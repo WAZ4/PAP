@@ -1,17 +1,37 @@
 <?php
 
 include_once "conectarBd.php";
-
 $id_post = 0;
-$titulo = "Post 1";
-$nomeUser = "Nome User";
-$timeStamp = "1 Jan, 2021";
-$categoria = "Negócios";
-$totalComentarios = 12;
-$altImagemPrincipal = "";
+if (isset($_SESSION["username"])) $username = $_SESSION["username"];
+if (isset($_SESSION["post-criar"])) {
+  $id_post = $_SESSION["post-criar"];
+  unset($_SESSION["post_criar"]);
+} else if (isset($_GET["id_post"])) $id_post = $_GET["id_post"];
 
-function imprimirConteudo($id_post)
+$cabecalho = $arrayName = array('titulo' => "", 'nomeUser' => "", 'timeStamp' => "", 'categoria' => "", 'imagemPrincipalUrl' => "");
+$totalComentarios = 12;
+
+function dataParaPortugues($data) {
+  // jan. fev. mar. abr. maio jun. jul. ago. set. out. nov. dez.
+  $mesesPt = array('01'=>"jan", '02'=>"fev", '03'=>"mar", '04'=>"abr", '05'=>"maio", '06'=>"jun", '07'=>"jul", '08'=>"ago", '09'=>"set", '10'=>"out", '11'=>'nov', '12'=>"dez");
+  $mesIng = substr($data, 0, 2);
+  $mes = $mesesPt[$mesIng] . substr($data, 2, strlen($data) - 2);
+}
+
+function getPostInformacaoPrincipal()
 {
+  global $id_post;
+  $sql = "SELECT * FROM post where id_post=". $id_post;
+
+  $conn = OpenCon();
+
+  $result_post = mysqli_query($conn, $sql);
+  var_dump($result_post);
+  CloseCon($conn);
+}
+function imprimirConteudo()
+{
+  global $id_post;
   $conn = OpenCon();
 
   $stmt = $conn->prepare("SELECT * FROM post_conteudo_detail WHERE id_post =" . $id_post);
@@ -49,7 +69,7 @@ function imprimirConteudo($id_post)
       ?>
         <blockquote>
           <p>
-            <?php echo $var1 ?>
+            “<?php echo $var1 ?>” - <?php echo $var2 ?>
           </p>
         </blockquote>
       <?php
@@ -58,8 +78,15 @@ function imprimirConteudo($id_post)
       case 3:
       ?>
         <img src="<?php echo $var1; ?>" class="img-fluid" alt="<?php echo $var2; ?>">
+      <?php
+        break;
+
+      case 4:
+      ?>
+        <h1 class="text-center fs-1">***</h1>
     <?php
         break;
+
 
       default:
         echo "Erro de formatação!";
@@ -68,12 +95,10 @@ function imprimirConteudo($id_post)
   }
 }
 
-function definirCabecalho($id_post)
+function definirCabecalho()
 {
-  global $titulo;
-  global $nomeUser;
-  global $timeStamp;
-  global $categoria;
+  global $cabecalho;
+  global $id_post;
 
   $conn = OpenCon();
 
@@ -90,10 +115,11 @@ function definirCabecalho($id_post)
   if ($result_post_conteudo_detail) {
     $row = $result_post_conteudo_detail->fetch_assoc();
 
-    $titulo = $row["titulo"];
-    $nomeUser = $row["username"];
-    $timeStamp = $row["timestamp"];
-    $categoria = $row["categoria"];
+    $cabecalho["nomeUser"] = $row["username"];
+    $cabecalho["titulo"] = $row["titulo"];
+    $cabecalho["timeStamp"] = $row["timestamp"];
+    $cabecalho["categoria"] = $row["categoria"];
+    $cabecalho["imagemPrincipalUrl"]  = $row["url_img"];
   } else {
     echo "Erro na conexão à base de dados!";
   }
@@ -192,15 +218,15 @@ function imprimirSubComentariosRecursiva($id_comentario, $sequencia = array()) /
         $sequencia = imprimirSubComentariosRecursiva($comentario, $sequencia);
         ?>
       </div>
-  <?php
+<?php
     }
   } else return $sequencia;
   return $sequencia;
 }
 
-function getSubComentario($id_post)
+function getSubComentario()
 {
-  // trocar por post ou sessao
+  global $id_post;
   $conn = OpenCon();
 
   $stmt = $conn->prepare("SELECT * FROM post_comentarios WHERE alvo = '" . $id_post . "'");
@@ -241,15 +267,16 @@ function getComentario($id_comentario)
   return $comentario;
 }
 
-
-
-
 //Função que corre no inicio do programa
 function main()
 {
   global $id_post; // trocar por session ou post
-  definirCabecalho($id_post);
+  global $cabecalho;
+
+  definirCabecalho($cabecalho);
+  var_dump($cabecalho);
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -281,6 +308,18 @@ function main()
 
   <!-- Template Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/aos/aos.js"></script>
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
+  <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="assets/vendor/waypoints/noframework.waypoints.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="assets/js/main.js"></script>
 
   <!-- =======================================================
   * Template Name: Company - v4.6.1
@@ -338,17 +377,11 @@ function main()
           <li><a href="pricing.html">Pricing</a></li>
           <li><a href="blog.html" class="active">Blog</a></li>
           <li><a href="contact.html">Contact</a></li>
+          <a href="contact.html">Login</a>
 
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
       </nav><!-- .navbar -->
-
-      <div class="header-social-links d-flex">
-        <a href="#" class="twitter"><i class="bu bi-twitter"></i></a>
-        <a href="#" class="facebook"><i class="bu bi-facebook"></i></a>
-        <a href="#" class="instagram"><i class="bu bi-instagram"></i></a>
-        <a href="#" class="linkedin"><i class="bu bi-linkedin"></i></i></a>
-      </div>
 
     </div>
   </header><!-- End Header -->
@@ -382,17 +415,17 @@ function main()
             <article class="entry entry-single">
               <!-- Imagem principal -->
               <div class="entry-img">
-
+                <img src="<?php echo $cabecalho["imagemPrincipalUrl"]; ?>" width="100%" height="100%" class="mx-auto d-block">
               </div>
 
               <h2 class="entry-title">
-                <a href="blog-single.html"><?php echo $titulo; ?></a>
+                <a href="blog-single.html"><?php echo $cabecalho["titulo"]; ?></a>
               </h2>
 
               <div class="entry-meta">
                 <ul>
-                  <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a href="blog-single.html"><?php echo $nomeUser; ?></a></li>
-                  <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a href="blog-single.html"><time datetime="2020-01-01"><?php echo $timeStamp; ?></time></a></li>
+                  <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a href="blog-single.html"><?php echo $cabecalho["nomeUser"]; ?></a></li>
+                  <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a href="blog-single.html"><time datetime="2020-01-01"><?php echo $cabecalho["timeStamp"]; ?></time></a></li>
                   <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> <a href="blog-single.html"><?php echo $totalComentarios; ?> Comentários</a></li>
                 </ul>
               </div>
@@ -408,7 +441,7 @@ function main()
               <div class="entry-footer">
                 <i class="bi bi-folder"></i>
                 <ul class="cats">
-                  <li><a href="#"><?php echo $categoria; ?></a></li>
+                  <li><a href="#"><?php echo $cabecalho["categoria"]; ?></a></li>
                 </ul>
 
                 <i class="bi bi-tags"></i>
@@ -531,30 +564,42 @@ function main()
 
               <div class="reply-form">
                 <h4>Leave a Reply</h4>
-                <p>Your email address will not be published. Required fields are marked * </p>
-                <form action="">
-                  <div class="row">
-                    <div class="col-md-6 form-group">
-                      <input name="name" type="text" class="form-control" placeholder="Your Name*">
+                <form action="#" method="post">
+                  <input type="hidden" name="<?php echo $id_post;?>">
+                <?php
+                if (isset($username)) {
+                ?>
+                    <div class="row">
+                      <div class="col form-group">
+                        <textarea name="comment" class="form-control" rows="5" placeholder="Your Comment*"></textarea>
+                      </div>
                     </div>
-                    <div class="col-md-6 form-group">
-                      <input name="email" type="text" class="form-control" placeholder="Your Email*">
+                    <button type="submit" class="btn btn-primary" name="comentario_submit">Post Comment</button>
+                <?php
+                } else {
+                  $data = gmdate("m d, Y", time());
+                  dataParaPortugues($data);
+                ?>
+                  <p>Your email address will not be published. Required fields are marked * </p>
+                  
+                    <div class="row">
+                      <div class="col-md-6 form-group">
+                        <input name="name" type="text" class="form-control" placeholder="Your Name*">
+                      </div>
+                      <div class="col-md-6 form-group">
+                        <input name="email" type="text" class="form-control" placeholder="Your Email*">
+                      </div>
                     </div>
-                  </div>
-                  <div class="row">
-                    <div class="col form-group">
-                      <input name="website" type="text" class="form-control" placeholder="Your Website">
+                    <div class="row">
+                      <div class="col form-group">
+                        <textarea name="comment" class="form-control" rows="5" placeholder="Your Comment*"></textarea>
+                      </div>
                     </div>
-                  </div>
-                  <div class="row">
-                    <div class="col form-group">
-                      <textarea name="comment" class="form-control" placeholder="Your Comment*"></textarea>
-                    </div>
-                  </div>
-                  <button type="submit" class="btn btn-primary">Post Comment</button>
-
+                    <button type="submit" class="btn btn-primary" name="comentario_submit">Post Comment</button>
+                    <?php
+                }
+                ?>
                 </form>
-
               </div>
 
             </div><!-- End blog comments -->
@@ -725,17 +770,6 @@ function main()
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
-  <!-- Vendor JS Files -->
-  <script src="assets/vendor/aos/aos.js"></script>
-  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
-  <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
-  <script src="assets/vendor/php-email-form/validate.js"></script>
-  <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
-  <script src="assets/vendor/waypoints/noframework.waypoints.js"></script>
-
-  <!-- Template Main JS File -->
-  <script src="assets/js/main.js"></script>
 
 </body>
 

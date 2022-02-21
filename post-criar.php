@@ -1,3 +1,184 @@
+<?php
+include_once("conectarBd.php");
+session_start();
+
+$errormsg;
+//nr de posts criados com index 1 , que por consequencia do index 1 passa a ser o numero do novo post. Se existirem 2 posts os seus index vao ser 0 e 1 mas a funcao devolve 2, logo o novo post vai ser o nr 2
+function getNrPost()
+{
+    $sql = "SELECT COUNT(id_post) AS numeroDePosts FROM post;";
+
+    $conn = OpenCon();
+
+    $result_post = mysqli_query($conn, $sql);
+
+    CloseCon($conn);
+
+    return mysqli_fetch_assoc($result_post)["numeroDePosts"];
+}
+//Inserir conteudo do editor de texto na base de dados
+function inserirPostConteudoBaseDeDados($nr_post)
+{
+    $stringJson = $_POST["submitEditor"];
+    $someObject = json_decode(json_encode(json_decode($stringJson)), true);
+    print_r($someObject);
+
+    foreach ($someObject["blocks"] as $key => $value) {
+        if (gettype($value) == "array") {
+            $ordem = $key;
+            $tipo = "";
+            $var1 = "";
+            $var2 = "";
+
+            switch ($value["type"]) {
+                case 'paragraph':
+                    $tipo = 0;
+                    $var1 = $value["data"]["text"];
+                    break;
+
+                case 'header':
+                    $tipo = 1;
+                    $var1 = $value["data"]["text"];
+                    break;
+
+                case 'quote':
+                    $tipo = 2;
+                    $var1 = $value["data"]["text"];
+                    $var2 = $value["data"]["caption"];
+                    break;
+
+                case 'image':
+                    $tipo = 3;
+                    $var1 = $value["data"]["file"]["url"];
+                    $var2 = $value["data"]["caption"];
+                    break;
+
+                case 'delimiter':
+                    $tipo = 4;
+                    break;
+
+                default:
+                    # code...
+                    break;
+            }
+
+            $sql = "INSERT INTO `post_conteudo_detail` (`id_post`, `ordem`, `tipo`, `var1`, `var2`) VALUES ('" . $nr_post . "', '" . $ordem . "', '" . $tipo . "', '" . $var1 . "', '" . $var2 . "')";
+
+            $conn = OpenCon();
+
+            $result_post_conteudo_detail = mysqli_query($conn, $sql);
+
+            var_dump($result_post_conteudo_detail);
+
+            CloseCon($conn);
+        }
+    }
+}
+//Inserir os dados do cabecalho do post na base de dados
+//falta adicionar o username dinamico
+function inserirPostBaseDeDados($nr_post)
+{
+    $urlPrefix = "http://localhost:8888/PAP/Company/";
+    $target_dir = "uploads/";
+    $filename = time() . '-' . random_int(1, 9999) . substr($_FILES["fileToUpload"]["name"], strpos($_FILES["fileToUpload"]["name"], '.'));
+    // echo $filename. "<br>";
+    $target_file = $target_dir . basename($filename);
+    // $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+    $uploadOk = 1;
+    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+    // Check if image file is a actual image or fake image
+    $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
+    if ($check !== false) {
+        $uploadOk = 1;
+    } else {
+        $errormsg = "File is not an image.";
+        $uploadOk = 0;
+    }
+
+    // Check if file already exists
+    if (file_exists($target_file)) {
+        $errormsg = "Sorry, file already exists.";
+        $uploadOk = 0;
+    }
+
+    // Check file size
+    if ($_FILES["fileToUpload"]["size"] > 500000) {
+        $errormsg = "Sorry, your file is too large.";
+        $uploadOk = 0;
+    }
+
+    // Allow certain file formats
+    if (
+        $imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+        && $imageFileType != "gif"
+    ) {
+        $errormsg = "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+        $uploadOk = 0;
+    }
+
+    // Check if $uploadOk is set to 0 by an error
+    if ($uploadOk == 0) {
+        // echo "Sorry, your file was not uploaded.";
+        // if everything is ok, try to upload file
+    } else {
+        if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+            // echo "The file " . htmlspecialchars(basename($_FILES["fileToUpload"]["name"])) . " has been uploaded.";
+
+            $username = 'goncalo';
+            $categoria = $_POST["categoria"];
+            $titulo = $_POST["postTitulo"];
+            $timestamp = date('M', time()) . gmdate(" d, Y", time());
+            // acabar este statement WAZA WAZA WAZA WAZA WAZA WAZA WAZA WAZA WAZA WAZA WAZA WAZA WAZA WAZA WAZA WAZA
+            $sql = "INSERT INTO post VALUES ( '" . $nr_post . "' ,'" . $username . "', '" . $titulo . "', '" . $timestamp . "', '1' , '" . $categoria . "',  '" . $urlPrefix . $target_file . "')";
+
+            $conn = OpenCon();
+
+            $result_post = mysqli_query($conn, $sql);
+
+            CloseCon($conn);
+        } else {
+            // echo "Sorry, there was an error uploading your file.";
+        }
+    }
+}
+//Inserir as tags na base de dados ACABAR
+function inserirTagsBaseDados($nr_post, $tags)
+{
+    // foreach ($ags as $key ) {
+    //     # code...
+    // }
+    $sql = "SELECT COUNT(id_post) AS numeroDePosts FROM post;";
+
+    $conn = OpenCon();
+
+    $result_post = mysqli_query($conn, $sql);
+
+    CloseCon($conn);
+
+    return mysqli_fetch_assoc($result_post)["numeroDePosts"];
+}
+
+if (isset($_POST["post-criar-submit"])) {
+    $novo_post = getNrPost();
+    //Inserir ImagemCapa
+    if (isset($_FILES["fileToUpload"])) {
+        inserirPostBaseDeDados($novo_post);
+    }
+
+    //Inserir Conteudo
+    if (isset($_POST["submitEditor"])) {
+        inserirPostConteudoBaseDeDados($novo_post);
+    }
+
+    //Inserir Tags
+    if (isset($_POST["tags"])) {
+        inserirTagsBaseDados($nr_post, $_POST["tags"]);
+    }
+    header('Location: post-single.php?id_post=' . $novo_post);
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -26,13 +207,39 @@
     <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
     <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
 
+    <!-- Vendor JS Files -->
+    <script src="assets/vendor/aos/aos.js"></script>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+    <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+    <script src="assets/vendor/php-email-form/validate.js"></script>
+    <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+    <script src="assets/vendor/waypoints/noframework.waypoints.js"></script>
+
+    <!-- Template Main JS File -->
+    <script src="assets/js/main.js"></script>
+
     <!-- Template Main CSS File -->
     <link href="assets/css/style.css" rel="stylesheet">
 
     <!-- css pessoal -->
     <link rel="stylesheet" href="estilo-post-criar.css">
-    <link rel="stylesheet" href="assets/trix-main/dist/trix.css">
-    <script src="assets/trix-main/dist/trix.js"></script>
+
+    <!-- EditorJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/paragraph@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/quote@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/image@2.3.0"></script>
+
+    <script src="editorJS/editor.js"></script>
+
+    <!-- Tags -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://unpkg.com/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
+
+
     <!-- =======================================================
   * Template Name: Company - v4.6.1
   * Template URL: https://bootstrapmade.com/company-free-html-bootstrap-template/
@@ -98,9 +305,11 @@
     echo "espaco <br>";
     var_dump($_POST);
     echo "espaco <br>";
-    var_dump($_POST);
+    var_dump($_FILES);
     echo "espaco <br>";
     var_dump($_POST);
+    echo "espaco <br>";
+    var_dump($_GET);
     ?>
 </pre>
 
@@ -128,264 +337,86 @@
 
                 <div class="row">
 
-                    <div class="col-lg-8 entries">
+                    <div class="col-lg-12 entries">
 
                         <article class="entry entry-single">
-                            <h1 class="align-center">Crie o seu Artigo!</h1>
+                            <div>
+                                <h1 class="align-center">Crie o seu Post!</h1>
+                                <p>Se necessário consulte o guia de como utilizar a nossa ferramenta de criação de posts <a class="link-info" href="">aqui</a></p>
+                            </div>
 
-                            <form id="formText" action="#" method="post">
-                                <input id="x" type="hidden" name="content">
-                                <trix-editor input="x"></trix-editor>
-                                <input type="submit" value="">;
-                            </form>
+                            <form action="#" method="post" enctype="multipart/form-data">
 
-                            <!-- <div class="mb-3">
-                                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-                                    <div class="btn-group me-2" role="group" aria-label="First group">
-                                        <button type="button" class="btn btn-primary">1</button>
-                                        <button type="button" class="btn btn-primary">2</button>
-                                        <button type="button" class="btn btn-primary">3</button>
-                                        <button type="button" class="btn btn-primary">4</button>
-                                    </div>
-                                    <div class="btn-group me-2" role="group" aria-label="Second group">
-                                        <button type="button" class="btn btn-secondary">5</button>
-                                        <button type="button" class="btn btn-secondary">6</button>
-                                        <button type="button" class="btn btn-secondary">7</button>
-                                    </div>
-                                    <div class="btn-group" role="group" aria-label="Third group">
-                                        <button type="button" class="btn btn-info">8</button>
-                                    </div>
+                                <div class="container bg-light">
+                                    <div id="editorjs"></div>
                                 </div>
-                            </div> -->
-                            <!-- <div>
-                                <span class="textarea" name="conteudo" id="conteudo" role="textbox" contenteditable></span>
-                            </div> -->
+                                <script src="editorJS/index.js"></script>
+                                <input type="hidden" name="submitEditor" id="submitEditor">
 
+                                <!-- Seccao para o utilizador escolher a categoria na qual se enquadra o seu post -->
+
+                                <div class="mt-2">
+                                    <label for="categoria">Escolha a categoria que o seu post aborda: </label>
+                                    <select required class="form-select" aria-label="Default select example" name="categoria" id="categoria">
+                                        <option disabled selected hidden>Clique para ver as categorias</option>
+                                        <option value="Geral">Geral</option>
+                                        <option value="Lifestyle">Lifestyle</option>
+                                    </select>
+                                </div>
+
+                                <div class="mt-2">
+                                    <label for="postTitulo" class="form-label mb-0">Titulo: </label>
+                                    <input required class="form-control" type="text" placeholder="Titulo do seu Post" aria-label="default input example" name="postTitulo">
+                                </div>
+
+                                <div class="mt-2">
+                                    <label for="formFile" class="form-label mb-0">Imagem de Capa: </label>
+                                    <input required class="form-control" type="file" name="fileToUpload">
+                                </div>
+
+
+                                <!-- <div class="mt2">
+                                    <label for="fileToUplaod">Imagem de Capa: </label>
+                                    <input type="file" name="fileToUpload" id="fileToUpload">
+                                </div> -->
+
+                                <!-- Seccao para o utilizador escolher as tags associadas ao seu post -->
+                                <div class="mt-2">
+                                    Escolha os temas associados ao seu post:
+                                    <input name='tags' value=' ' class="form-control" autofocus placeholder="Por exemplo: 'Guia', 'Uso Tópico'">
+                                    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/js/bootstrap.min.js"></script>
+                                    <script src="https://unpkg.com/@yaireo/tagify"></script>
+                                    <script src="https://unpkg.com/@yaireo/tagify@3.1.0/dist/tagify.polyfills.min.js"></script>
+                                    <script>
+                                        // The DOM element you wish to replace with Tagify
+                                        var input = document.querySelector('input[name=tags]');
+
+                                        // initialize Tagify on the above input node reference
+                                        new Tagify(input)
+                                    </script>
+
+                                    <!-- Seccao de publicar ou previsualizar o post -->
+                                    <div class="btn-toolbar justify-content-between mt-2" role="toolbar" aria-label="Toolbar with button groups">
+                                        <div class="btn-group" role="group" aria-label="First group">
+                                            <button type="submit" name="post-criar-submit" onclick="gravarEditor()" value="submit" class="btn btn-primary">Publicar</button>
+                                        </div>
+                                        <!-- <div class="mt-3"> -->
+                                        <div class="input-group">
+                                            <!-- Button trigger modal -->
+                                            <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"> Launch demo modal</button>
+                                                <button type="button" class="btn btn-outline-secondary" onclick="previsualizarPost()">Previsualizar Post</button> -->
+                                            <!-- </div> -->
+                                            <!-- </div> -->
+                                        </div>
+                                    </div>
 
                         </article><!-- End blog entry -->
 
-                        <div class="blog-author d-flex align-items-center">
-                            <img src="assets/img/blog/blog-author.jpg" class="rounded-circle float-left" alt="">
-                            <div>
-                                <h4>Jane Smith</h4>
-                                <div class="social-links">
-                                    <a href="https://twitters.com/#"><i class="bi bi-twitter"></i></a>
-                                    <a href="https://facebook.com/#"><i class="bi bi-facebook"></i></a>
-                                    <a href="https://instagram.com/#"><i class="biu bi-instagram"></i></a>
-                                </div>
-                                <p>
-                                    Itaque quidem optio quia voluptatibus dolorem dolor. Modi eum sed possimus accusantium. Quas repellat voluptatem officia numquam sint aspernatur voluptas. Esse et accusantium ut unde voluptas.
-                                </p>
-                            </div>
-                        </div><!-- End blog author bio -->
+                        </form>
 
-                        <div class="blog-comments">
-
-                            <h4 class="comments-count">8 Comments</h4>
-
-                            <div id="comment-1" class="comment">
-                                <div class="d-flex">
-                                    <div class="comment-img"><img src="assets/img/blog/comments-1.jpg" alt=""></div>
-                                    <div>
-                                        <h5><a href="">Georgia Reader</a> <a href="#" class="reply"><i class="bi bi-reply-fill"></i> Reply</a></h5>
-                                        <time datetime="2020-01-01">01 Jan, 2020</time>
-                                        <p>
-                                            Et rerum totam nisi. Molestiae vel quam dolorum vel voluptatem et et. Est ad aut sapiente quis molestiae est qui cum soluta.
-                                            Vero aut rerum vel. Rerum quos laboriosam placeat ex qui. Sint qui facilis et.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div><!-- End comment #1 -->
-
-                            <div id="comment-2" class="comment">
-                                <div class="d-flex">
-                                    <div class="comment-img"><img src="assets/img/blog/comments-2.jpg" alt=""></div>
-                                    <div>
-                                        <h5><a href="">Aron Alvarado</a> <a href="#" class="reply"><i class="bi bi-reply-fill"></i> Reply</a></h5>
-                                        <time datetime="2020-01-01">01 Jan, 2020</time>
-                                        <p>
-                                            Ipsam tempora sequi voluptatem quis sapiente non. Autem itaque eveniet saepe. Officiis illo ut beatae.
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div id="comment-reply-1" class="comment comment-reply">
-                                    <div class="d-flex">
-                                        <div class="comment-img"><img src="assets/img/blog/comments-3.jpg" alt=""></div>
-                                        <div>
-                                            <h5><a href="">Lynda Small</a> <a href="#" class="reply"><i class="bi bi-reply-fill"></i> Reply</a></h5>
-                                            <time datetime="2020-01-01">01 Jan, 2020</time>
-                                            <p>
-                                                Enim ipsa eum fugiat fuga repellat. Commodi quo quo dicta. Est ullam aspernatur ut vitae quia mollitia id non. Qui ad quas nostrum rerum sed necessitatibus aut est. Eum officiis sed repellat maxime vero nisi natus. Amet nesciunt nesciunt qui illum omnis est et dolor recusandae.
-
-                                                Recusandae sit ad aut impedit et. Ipsa labore dolor impedit et natus in porro aut. Magnam qui cum. Illo similique occaecati nihil modi eligendi. Pariatur distinctio labore omnis incidunt et illum. Expedita et dignissimos distinctio laborum minima fugiat.
-
-                                                Libero corporis qui. Nam illo odio beatae enim ducimus. Harum reiciendis error dolorum non autem quisquam vero rerum neque.
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div id="comment-reply-2" class="comment comment-reply">
-                                        <div class="d-flex">
-                                            <div class="comment-img"><img src="assets/img/blog/comments-4.jpg" alt=""></div>
-                                            <div>
-                                                <h5><a href="">Sianna Ramsay</a> <a href="#" class="reply"><i class="bi bi-reply-fill"></i> Reply</a></h5>
-                                                <time datetime="2020-01-01">01 Jan, 2020</time>
-                                                <p>
-                                                    Et dignissimos impedit nulla et quo distinctio ex nemo. Omnis quia dolores cupiditate et. Ut unde qui eligendi sapiente omnis ullam. Placeat porro est commodi est officiis voluptas repellat quisquam possimus. Perferendis id consectetur necessitatibus.
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                    </div><!-- End comment reply #2-->
-
-                                </div><!-- End comment reply #1-->
-
-                            </div><!-- End comment #2-->
-
-                            <div id="comment-3" class="comment">
-                                <div class="d-flex">
-                                    <div class="comment-img"><img src="assets/img/blog/comments-5.jpg" alt=""></div>
-                                    <div>
-                                        <h5><a href="">Nolan Davidson</a> <a href="#" class="reply"><i class="bi bi-reply-fill"></i> Reply</a></h5>
-                                        <time datetime="2020-01-01">01 Jan, 2020</time>
-                                        <p>
-                                            Distinctio nesciunt rerum reprehenderit sed. Iste omnis eius repellendus quia nihil ut accusantium tempore. Nesciunt expedita id dolor exercitationem aspernatur aut quam ut. Voluptatem est accusamus iste at.
-                                            Non aut et et esse qui sit modi neque. Exercitationem et eos aspernatur. Ea est consequuntur officia beatae ea aut eos soluta. Non qui dolorum voluptatibus et optio veniam. Quam officia sit nostrum dolorem.
-                                        </p>
-                                    </div>
-                                </div>
-
-                            </div><!-- End comment #3 -->
-
-                            <div id="comment-4" class="comment">
-                                <div class="d-flex">
-                                    <div class="comment-img"><img src="assets/img/blog/comments-6.jpg" alt=""></div>
-                                    <div>
-                                        <h5><a href="">Kay Duggan</a> <a href="#" class="reply"><i class="bi bi-reply-fill"></i> Reply</a></h5>
-                                        <time datetime="2020-01-01">01 Jan, 2020</time>
-                                        <p>
-                                            Dolorem atque aut. Omnis doloremque blanditiis quia eum porro quis ut velit tempore. Cumque sed quia ut maxime. Est ad aut cum. Ut exercitationem non in fugiat.
-                                        </p>
-                                    </div>
-                                </div>
-
-                            </div><!-- End comment #4 -->
-
-                            <div class="reply-form">
-                                <h4>Leave a Reply</h4>
-                                <p>Your email address will not be published. Required fields are marked * </p>
-                                <form action="">
-                                    <div class="row">
-                                        <div class="col-md-6 form-group">
-                                            <input name="name" type="text" class="form-control" placeholder="Your Name*">
-                                        </div>
-                                        <div class="col-md-6 form-group">
-                                            <input name="email" type="text" class="form-control" placeholder="Your Email*">
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col form-group">
-                                            <input name="website" type="text" class="form-control" placeholder="Your Website">
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col form-group">
-                                            <textarea name="comment" class="form-control" placeholder="Your Comment*"></textarea>
-                                        </div>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Post Comment</button>
-
-                                </form>
-
-                            </div>
-
-                        </div><!-- End blog comments -->
-
-                    </div><!-- End blog entries list -->
-
-                    <div class="col-lg-4">
-
-                        <div class="sidebar">
-
-                            <h3 class="sidebar-title">Search</h3>
-                            <div class="sidebar-item search-form">
-                                <form action="">
-                                    <input type="text">
-                                    <button type="submit"><i class="bi bi-search"></i></button>
-                                </form>
-                            </div><!-- End sidebar search formn-->
-
-                            <h3 class="sidebar-title">Categories</h3>
-                            <div class="sidebar-item categories">
-                                <ul>
-                                    <li><a href="#">General <span>(25)</span></a></li>
-                                    <li><a href="#">Lifestyle <span>(12)</span></a></li>
-                                    <li><a href="#">Travel <span>(5)</span></a></li>
-                                    <li><a href="#">Design <span>(22)</span></a></li>
-                                    <li><a href="#">Creative <span>(8)</span></a></li>
-                                    <li><a href="#">Educaion <span>(14)</span></a></li>
-                                </ul>
-                            </div><!-- End sidebar categories-->
-
-                            <h3 class="sidebar-title">Recent Posts</h3>
-                            <div class="sidebar-item recent-posts">
-                                <div class="post-item clearfix">
-                                    <img src="assets/img/blog/blog-recent-1.jpg" alt="">
-                                    <h4><a href="blog-single.html">Nihil blanditiis at in nihil autem</a></h4>
-                                    <time datetime="2020-01-01">Jan 1, 2020</time>
-                                </div>
-
-                                <div class="post-item clearfix">
-                                    <img src="assets/img/blog/blog-recent-2.jpg" alt="">
-                                    <h4><a href="blog-single.html">Quidem autem et impedit</a></h4>
-                                    <time datetime="2020-01-01">Jan 1, 2020</time>
-                                </div>
-
-                                <div class="post-item clearfix">
-                                    <img src="assets/img/blog/blog-recent-3.jpg" alt="">
-                                    <h4><a href="blog-single.html">Id quia et et ut maxime similique occaecati ut</a></h4>
-                                    <time datetime="2020-01-01">Jan 1, 2020</time>
-                                </div>
-
-                                <div class="post-item clearfix">
-                                    <img src="assets/img/blog/blog-recent-4.jpg" alt="">
-                                    <h4><a href="blog-single.html">Laborum corporis quo dara net para</a></h4>
-                                    <time datetime="2020-01-01">Jan 1, 2020</time>
-                                </div>
-
-                                <div class="post-item clearfix">
-                                    <img src="assets/img/blog/blog-recent-5.jpg" alt="">
-                                    <h4><a href="blog-single.html">Et dolores corrupti quae illo quod dolor</a></h4>
-                                    <time datetime="2020-01-01">Jan 1, 2020</time>
-                                </div>
-
-                            </div><!-- End sidebar recent posts-->
-
-                            <h3 class="sidebar-title">Tags</h3>
-                            <div class="sidebar-item tags">
-                                <ul>
-                                    <li><a href="#">App</a></li>
-                                    <li><a href="#">IT</a></li>
-                                    <li><a href="#">Business</a></li>
-                                    <li><a href="#">Mac</a></li>
-                                    <li><a href="#">Design</a></li>
-                                    <li><a href="#">Office</a></li>
-                                    <li><a href="#">Creative</a></li>
-                                    <li><a href="#">Studio</a></li>
-                                    <li><a href="#">Smart</a></li>
-                                    <li><a href="#">Tips</a></li>
-                                    <li><a href="#">Marketing</a></li>
-                                </ul>
-                            </div><!-- End sidebar tags-->
-
-                        </div><!-- End sidebar -->
-
-                    </div><!-- End blog sidebar -->
+                    </div>
 
                 </div>
-
-            </div>
         </section><!-- End Blog Single Section -->
 
     </main><!-- End #main -->
@@ -468,18 +499,85 @@
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
-    <!-- Vendor JS Files -->
-    <script src="assets/vendor/aos/aos.js"></script>
-    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
-    <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
-    <script src="assets/vendor/php-email-form/validate.js"></script>
-    <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
-    <script src="assets/vendor/waypoints/noframework.waypoints.js"></script>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="conteudo-modal">
 
-    <!-- Template Main JS File -->
-    <script src="assets/js/main.js"></script>
-
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
+
+<script>
+    function gravarEditor() {
+        editor.save().then((output) => {
+            document.getElementById('submitEditor').setAttribute('value', JSON.stringify(output));
+
+        }).catch((error) => {
+            document.getElementById('submitEditor').setAttribute('value', "");
+
+        });
+    }
+
+    var outputData;
+
+    function previsualizarPost() {
+        editor.save().then((outputData) => {
+            // JSON to Object / Array
+            var i = 0;
+            var conteudoTotal = "";
+            while (outputData.blocks[i] != null) {
+
+                switch (outputData.blocks[i].type) {
+                    case "paragraph":
+                        var conteudo = outputData.blocks[i].data.text;
+                        conteudoTotal += "<p>" + conteudo + "</p>";
+                        break;
+
+                    case "header":
+                        var conteudo = outputData.blocks[i].data.text;
+                        conteudoTotal += "<h3>" + conteudo + "</h3>";
+                        break;
+
+                    case "quote":
+                        var conteudo = outputData.blocks[i].data.text;
+                        var caption = outputData.blocks[i].data.caption;
+                        conteudoTotal += "<blockquote> <p> " + conteudo + " - " + caption + "</p> </blockquote>";
+                        break;
+
+                    case "image":
+                        var conteudo = outputData.blocks[i].data.file.url;
+                        var textoAlt = outputData.blocks[i].data.caption;
+                        conteudoTotal += "<img src=" + conteudo + " class='img-fluid' alt=" + caption + ">";
+                        break;
+
+                    case "delimiter":
+                        conteudoTotal += "<h1 class='text-center fs-1'>***</h1>";
+                        break;
+
+                    default:
+                        break;
+                }
+                console.log('Article data: ', outputData.blocks[i].data.text);
+                i++;
+            }
+            document.getElementById('conteudo-modal').innerHTML = conteudoTotal;
+
+        }).catch((error) => {
+            console.log('Saving failed: ', error);
+        });
+    }
+</script>
 
 </html>
