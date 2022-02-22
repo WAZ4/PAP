@@ -2,7 +2,7 @@
 
 include_once "conectarBd.php";
 $id_post = 0;
-$username ="goncalo";
+$username = "goncalo";
 unset($_SESSION["id_post"]);
 if (isset($_SESSION["username"])) $username = $_SESSION["username"];
 if (isset($_SESSION["post-criar"])) {
@@ -22,7 +22,8 @@ function dataParaPortugues($data)
   return $mes;
 }
 
-function adicionarComentario() {
+function adicionarComentario()
+{
   global $username;
   global $id_post;
   $conteudo = $_POST["comentario"];
@@ -31,10 +32,10 @@ function adicionarComentario() {
   $timestamp = dataParaPortugues(gmdate("m d, Y", time()));
 
   $conn = OpenCon();
-  
+
   $nrDeComentario = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(id_comentario) AS numeroDeComentarios FROM post_comentarios WHERE id_post = " . $id_post))["numeroDeComentarios"];
 
-  $sql = "INSERT INTO post_comentarios VALUES (" . $id_post .", " . $nrDeComentario .", '" . $alvo . "', '" . $conteudo ."', '" . $username ."', '" . $timestamp ."');";
+  $sql = "INSERT INTO post_comentarios VALUES (" . $id_post . ", " . $nrDeComentario . ", '" . $alvo . "', '" . $conteudo . "', '" . $username . "', '" . $timestamp . "');";
 
   $result_post_comentarios = mysqli_query($conn, $sql);
 
@@ -162,12 +163,10 @@ function imprimirTags()
 
 function imprimirComentarios()
 {
-  // <h4 class="comments-count">8 Comments</h4>
-
-  global $id_post; // trocar por post ou sessao
+  global $id_post;
   $conn = OpenCon();
 
-  $stmt = $conn->prepare("SELECT * FROM post_comentarios WHERE id_post = " . $id_post); // ." AND alvo = 'post'"
+  $stmt = $conn->prepare("SELECT * FROM post_comentarios WHERE id_post = " . $id_post);
   $stmt->execute();
 
   $result_post_comentarios = $stmt->get_result();
@@ -175,7 +174,7 @@ function imprimirComentarios()
   $stmt->free_result();
   $stmt->close();
   ?>
-  <h4 class="comments-count"><?php echo $result_post_comentarios->num_rows ?> Comments</h4>
+  <h4 class="comments-count"><?php echo $result_post_comentarios->num_rows ?> Comentários</h4>
   <?php
 
   while ($row = $result_post_comentarios->fetch_assoc()) {
@@ -205,14 +204,14 @@ function imprimirComentarios()
   // }
 }
 
-function imprimirSubComentariosRecursiva($id_comentario, $sequencia = array()) // arranjar isto WAZA
+function imprimirSubComentariosRecursiva($id_comentario) // arranjar isto WAZA
 {
 
   // var_dump($sequencia);
   $comentariosInferiores = getSubComentario($id_comentario);
+  // var_dump($comentariosInferiores);
   if ($comentariosInferiores != false) {
     foreach ($comentariosInferiores as $comentario) {
-      array_push($sequencia, $comentario);
       $dados = getComentario($comentario);
     ?>
       <div id="comment-reply-1" class="comment comment-reply">
@@ -227,28 +226,25 @@ function imprimirSubComentariosRecursiva($id_comentario, $sequencia = array()) /
           </div>
         </div>
         <?php
-        $sequencia = imprimirSubComentariosRecursiva($comentario, $sequencia);
+        imprimirSubComentariosRecursiva($comentario);
         ?>
       </div>
 <?php
     }
-  } else return $sequencia;
-  return $sequencia;
+  }
 }
 
-function getSubComentario()
+function getSubComentario($id_comentario)
 {
   global $id_post;
+  $sql = "SELECT * FROM post_comentarios WHERE id_post = '" . $id_post . "' AND alvo = '" . $id_comentario."'";
+
   $conn = OpenCon();
 
-  $stmt = $conn->prepare("SELECT * FROM post_comentarios WHERE alvo = '" . $id_post . "'");
-  $stmt->execute();
+  $result_post_comentarios = mysqli_query($conn, $sql);
 
-  $result_post_comentarios = $stmt->get_result();
-
-  $stmt->free_result();
-  $stmt->close();
-
+  CloseCon($conn);
+  // var_dump($result_post_comentarios);
 
   if ($result_post_comentarios == false || $result_post_comentarios->num_rows == 0) return false;
   else {
@@ -264,9 +260,10 @@ function getSubComentario()
 
 function getComentario($id_comentario)
 {
+  global $id_post;
   $conn = OpenCon();
 
-  $stmt = $conn->prepare("SELECT * FROM post_comentarios WHERE id_comentario = '" . $id_comentario . "'"); //verificar se encontra a certa ou a amis de outros comentarios
+  $stmt = $conn->prepare("SELECT * FROM post_comentarios WHERE id_comentario = '" . $id_comentario . "' AND id_post =" . $id_post); //verificar se encontra a certa ou a amis de outros comentarios
   $stmt->execute();
 
   $result_post_comentarios = $stmt->get_result();
@@ -355,7 +352,7 @@ function main()
   <pre>
   <?php
 
-  main();
+  // main();
 
   // imprimirComentarios();
 
@@ -504,7 +501,7 @@ function main()
                         <textarea name="comentario" class="form-control" rows="5" placeholder="O seu comentário*"></textarea>
                       </div>
                     </div>
-                    <input type="hidden" name="comentario_post" value="<?php echo $id_post;?>">
+                    <input type="hidden" name="comentario_post" value="<?php echo $id_post; ?>">
                     <input type="hidden" name="comentario_alvo" value="post">
                     <button type="submit" class="btn btn-primary" name="comentario_principal_submit">Post Comment</button>
                   </form>
@@ -512,9 +509,9 @@ function main()
                 } else {
                 ?>
                   <div class="container coment-div">
-                        <span class="material-icons coment-span">lock</span>
-                        <p class="coment-span text-center">Para comentar é necessário ter uma conta</p>
-                        <a class="coment-span" href="">Crie uma conta aqui!</a>
+                    <span class="material-icons coment-span">lock</span>
+                    <p class="coment-span text-center">Para comentar é necessário ter uma conta</p>
+                    <a class="coment-span" href="">Crie uma conta aqui!</a>
                   </div>
                 <?php
                 }
@@ -612,7 +609,7 @@ function main()
   </main><!-- End #main -->
 
   <!-- ======= Footer ======= -->
-  <footer id="footer">
+  <footer id="footer" class="d-block">
 
     <div class="footer-top">
       <div class="container">
