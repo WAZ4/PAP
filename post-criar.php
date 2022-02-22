@@ -1,6 +1,7 @@
 <?php
 include_once("conectarBd.php");
 session_start();
+session_unset();
 
 $errormsg;
 //nr de posts criados com index 1 , que por consequencia do index 1 passa a ser o numero do novo post. Se existirem 2 posts os seus index vao ser 0 e 1 mas a funcao devolve 2, logo o novo post vai ser o nr 2

@@ -1,15 +1,34 @@
+<!-- Comentario de comentario -->
+<script>
+  // flag == true:  Esconader Botao abrir, Motrar zona de comentario
+  // flag == false: Mostrar Botao abrir, Esconder zona de comentario
+  function toggleComentario(id, flag) {
+    var botaoAbrir = document.getElementById("comentario-reply-abrir-" + id);
+    var botaoFechar = document.getElementById("comentario-novo-" + id);
+    if (flag) {
+      // botaoAbrir.classList.add("visually-hidden-focusable");
+
+      botaoFechar.classList.remove("d-none");
+    } else {
+      // botaoAbrir.classList.remove("visually-hidden-focusable");
+      botaoFechar.classList.add("d-none");
+    }
+
+
+  }
+</script>
+
 <?php
 
 include_once "conectarBd.php";
 $id_post = 0;
 $username = "goncalo";
-unset($_SESSION["id_post"]);
-if (isset($_SESSION["username"])) $username = $_SESSION["username"];
-if (isset($_SESSION["post-criar"])) {
+if (isset($_GET["id_post"])) $id_post = $_GET["id_post"];
+else if (isset($_SESSION["username"])) $username = $_SESSION["username"];
+else if (isset($_SESSION["post-criar"])) {
   $id_post = $_SESSION["post-criar"];
   unset($_SESSION["post_criar"]);
-} else if (isset($_GET["id_post"])) $id_post = $_GET["id_post"];
-
+}
 $cabecalho = $arrayName = array('titulo' => "", 'nomeUser' => "", 'timeStamp' => "", 'categoria' => "", 'imagemPrincipalUrl' => "");
 $totalComentarios = 12;
 
@@ -27,7 +46,7 @@ function adicionarComentario()
   global $username;
   global $id_post;
   $conteudo = $_POST["comentario"];
-  $id_post = $_POST["comentario_post"];
+  $id_post = $_POST["id_post"];
   $alvo = $_POST["comentario_alvo"];
   $timestamp = dataParaPortugues(gmdate("m d, Y", time()));
 
@@ -123,11 +142,10 @@ function definirCabecalho()
   $stmt->free_result();
   $stmt->close();
 
-  var_dump($result_post_conteudo_detail);
-
+  // var_dump($result_post_conteudo_detail);
+  
   if ($result_post_conteudo_detail) {
     $row = $result_post_conteudo_detail->fetch_assoc();
-
     $cabecalho["nomeUser"] = $row["username"];
     $cabecalho["titulo"] = $row["titulo"];
     $cabecalho["timeStamp"] = $row["timestamp"];
@@ -185,11 +203,34 @@ function imprimirComentarios()
         <div class="d-flex">
           <div class="comment-img"><img src="assets/img/blog/comments-1.jpg" alt=""></div>
           <div>
-            <h5><a href=""><?php echo $row["username"] ?></a> <a href="#" class="reply"><i class="bi bi-reply-fill"></i> Reply</a></h5>
+            <h5><a href=""><?php echo $row["username"] ?></a> 
+            <!-- <a href="#" class="reply"><i class="bi bi-reply-fill"></i> Reply</a> -->
+            <button id="comentario-reply-abrir-<?php echo $row["id_comentario"] ?>" class="reply btn" onclick="toggleComentario(<?php echo $row['id_comentario']; ?>, true);"><span class="material-icons">reply</span></button>
+          </h5>
             <time datetime="2020-01-01"><?php echo $row["timestamp"] ?></time>
             <p>
               <?php echo $row["conteudo"] ?>
             </p>
+          </div>
+        </div>
+
+        <div id="comentario-novo-<?php echo $row["id_comentario"] ?>" class="comment comment-reply d-none">
+          <div class="d-flex reply-form">
+            <div class="w-100">
+              <h4><span class="material-icons">north</span> Deixe a sua resposta <button class="float-end btn" onclick="toggleComentario(<?php echo $row['id_comentario']; ?>, false);"><span class="material-icons btn-comentario">close</span></button></h4>
+
+              <form action="#" method="POST">
+                <div class="row mt-2 ">
+                  <div class="col form-group ">
+                    <textarea name="comentario" class="form-control " placeholder="A sua resposta* " rows="5 "></textarea>
+                  </div>
+                </div>
+                <input type="hidden" name="id_post" value="<?php echo $id_post; ?>">
+                <input type="hidden" name="comentario_alvo" value="<?php echo $row["id_comentario"] ?>">
+                <button type="submit" class="btn btn-primary" name="comentario_principal_submit">Responder</button>
+
+              </form>
+            </div>
           </div>
         </div>
 
@@ -206,7 +247,7 @@ function imprimirComentarios()
 
 function imprimirSubComentariosRecursiva($id_comentario) // arranjar isto WAZA
 {
-
+  global $id_post;
   // var_dump($sequencia);
   $comentariosInferiores = getSubComentario($id_comentario);
   // var_dump($comentariosInferiores);
@@ -218,16 +259,39 @@ function imprimirSubComentariosRecursiva($id_comentario) // arranjar isto WAZA
         <div class="d-flex">
           <div class="comment-img"><img src="assets/img/blog/comments-3.jpg" alt=""></div>
           <div>
-            <h5><a href=""><?php echo $dados["username"] ?></a> <a href="#" class="reply"><i class="bi bi-reply-fill"></i> Reply</a></h5>
-            <time datetime="2020-01-01"><?php echo $dados["timestamp"] ?></time>
+            <h5><a href=""><?php echo $dados["username"] ?></a>
+              <button id="comentario-reply-abrir-<?php echo $dados["id_comentario"] ?>" class="reply btn" onclick="toggleComentario(<?php echo $dados['id_comentario']; ?>, true);"><span class="material-icons">reply</span></button>
+            </h5>
+
+            <time><?php echo $dados["timestamp"] ?></time>
             <p>
               <?php echo $dados["conteudo"] ?>
             </p>
           </div>
         </div>
-        <?php
-        imprimirSubComentariosRecursiva($comentario);
-        ?>
+
+        <div id="comentario-novo-<?php echo $dados["id_comentario"] ?>" class="comment comment-reply d-none">
+          <div class="d-flex reply-form">
+            <div class="w-100">
+              <h4><span class="material-icons">north</span> Deixe a sua resposta <button class="float-end btn" onclick="toggleComentario(<?php echo $dados['id_comentario']; ?>, false);"><span class="material-icons btn-comentario">close</span></button></h4>
+
+              <form action="#" method="POST">
+                <div class="row mt-2 ">
+                  <div class="col form-group ">
+                    <textarea name="comentario" class="form-control " placeholder="A sua resposta* " rows="5 "></textarea>
+                  </div>
+                </div>
+                <input type="hidden" name="id_post" value="<?php echo $id_post; ?>">
+                <input type="hidden" name="comentario_alvo" value="<?php echo $dados["id_comentario"] ?>">
+                <button type="submit" class="btn btn-primary" name="comentario_principal_submit">Responder</button>
+
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <?php imprimirSubComentariosRecursiva($comentario); ?>
+
       </div>
 <?php
     }
@@ -237,7 +301,7 @@ function imprimirSubComentariosRecursiva($id_comentario) // arranjar isto WAZA
 function getSubComentario($id_comentario)
 {
   global $id_post;
-  $sql = "SELECT * FROM post_comentarios WHERE id_post = '" . $id_post . "' AND alvo = '" . $id_comentario."'";
+  $sql = "SELECT * FROM post_comentarios WHERE id_post = '" . $id_post . "' AND alvo = '" . $id_comentario . "'";
 
   $conn = OpenCon();
 
@@ -283,11 +347,13 @@ function main()
   global $cabecalho;
 
   definirCabecalho($cabecalho);
-  var_dump($cabecalho);
+  // var_dump($cabecalho);
   if (isset($_POST["comentario_principal_submit"])) {
     adicionarComentario();
   }
 }
+
+main();
 
 ?>
 <!DOCTYPE html>
@@ -321,18 +387,6 @@ function main()
   <!-- Template Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
 
-  <!-- Vendor JS Files -->
-  <script src="assets/vendor/aos/aos.js"></script>
-  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
-  <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
-  <script src="assets/vendor/php-email-form/validate.js"></script>
-  <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
-  <script src="assets/vendor/waypoints/noframework.waypoints.js"></script>
-
-  <!-- Template Main JS File -->
-  <script src="assets/js/main.js"></script>
-
   <!-- Icones Googles -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
@@ -349,17 +403,6 @@ function main()
 
 <body>
 
-  <pre>
-  <?php
-
-  // main();
-
-  // imprimirComentarios();
-
-  // var_dump(recursiva(1));
-
-  ?>
-</pre>
 
   <!-- ======= Header ======= -->
   <header id="header" class="fixed-top">
@@ -395,14 +438,22 @@ function main()
           <li><a href="pricing.html">Pricing</a></li>
           <li><a href="blog.html" class="active">Blog</a></li>
           <li><a href="contact.html">Contact</a></li>
-          <a href="contact.html">Login</a>
 
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
-      </nav><!-- .navbar -->
+      </nav>
+      <!-- .navbar -->
+
+      <div class="header-social-links d-flex">
+        <a href="#" class="twitter"><i class="bu bi-twitter"></i></a>
+        <a href="#" class="facebook"><i class="bu bi-facebook"></i></a>
+        <a href="#" class="instagram"><i class="bu bi-instagram"></i></a>
+        <a href="#" class="linkedin"><i class="bu bi-linkedin"></i></i></a>
+      </div>
 
     </div>
-  </header><!-- End Header -->
+  </header>
+  <!-- End Header -->
 
   <main id="main">
 
@@ -433,7 +484,7 @@ function main()
             <article class="entry entry-single">
               <!-- Imagem principal -->
               <div class="entry-img">
-                <img src="<?php echo $cabecalho["imagemPrincipalUrl"]; ?>" width="100%" height="100%" class="mx-auto d-block">
+                <img src="<?php echo $cabecalho["imagemPrincipalUrl"]; ?>" width="100%" height="auto" class="mx-auto d-block">
               </div>
 
               <h2 class="entry-title">
@@ -450,7 +501,6 @@ function main()
 
               <!-- inserir conteudo aqui -->
               <div class="entry-content">
-
                 <?php imprimirConteudo($id_post);
                 ?>
 
@@ -501,9 +551,9 @@ function main()
                         <textarea name="comentario" class="form-control" rows="5" placeholder="O seu comentário*"></textarea>
                       </div>
                     </div>
-                    <input type="hidden" name="comentario_post" value="<?php echo $id_post; ?>">
+                    <input type="hidden" name="id_post" value="<?php echo $id_post; ?>">
                     <input type="hidden" name="comentario_alvo" value="post">
-                    <button type="submit" class="btn btn-primary" name="comentario_principal_submit">Post Comment</button>
+                    <button type="submit" class="btn btn-primary" name="comentario_principal_submit">Comentar</button>
                   </form>
                 <?php
                 } else {
@@ -686,6 +736,17 @@ function main()
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/aos/aos.js "></script>
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js "></script>
+  <script src="assets/vendor/glightbox/js/glightbox.min.js "></script>
+  <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js "></script>
+  <script src="assets/vendor/php-email-form/validate.js "></script>
+  <script src="assets/vendor/swiper/swiper-bundle.min.js "></script>
+  <script src="assets/vendor/waypoints/noframework.waypoints.js "></script>
+
+  <!-- Template Main JS File -->
+  <script src="assets/js/main.js "></script>
 
 </body>
 
