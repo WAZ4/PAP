@@ -4,7 +4,7 @@ function OpenCon()
 {
     $dbhost = "localhost";
     $dbuser = "root";
-    $dbpass = "";
+    $dbpass = "root";
     $db = "postTeste";
     $conn = new mysqli($dbhost, $dbuser, $dbpass, $db);
 

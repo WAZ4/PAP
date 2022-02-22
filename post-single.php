@@ -3,6 +3,7 @@
 include_once "conectarBd.php";
 $id_post = 0;
 $username ="goncalo";
+unset($_SESSION["id_post"]);
 if (isset($_SESSION["username"])) $username = $_SESSION["username"];
 if (isset($_SESSION["post-criar"])) {
   $id_post = $_SESSION["post-criar"];
@@ -265,7 +266,7 @@ function getComentario($id_comentario)
 {
   $conn = OpenCon();
 
-  $stmt = $conn->prepare("SELECT * FROM post_comentarios WHERE id_comentario = '" . $id_comentario . "'");
+  $stmt = $conn->prepare("SELECT * FROM post_comentarios WHERE id_comentario = '" . $id_comentario . "'"); //verificar se encontra a certa ou a amis de outros comentarios
   $stmt->execute();
 
   $result_post_comentarios = $stmt->get_result();
