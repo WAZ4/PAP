@@ -2,6 +2,7 @@
 
 include_once "conectarBd.php";
 $id_post = 0;
+$username ="goncalo";
 if (isset($_SESSION["username"])) $username = $_SESSION["username"];
 if (isset($_SESSION["post-criar"])) {
   $id_post = $_SESSION["post-criar"];
@@ -11,24 +12,34 @@ if (isset($_SESSION["post-criar"])) {
 $cabecalho = $arrayName = array('titulo' => "", 'nomeUser' => "", 'timeStamp' => "", 'categoria' => "", 'imagemPrincipalUrl' => "");
 $totalComentarios = 12;
 
-function dataParaPortugues($data) {
+function dataParaPortugues($data)
+{
   // jan. fev. mar. abr. maio jun. jul. ago. set. out. nov. dez.
-  $mesesPt = array('01'=>"jan", '02'=>"fev", '03'=>"mar", '04'=>"abr", '05'=>"maio", '06'=>"jun", '07'=>"jul", '08'=>"ago", '09'=>"set", '10'=>"out", '11'=>'nov', '12'=>"dez");
+  $mesesPt = array('01' => "jan", '02' => "fev", '03' => "mar", '04' => "abr", '05' => "maio", '06' => "jun", '07' => "jul", '08' => "ago", '09' => "set", '10' => "out", '11' => 'nov', '12' => "dez");
   $mesIng = substr($data, 0, 2);
   $mes = $mesesPt[$mesIng] . substr($data, 2, strlen($data) - 2);
+  return $mes;
 }
 
-function getPostInformacaoPrincipal()
-{
+function adicionarComentario() {
+  global $username;
   global $id_post;
-  $sql = "SELECT * FROM post where id_post=". $id_post;
+  $conteudo = $_POST["comentario"];
+  $id_post = $_POST["comentario_post"];
+  $alvo = $_POST["comentario_alvo"];
+  $timestamp = dataParaPortugues(gmdate("m d, Y", time()));
 
   $conn = OpenCon();
+  
+  $nrDeComentario = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(id_comentario) AS numeroDeComentarios FROM post_comentarios WHERE id_post = " . $id_post))["numeroDeComentarios"];
 
-  $result_post = mysqli_query($conn, $sql);
-  var_dump($result_post);
+  $sql = "INSERT INTO post_comentarios VALUES (" . $id_post .", " . $nrDeComentario .", '" . $alvo . "', '" . $conteudo ."', '" . $username ."', '" . $timestamp ."');";
+
+  $result_post_comentarios = mysqli_query($conn, $sql);
+
   CloseCon($conn);
 }
+
 function imprimirConteudo()
 {
   global $id_post;
@@ -275,6 +286,9 @@ function main()
 
   definirCabecalho($cabecalho);
   var_dump($cabecalho);
+  if (isset($_POST["comentario_principal_submit"])) {
+    adicionarComentario();
+  }
 }
 
 ?>
@@ -320,6 +334,12 @@ function main()
 
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
+
+  <!-- Icones Googles -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <!-- CSS extra -->
+  <link rel="stylesheet" href="estilo-post-single.css">
 
   <!-- =======================================================
   * Template Name: Company - v4.6.1
@@ -471,135 +491,33 @@ function main()
               <?php
               imprimirComentarios();
               ?>
-
-              <div id="comment-1" class="comment">
-                <div class="d-flex">
-                  <div class="comment-img"><img src="assets/img/blog/comments-1.jpg" alt=""></div>
-                  <div>
-                    <h5><a href="">Georgia Reader</a> <a href="#" class="reply"><i class="bi bi-reply-fill"></i> Reply</a></h5>
-                    <time datetime="2020-01-01">01 Jan, 2020</time>
-                    <p>
-                      Et rerum totam nisi. Molestiae vel quam dolorum vel voluptatem et et. Est ad aut sapiente quis molestiae est qui cum soluta.
-                      Vero aut rerum vel. Rerum quos laboriosam placeat ex qui. Sint qui facilis et.
-                    </p>
-                  </div>
-                </div>
-              </div><!-- End comment #1 -->
-
-
-              <div id="comment-2" class="comment">
-                <div class="d-flex">
-                  <div class="comment-img"><img src="assets/img/blog/comments-2.jpg" alt=""></div>
-                  <div>
-                    <h5><a href="">Aron Alvarado</a> <a href="#" class="reply"><i class="bi bi-reply-fill"></i> Reply</a></h5>
-                    <time datetime="2020-01-01">01 Jan, 2020</time>
-                    <p>
-                      Ipsam tempora sequi voluptatem quis sapiente non. Autem itaque eveniet saepe. Officiis illo ut beatae.
-                    </p>
-                  </div>
-
-                </div>
-                <div id="comment-reply-1" class="comment comment-reply">
-                  <div class="d-flex">
-                    <div class="comment-img"><img src="assets/img/blog/comments-3.jpg" alt=""></div>
-                    <div>
-                      <h5><a href="">Lynda Small</a> <a href="#" class="reply"><i class="bi bi-reply-fill"></i> Reply</a></h5>
-                      <time datetime="2020-01-01">01 Jan, 2020</time>
-                      <p>
-                        Enim ipsa eum fugiat fuga repellat. Commodi quo quo dicta. Est ullam aspernatur ut vitae quia mollitia id non. Qui ad quas nostrum rerum sed necessitatibus aut est. Eum officiis sed repellat maxime vero nisi natus. Amet nesciunt nesciunt qui illum omnis est et dolor recusandae.
-
-                        Recusandae sit ad aut impedit et. Ipsa labore dolor impedit et natus in porro aut. Magnam qui cum. Illo similique occaecati nihil modi eligendi. Pariatur distinctio labore omnis incidunt et illum. Expedita et dignissimos distinctio laborum minima fugiat.
-
-                        Libero corporis qui. Nam illo odio beatae enim ducimus. Harum reiciendis error dolorum non autem quisquam vero rerum neque.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div id="comment-reply-2" class="comment comment-reply">
-                    <div class="d-flex">
-                      <div class="comment-img"><img src="assets/img/blog/comments-4.jpg" alt=""></div>
-                      <div>
-                        <h5><a href="">Sianna Ramsay</a> <a href="#" class="reply"><i class="bi bi-reply-fill"></i> Reply</a></h5>
-                        <time datetime="2020-01-01">01 Jan, 2020</time>
-                        <p>
-                          Et dignissimos impedit nulla et quo distinctio ex nemo. Omnis quia dolores cupiditate et. Ut unde qui eligendi sapiente omnis ullam. Placeat porro est commodi est officiis voluptas repellat quisquam possimus. Perferendis id consectetur necessitatibus.
-                        </p>
-                      </div>
-                    </div>
-
-                  </div><!-- End comment reply #2-->
-
-                </div><!-- End comment reply #1-->
-
-              </div><!-- End comment #2-->
-
-              <div id="comment-3" class="comment">
-                <div class="d-flex">
-                  <div class="comment-img"><img src="assets/img/blog/comments-5.jpg" alt=""></div>
-                  <div>
-                    <h5><a href="">Nolan Davidson</a> <a href="#" class="reply"><i class="bi bi-reply-fill"></i> Reply</a></h5>
-                    <time datetime="2020-01-01">01 Jan, 2020</time>
-                    <p>
-                      Distinctio nesciunt rerum reprehenderit sed. Iste omnis eius repellendus quia nihil ut accusantium tempore. Nesciunt expedita id dolor exercitationem aspernatur aut quam ut. Voluptatem est accusamus iste at.
-                      Non aut et et esse qui sit modi neque. Exercitationem et eos aspernatur. Ea est consequuntur officia beatae ea aut eos soluta. Non qui dolorum voluptatibus et optio veniam. Quam officia sit nostrum dolorem.
-                    </p>
-                  </div>
-                </div>
-
-              </div><!-- End comment #3 -->
-
-              <div id="comment-4" class="comment">
-                <div class="d-flex">
-                  <div class="comment-img"><img src="assets/img/blog/comments-6.jpg" alt=""></div>
-                  <div>
-                    <h5><a href="">Kay Duggan</a> <a href="#" class="reply"><i class="bi bi-reply-fill"></i> Reply</a></h5>
-                    <time datetime="2020-01-01">01 Jan, 2020</time>
-                    <p>
-                      Dolorem atque aut. Omnis doloremque blanditiis quia eum porro quis ut velit tempore. Cumque sed quia ut maxime. Est ad aut cum. Ut exercitationem non in fugiat.
-                    </p>
-                  </div>
-                </div>
-
-              </div><!-- End comment #4 -->
-
               <div class="reply-form">
-                <h4>Leave a Reply</h4>
-                <form action="#" method="post">
-                  <input type="hidden" name="<?php echo $id_post;?>">
                 <?php
-                if (isset($username)) {
+                if (isset($username) && $username != "") {
                 ?>
+                  <h4>Deixe o seu comentário</h4>
+                  <form action="#" method="post">
+                    <input type="hidden" name="<?php echo $id_post; ?>">
                     <div class="row">
                       <div class="col form-group">
-                        <textarea name="comment" class="form-control" rows="5" placeholder="Your Comment*"></textarea>
+                        <textarea name="comentario" class="form-control" rows="5" placeholder="O seu comentário*"></textarea>
                       </div>
                     </div>
-                    <button type="submit" class="btn btn-primary" name="comentario_submit">Post Comment</button>
+                    <input type="hidden" name="comentario_post" value="<?php echo $id_post;?>">
+                    <input type="hidden" name="comentario_alvo" value="post">
+                    <button type="submit" class="btn btn-primary" name="comentario_principal_submit">Post Comment</button>
+                  </form>
                 <?php
                 } else {
-                  $data = gmdate("m d, Y", time());
-                  dataParaPortugues($data);
                 ?>
-                  <p>Your email address will not be published. Required fields are marked * </p>
-                  
-                    <div class="row">
-                      <div class="col-md-6 form-group">
-                        <input name="name" type="text" class="form-control" placeholder="Your Name*">
-                      </div>
-                      <div class="col-md-6 form-group">
-                        <input name="email" type="text" class="form-control" placeholder="Your Email*">
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col form-group">
-                        <textarea name="comment" class="form-control" rows="5" placeholder="Your Comment*"></textarea>
-                      </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary" name="comentario_submit">Post Comment</button>
-                    <?php
+                  <div class="container coment-div">
+                        <span class="material-icons coment-span">lock</span>
+                        <p class="coment-span text-center">Para comentar é necessário ter uma conta</p>
+                        <a class="coment-span" href="">Crie uma conta aqui!</a>
+                  </div>
+                <?php
                 }
                 ?>
-                </form>
               </div>
 
             </div><!-- End blog comments -->

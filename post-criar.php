@@ -4,6 +4,16 @@ session_start();
 
 $errormsg;
 //nr de posts criados com index 1 , que por consequencia do index 1 passa a ser o numero do novo post. Se existirem 2 posts os seus index vao ser 0 e 1 mas a funcao devolve 2, logo o novo post vai ser o nr 2
+
+function dataParaPortugues($data)
+{
+  // jan. fev. mar. abr. maio jun. jul. ago. set. out. nov. dez.
+  $mesesPt = array('01' => "jan", '02' => "fev", '03' => "mar", '04' => "abr", '05' => "maio", '06' => "jun", '07' => "jul", '08' => "ago", '09' => "set", '10' => "out", '11' => 'nov', '12' => "dez");
+  $mesIng = substr($data, 0, 2);
+  $mes = $mesesPt[$mesIng] . substr($data, 2, strlen($data) - 2);
+  return $mes;
+}
+
 function getNrPost()
 {
     $sql = "SELECT COUNT(id_post) AS numeroDePosts FROM post;";
@@ -78,7 +88,8 @@ function inserirPostConteudoBaseDeDados($nr_post)
 //falta adicionar o username dinamico
 function inserirPostBaseDeDados($nr_post)
 {
-    $urlPrefix = "http://localhost:8888/PAP/Company/";
+    // $urlPrefix = "http://localhost:8888/PAP/Company/";
+    $urlPrefix = "";
     $target_dir = "uploads/";
     $filename = time() . '-' . random_int(1, 9999) . substr($_FILES["fileToUpload"]["name"], strpos($_FILES["fileToUpload"]["name"], '.'));
     // echo $filename. "<br>";
@@ -128,8 +139,7 @@ function inserirPostBaseDeDados($nr_post)
             $username = 'goncalo';
             $categoria = $_POST["categoria"];
             $titulo = $_POST["postTitulo"];
-            $timestamp = date('M', time()) . gmdate(" d, Y", time());
-            // acabar este statement WAZA WAZA WAZA WAZA WAZA WAZA WAZA WAZA WAZA WAZA WAZA WAZA WAZA WAZA WAZA WAZA
+            $timestamp = dataParaPortugues(gmdate("m d, Y", time()));
             $sql = "INSERT INTO post VALUES ( '" . $nr_post . "' ,'" . $username . "', '" . $titulo . "', '" . $timestamp . "', '1' , '" . $categoria . "',  '" . $urlPrefix . $target_file . "')";
 
             $conn = OpenCon();

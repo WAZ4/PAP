@@ -7,7 +7,7 @@ $accepted_origins = array("http://localhost:8888");
 
 // Images upload path
 $imageFolder = "../uploads/";
-$urlPrefix = "http://localhost:8888/PAP/Company/uploads/";
+$urlPrefix = "uploads/";
 
 reset($_FILES);
 $temp = current($_FILES);
