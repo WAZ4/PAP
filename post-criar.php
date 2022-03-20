@@ -171,22 +171,22 @@ function inserirTagsBaseDados($nr_post, $tags)
 }
 
 if (isset($_POST["post-criar-submit"])) {
-    $novo_post = getNrPost();
+    $nr_post = getNrPost();
     //Inserir ImagemCapa
     if (isset($_FILES["fileToUpload"])) {
-        inserirPostBaseDeDados($novo_post);
+        inserirPostBaseDeDados($nr_post);
     }
 
     //Inserir Conteudo
     if (isset($_POST["submitEditor"])) {
-        inserirPostConteudoBaseDeDados($novo_post);
+        inserirPostConteudoBaseDeDados($nr_post);
     }
 
     //Inserir Tags
     if (isset($_POST["tags"])) {
         inserirTagsBaseDados($nr_post, $_POST["tags"]);
     }
-    header('Location: post-single.php?id_post=' . $novo_post);
+    header('Location: post-single.php?id_post=' . $nr_post);
 }
 
 ?>
