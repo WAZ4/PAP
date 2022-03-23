@@ -1,3 +1,130 @@
+<?php
+include_once("conectarBd.php");
+if (isset($_GET["pagina"])) $pagina = $_GET["pagina"];
+else $pagina = 1;
+function getTotalComentarios($id_post)
+{
+    $conn = OpenCon();
+
+    $sql = "SELECT * FROM post_comentarios WHERE id_post = " . $id_post;
+
+    $result_post_comentarios = mysqli_query($conn, $sql);
+
+    $totalComentarios = mysqli_num_rows($result_post_comentarios);
+
+    return $totalComentarios;
+}
+
+function getTotalPosts()
+{
+    $conn = OpenCon();
+
+    $sql = "SELECT * FROM post";
+
+    $result_post = mysqli_query($conn, $sql);
+
+    $totalPosts = mysqli_num_rows($result_post);
+
+    return $totalPosts;
+}
+
+function getParagrafoInicial($id_post)
+{
+    $conn = OpenCon();
+
+    $sql = "SELECT tipo, var1 FROM post_conteudo_detail WHERE id_post = " . $id_post . " AND ordem = 0";
+
+    $result_post_conteudo_detail = mysqli_query($conn, $sql);
+    $row = mysqli_fetch_assoc($result_post_conteudo_detail);
+    // var_dump($row);
+
+    if (isset($row["tipo"]) && $row["tipo"] == 0) {
+        return $row["var1"];
+    } else {
+        return false;
+    }
+}
+
+function imprimirPosts()
+{
+    global $pagina;
+    $conn = OpenCon();
+
+    $sql = "SELECT * FROM post LIMIT 4 OFFSET ". ($pagina-1) *4;
+
+    $result_post = mysqli_query($conn, $sql);
+
+    CloseCon($conn);
+
+    $i = 1 * $pagina;
+
+    $numeroDePaginas = ceil(getTotalPosts() / 4);
+
+    while ($row = mysqli_fetch_assoc($result_post)) {
+
+?>
+        <article class="entry">
+
+            <div class="entry-img">
+                <img src="<?php echo $row["url_img"]; ?>" alt="" class="img-fluid">
+            </div>
+
+            <h2 class="entry-title">
+                <a href="blog-single.html"><?php echo $row["titulo"]; ?></a>
+            </h2>
+
+            <div class="entry-meta">
+                <ul>
+                    <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a href="blog-single.html"><?php echo $row["username"]; ?></a></li>
+                    <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a href="blog-single.html"><?php echo $row["timestamp"] ?></a></li>
+                    <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> <a href="blog-single.html"><?php echo getTotalComentarios($row["id_post"]); ?></a></li>
+                </ul>
+            </div>
+
+            <div class="entry-content">
+                <p><?php echo getParagrafoInicial($row["id_post"]); ?></p>
+                <div class="read-more">
+                    <form action="post-single.php" method="get" id="form<?php echo $row["id_post"]; ?>"><input type="hidden" name="id_post" value="<?php echo $row['id_post'];?>"></form>
+                    <a onclick="document.getElementById('<?php echo 'form'.$row['id_post'] ?>').submit();">Ler Mais</a>
+                </div>
+            </div>
+
+        </article><!-- End blog entry -->
+    <?php
+    }
+}
+
+function imprimirPaginacao($pagina)
+{
+    if ($pagina == 1 &&  getTotalPosts() > 4) {
+    ?>
+        <li class="active">
+            <form action="#" method="get" id="0"><a onclick="document.getElementById('1').submit();">1</a>
+        </li><input type="hidden" name="pagina" value="1"></form>
+        <li>
+            <form action="#" method="get" id="2"><a onclick="document.getElementById('2').submit();">2</a>
+        </li><input type="hidden" name="pagina" value="2"></form>
+    <?php
+    } else if ($pagina != 1) {
+    ?>
+        <li>
+            <form action="#" method="get" id="<?php echo $pagina - 1; ?>"><a onclick="document.getElementById('<?php echo $pagina - 1; ?>').submit();"><?php echo $pagina - 1; ?></a>
+        </li><input type="hidden" name="pagina" value="<?php echo $pagina - 1; ?>"></form>
+        <li class="active">
+            <form action="#" method="get" id="<?php echo $pagina; ?>"><a onclick="document.getElementById('<?php echo $pagina; ?>').submit();"><?php echo $pagina; ?></a>
+        </li><input type="hidden" name="pagina" value="<?php echo $pagina; ?>"></form>
+        <?php
+        if ($pagina <= floor(getTotalPosts() / 4)) {
+        ?>
+            <li>
+                <form action="#" method="get" id="<?php echo $pagina + 1; ?>"><a onclick="document.getElementById('<?php echo $pagina + 1; ?>').submit();"><?php echo $pagina + 1; ?></a>
+            </li><input type="hidden" name="pagina" value="<?php echo $pagina + 1; ?>"></form>
+<?php
+        }
+    }
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -38,7 +165,6 @@
 </head>
 
 <body>
-
     <!-- ======= Header ======= -->
     <header id="header" class="fixed-top">
         <div class="container d-flex align-items-center">
@@ -71,13 +197,12 @@
                     <li><a href="services.html">Services</a></li>
                     <li><a href="portfolio.html">Portfolio</a></li>
                     <li><a href="pricing.html">Pricing</a></li>
-                    <li><a href="blog.php" class="active">Blog</a></li>
+                    <li><a href="blog.html" class="active">Blog</a></li>
                     <li><a href="contact.html">Contact</a></li>
 
                 </ul>
                 <i class="bi bi-list mobile-nav-toggle"></i>
-            </nav>
-            <!-- .navbar -->
+            </nav><!-- .navbar -->
 
             <div class="header-social-links d-flex">
                 <a href="#" class="twitter"><i class="bu bi-twitter"></i></a>
@@ -87,8 +212,7 @@
             </div>
 
         </div>
-    </header>
-    <!-- End Header -->
+    </header><!-- End Header -->
 
     <main id="main">
 
@@ -105,8 +229,7 @@
                 </div>
 
             </div>
-        </section>
-        <!-- End Breadcrumbs -->
+        </section><!-- End Breadcrumbs -->
 
         <!-- ======= Blog Section ======= -->
         <section id="blog" class="blog">
@@ -114,142 +237,19 @@
 
                 <div class="row">
 
-                    <div class="col-lg-8 entries">
+                    <div class="col-lg-8 entries mb-3">
 
-                        <article class="entry">
-
-                            <div class="entry-img">
-                                <img src="assets/img/blog/blog-1.jpg" alt="" class="img-fluid">
-                            </div>
-
-                            <h2 class="entry-title">
-                                <a href="blog-single.html">Dolorum optio tempore voluptas dignissimos cumque fuga qui quibusdam quia</a>
-                            </h2>
-
-                            <div class="entry-meta">
-                                <ul>
-                                    <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a href="blog-single.html">John Doe</a></li>
-                                    <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a href="blog-single.html"><time datetime="2020-01-01">Jan 1, 2020</time></a></li>
-                                    <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> <a href="blog-single.html">12 Comments</a></li>
-                                </ul>
-                            </div>
-
-                            <div class="entry-content">
-                                <p>
-                                    Similique neque nam consequuntur ad non maxime aliquam quas. Quibusdam animi praesentium. Aliquam et laboriosam eius aut nostrum quidem aliquid dicta. Et eveniet enim. Qui velit est ea dolorem doloremque deleniti aperiam unde soluta. Est cum et quod quos
-                                    aut ut et sit sunt. Voluptate porro consequatur assumenda perferendis dolore.
-                                </p>
-                                <div class="read-more">
-                                    <a href="blog-single.html">Read More</a>
-                                </div>
-                            </div>
-
-                        </article>
-                        <!-- End blog entry -->
-
-                        <article class="entry">
-
-                            <div class="entry-img">
-                                <img src="assets/img/blog/blog-2.jpg" alt="" class="img-fluid">
-                            </div>
-
-                            <h2 class="entry-title">
-                                <a href="blog-single.html">Nisi magni odit consequatur autem nulla dolorem</a>
-                            </h2>
-
-                            <div class="entry-meta">
-                                <ul>
-                                    <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a href="blog-single.html">John Doe</a></li>
-                                    <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a href="blog-single.html"><time datetime="2020-01-01">Jan 1, 2020</time></a></li>
-                                    <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> <a href="blog-single.html">12 Comments</a></li>
-                                </ul>
-                            </div>
-
-                            <div class="entry-content">
-                                <p>
-                                    Incidunt voluptate sit temporibus aperiam. Quia vitae aut sint ullam quis illum voluptatum et. Quo libero rerum voluptatem pariatur nam. Ad impedit qui officiis est in non aliquid veniam laborum. Id ipsum qui aut. Sit aliquam et quia molestias laboriosam.
-                                    Tempora nam odit omnis eum corrupti qui aliquid excepturi molestiae. Facilis et sint quos sed voluptas. Maxime sed tempore enim omnis non alias odio quos distinctio.
-                                </p>
-                                <div class="read-more">
-                                    <a href="blog-single.html">Read More</a>
-                                </div>
-                            </div>
-
-                        </article>
-                        <!-- End blog entry -->
-
-                        <article class="entry">
-
-                            <div class="entry-img">
-                                <img src="assets/img/blog/blog-3.jpg" alt="" class="img-fluid">
-                            </div>
-
-                            <h2 class="entry-title">
-                                <a href="blog-single.html">Possimus soluta ut id suscipit ea ut. In quo quia et soluta libero sit sint.</a>
-                            </h2>
-
-                            <div class="entry-meta">
-                                <ul>
-                                    <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a href="blog-single.html">John Doe</a></li>
-                                    <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a href="blog-single.html"><time datetime="2020-01-01">Jan 1, 2020</time></a></li>
-                                    <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> <a href="blog-single.html">12 Comments</a></li>
-                                </ul>
-                            </div>
-
-                            <div class="entry-content">
-                                <p>
-                                    Aut iste neque ut illum qui perspiciatis similique recusandae non. Fugit autem dolorem labore omnis et. Eum temporibus fugiat voluptate enim tenetur sunt omnis. Doloremque est saepe laborum aut. Ipsa cupiditate ex harum at recusandae nesciunt. Ut dolores
-                                    velit.
-                                </p>
-                                <div class="read-more">
-                                    <a href="blog-single.html">Read More</a>
-                                </div>
-                            </div>
-
-                        </article>
-                        <!-- End blog entry -->
-
-                        <article class="entry">
-
-                            <div class="entry-img">
-                                <img src="assets/img/blog/blog-4.jpg" alt="" class="img-fluid">
-                            </div>
-
-                            <h2 class="entry-title">
-                                <a href="blog-single.html">Non rem rerum nam cum quo minus. Dolor distinctio deleniti explicabo eius exercitationem.</a>
-                            </h2>
-
-                            <div class="entry-meta">
-                                <ul>
-                                    <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a href="blog-single.html">John Doe</a></li>
-                                    <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a href="blog-single.html"><time datetime="2020-01-01">Jan 1, 2020</time></a></li>
-                                    <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> <a href="blog-single.html">12 Comments</a></li>
-                                </ul>
-                            </div>
-
-                            <div class="entry-content">
-                                <p>
-                                    Aspernatur rerum perferendis et sint. Voluptates cupiditate voluptas atque quae. Rem veritatis rerum enim et autem. Saepe atque cum eligendi eaque iste omnis a qui. Quia sed sunt. Ea asperiores expedita et et delectus voluptates rerum. Id saepe ut itaque
-                                    quod qui voluptas nobis porro rerum. Quam quia nesciunt qui aut est non omnis. Inventore occaecati et quaerat magni itaque nam voluptas. Voluptatem ducimus sint id earum ut nesciunt sed corrupti nemo.
-                                </p>
-                                <div class="read-more">
-                                    <a href="blog-single.html">Read More</a>
-                                </div>
-                            </div>
-
-                        </article>
-                        <!-- End blog entry -->
+                        <?php imprimirPosts(); ?>
 
                         <div class="blog-pagination">
                             <ul class="justify-content-center">
-                                <li><a href="#">1</a></li>
-                                <li class="active"><a href="#">2</a></li>
-                                <li><a href="#">3</a></li>
+                                <?php
+                                imprimirPaginacao($pagina);
+                                ?>
                             </ul>
                         </div>
 
-                    </div>
-                    <!-- End blog entries list -->
+                    </div><!-- End blog entries list -->
 
                     <div class="col-lg-4">
 
@@ -261,8 +261,7 @@
                                     <input type="text">
                                     <button type="submit"><i class="bi bi-search"></i></button>
                                 </form>
-                            </div>
-                            <!-- End sidebar search formn-->
+                            </div><!-- End sidebar search formn-->
 
                             <h3 class="sidebar-title">Categories</h3>
                             <div class="sidebar-item categories">
@@ -274,8 +273,7 @@
                                     <li><a href="#">Creative <span>(8)</span></a></li>
                                     <li><a href="#">Educaion <span>(14)</span></a></li>
                                 </ul>
-                            </div>
-                            <!-- End sidebar categories-->
+                            </div><!-- End sidebar categories-->
 
                             <h3 class="sidebar-title">Recent Posts</h3>
                             <div class="sidebar-item recent-posts">
@@ -309,8 +307,7 @@
                                     <time datetime="2020-01-01">Jan 1, 2020</time>
                                 </div>
 
-                            </div>
-                            <!-- End sidebar recent posts-->
+                            </div><!-- End sidebar recent posts-->
 
                             <h3 class="sidebar-title">Tags</h3>
                             <div class="sidebar-item tags">
@@ -327,23 +324,18 @@
                                     <li><a href="#">Tips</a></li>
                                     <li><a href="#">Marketing</a></li>
                                 </ul>
-                            </div>
-                            <!-- End sidebar tags-->
+                            </div><!-- End sidebar tags-->
 
-                        </div>
-                        <!-- End sidebar -->
+                        </div><!-- End sidebar -->
 
-                    </div>
-                    <!-- End blog sidebar -->
+                    </div><!-- End blog sidebar -->
 
                 </div>
 
             </div>
-        </section>
-        <!-- End Blog Section -->
+        </section><!-- End Blog Section -->
 
-    </main>
-    <!-- End #main -->
+    </main><!-- End #main -->
 
     <!-- ======= Footer ======= -->
     <footer id="footer">
@@ -355,7 +347,9 @@
                     <div class="col-lg-3 col-md-6 footer-contact">
                         <h3>Company</h3>
                         <p>
-                            A108 Adam Street <br> New York, NY 535022<br> United States <br><br>
+                            A108 Adam Street <br>
+                            New York, NY 535022<br>
+                            United States <br><br>
                             <strong>Phone:</strong> +1 5589 55488 55<br>
                             <strong>Email:</strong> info@example.com<br>
                         </p>
@@ -417,8 +411,7 @@
                 <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
             </div>
         </div>
-    </footer>
-    <!-- End Footer -->
+    </footer><!-- End Footer -->
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 

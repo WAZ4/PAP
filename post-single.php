@@ -1,6 +1,6 @@
 <!-- Comentario de comentario -->
 <script>
-  // flag == true:  Esconader Botao abrir, Motrar zona de comentario
+  // flag == true:  Esconder Botao abrir, Mostrar zona de comentario
   // flag == false: Mostrar Botao abrir, Esconder zona de comentario
   function toggleComentario(id, flag) {
     var botaoAbrir = document.getElementById("comentario-reply-abrir-" + id);
