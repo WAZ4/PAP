@@ -251,7 +251,7 @@ if (isset($_POST["post-criar-submit"])) {
     // echo "espaco <br>";
     // var_dump($_POST);
     ?>
-</pre>
+<!-- </pre> -->
 
     <main id="main">
 

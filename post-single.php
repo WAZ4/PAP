@@ -436,7 +436,7 @@ main();
           <li><a href="services.html">Services</a></li>
           <li><a href="portfolio.html">Portfolio</a></li>
           <li><a href="pricing.html">Pricing</a></li>
-          <li><a href="blog.html" class="active">Blog</a></li>
+          <li><a href="blog.php" class="active">Blog</a></li>
           <li><a href="contact.html">Contact</a></li>
 
         </ul>
@@ -465,7 +465,7 @@ main();
           <h2>Blog Single</h2>
           <ol>
             <li><a href="index.html">Home</a></li>
-            <li><a href="blog.html">Blog</a></li>
+            <li><a href="blog.php">Blog</a></li>
             <li>Blog Single</li>
           </ol>
         </div>
@@ -495,7 +495,7 @@ main();
                 <ul>
                   <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a href="blog-single.html"><?php echo $cabecalho["nomeUser"]; ?></a></li>
                   <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a href="blog-single.html"><time datetime="2020-01-01"><?php echo $cabecalho["timeStamp"]; ?></time></a></li>
-                  <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> <a href="blog-single.html"><?php echo $totalComentarios; ?> Comentários</a></li>
+                  <!-- <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> <a href="blog-single.html"><?php //echo $totalComentarios; ?> Comentários</a></li> -->
                 </ul>
               </div>
 
