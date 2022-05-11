@@ -1,0 +1,11 @@
+.list-group {
+    max-height: 50rem;
+    margin-bottom: 10px;
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+}
+
+.img-usos {
+    max-width: 80%;
+    border: none;
+}
