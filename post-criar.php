@@ -293,7 +293,7 @@ if (isset($_POST["post-criar-submit"])) {
                     <li><a href="services.html">Services</a></li>
                     <li><a href="portfolio.html">Portfolio</a></li>
                     <li><a href="pricing.html">Pricing</a></li>
-                    <li><a href="blog.html" class="active">Blog</a></li>
+                    <li><a href="blog.php" class="active">Blog</a></li>
                     <li><a href="contact.html">Contact</a></li>
 
                 </ul>
@@ -311,18 +311,18 @@ if (isset($_POST["post-criar-submit"])) {
     </header><!-- End Header -->
 
 
-    <pre>
+    <!-- <pre> -->
     <?php
-    echo "espaco <br>";
-    var_dump($_POST);
-    echo "espaco <br>";
-    var_dump($_FILES);
-    echo "espaco <br>";
-    var_dump($_POST);
-    echo "espaco <br>";
-    var_dump($_GET);
+    // echo "espaco <br>";
+    // var_dump($_POST);
+    // echo "espaco <br>";
+    // var_dump($_FILES);
+    // echo "espaco <br>";
+    // var_dump($_POST);
+    // echo "espaco <br>";
+    // var_dump($_GET);
     ?>
-</pre>
+<!-- </pre> -->
 
     <main id="main">
 
@@ -334,7 +334,7 @@ if (isset($_POST["post-criar-submit"])) {
                     <h2>Blog Single</h2>
                     <ol>
                         <li><a href="index.html">Home</a></li>
-                        <li><a href="blog.html">Blog</a></li>
+                        <li><a href="blog.php">Blog</a></li>
                         <li>Blog Single</li>
                     </ol>
                 </div>
