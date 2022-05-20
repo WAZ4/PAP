@@ -9,3 +9,7 @@
     max-width: 80%;
     border: none;
 }
+
+.grayscale {
+    filter: grayscale(100%);
+}

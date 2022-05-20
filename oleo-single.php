@@ -20,24 +20,11 @@
     include("estruturaPrincipal/head-js.php");
     ?>
 
-    <!-- CSS PESSOAL -->
-    <link rel="stylesheet" href="estilo-post-criar.css">
-
-    <!-- EditorJS -->
-    <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@editorjs/paragraph@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@editorjs/quote@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@editorjs/image@2.3.0"></script>
-
-    <script src="editorJS/editor.js"></script>
-
     <!-- Tags -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://unpkg.com/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
 
-    <link rel="stylesheet" href="cssPessoal/oleo-single.css">
+    <link rel="stylesheet" href="cssPessoal\oleo-single.css">
 
     <!-- =======================================================
   * Template Name: Company - v4.6.1
@@ -187,46 +174,115 @@
                                 </div>
                             </div>
                         </article>
-                        
+
                     </div>
                     <div class="col-md-8  entries">
                         <article class="entry entry-single">
                             <div class="row">
-                                <div class="col-lg-6">
-                                    <h2>Nome Oleo</h1>
-                                    <h4 class="mt-5">Nome Oleo Portugues</h3>
-                                    
+                                <div class="col-md-6 h-100">
+                                    <div class="align-content-bottom text-center mt-3">
+                                        <h2 class="">Nome Oleo</h1>
+                                        <h4 class="">Nome Oleo Portugues</h3>
+                                    </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-md-6">
                                     <div class="row">
-                                        <div class="col px-0" class="">
-                                            <img src="imgs/Aromatico.png" alt="Aromatico" class="img_fluid img-usos">
+                                        <div class="col-4 px-0" class="">
+                                            <img src="imgs/Aromatico.png" alt="Aromatico" class="img-thumbnail img-usos">
                                         </div>
-                                        <div class="col px-0" class="">
-                                            <img src="imgs/Ingerir.png" alt="Aromatico" class="img-thumbnail img-usos">
+                                        <div class="col-4 px-0" class="">
+                                            <img src="imgs/Ingerir.png" alt="Aromatico" class="img-thumbnail img-usos grayscale">
                                         </div>
-                                        <div class="col px-0" class="">
+                                        <div class="col-4 px-0" class="">
                                             <img src="imgs/Topico.png" alt="Aromatico" class="img-thumbnail img-usos">
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <hr>
-                        </article>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div>
+                                        <h5>Sobre o Oleo</h6>
+                                        <p>
+                                        The peppermint plant is a hybrid of water mint and spearmint and was first described by Carl Linnaeus in 1753.
+                                        Frequently used in toothpaste and chewing gum for oral hygiene, Peppermint oil also helps alleviate occasional stomach upset and promotes healthy respiratory function when taken internally.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="">
+                                        <img src="imgs/hortela.jpg" alt="aromatico" class="img-fluid rounded">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <h6>Propriedades Principais</h6>
+                                        <div>
+                                            <ul class="list-group list-group-flush overflow-hidden">
+                                                <li class="list-group-item">An item</li>
+                                                <li class="list-group-item">A second item</li>
+                                                <li class="list-group-item">A third item</li>
+                                                <li class="list-group-item">A fourth item</li>
+                                                <li class="list-group-item">And a fifth one</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <h6>Outros Usos</h6>
+                                        <div>
+                                            <ul class="list-group list-group-flush overflow-hidden">
+                                                <li class="list-group-item">An item</li>
+                                                <li class="list-group-item">A second item</li>
+                                                <li class="list-group-item">A third item</li>
+                                                <li class="list-group-item">A fourth item</li>
+                                                <li class="list-group-item">And a fifth one</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <div class="row">
+                                            <h6>Usos mais comum</h6>
+                                            <div>
+                                                <ul class="list-group list-group-flush overflow-hidden">
+                                                    <li class="list-group-item">An item</li>
+                                                    <li class="list-group-item">A second item</li>
+                                                    <li class="list-group-item">A third item</li>
+                                                    <li class="list-group-item">A fourth item</li>
+                                                    <li class="list-group-item">And a fifth one</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <h6>Segurança</h6>
+                                            <div>
+                                                <ul class="list-group list-group-flush overflow-hidden">
+                                                    <li class="list-group-item">An item</li>
+                                                    <li class="list-group-item">A second item</li>
+                                                    <li class="list-group-item">A third item</li>
+                                                    <li class="list-group-item">A fourth item</li>
+                                                    <li class="list-group-item">And a fifth one</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                     </div>
                 </div>
-                <!-- Body -->
-                <div class="row">
-                    <div class="col">
+                </article>
+            </div>
+            <!-- Body -->
+            <div class="row">
+                <div class="col">
 
-                    </div>
-                    <div class="col">
-                        
-                    </div>
-                    <div class="row">
-
-                    </div>
                 </div>
+            </div>
         </section><!-- End Blog Single Section -->
 
     </main><!-- End #main -->
