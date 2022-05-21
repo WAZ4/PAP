@@ -33,7 +33,14 @@
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
 </head>
-
+<style>
+    hr{
+        color: #bf46e8;
+    }
+    .borda-roxa{
+        border-color: #bf46e8!important;
+    }
+</style>
 <body>
 
     <!-- <pre> -->
@@ -74,6 +81,104 @@
             <div class="container" data-aos="fade-up">
                 <!-- Header -->
                 <div class="row">
+                    <div class="col-md-8  entries">
+                        <article class="entry entry-single">
+                            <div class="row">
+                                <div class="col-md-6 h-100">
+                                    <div class="align-content-bottom text-center mt-3">
+                                        <h2 class="">Nome Oleo</h1>
+                                        <h4 class="">Nome Oleo Portugues</h3>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <div class="col-4 px-0" class="">
+                                            <img src="imgs/Aromatico.png" alt="Aromatico" class="img-thumbnail img-usos">
+                                        </div>
+                                        <div class="col-4 px-0" class="">
+                                            <img src="imgs/Ingerir.png" alt="Aromatico" class="img-thumbnail img-usos grayscale">
+                                        </div>
+                                        <div class="col-4 px-0" class="">
+                                            <img src="imgs/Topico.png" alt="Aromatico" class="img-thumbnail img-usos">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="borda-roxa">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div>
+                                        <h5>Sobre o Oleo</h6>
+                                        <p>
+                                        The peppermint plant is a hybrid of water mint and spearmint and was first described by Carl Linnaeus in 1753.
+                                        Frequently used in toothpaste and chewing gum for oral hygiene, Peppermint oil also helps alleviate occasional stomach upset and promotes healthy respiratory function when taken internally.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="">
+                                        <img src="imgs/hortela.jpg" alt="aromatico" class="img-fluid rounded">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <h6>Propriedades Principais</h6>
+                                        <div>
+                                            <ul class="list-group list-group-flush overflow-hidden">
+                                                <li class="list-group-item">An item</li>
+                                                <li class="list-group-item">A second item</li>
+                                                <li class="list-group-item">A third item</li>
+                                                <li class="list-group-item">A fourth item</li>
+                                                <li class="list-group-item">And a fifth one</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <h6>Outros Usos</h6>
+                                        <div>
+                                            <ul class="list-group list-group-flush overflow-hidden">
+                                                <li class="list-group-item">An item</li>
+                                                <li class="list-group-item">A second item</li>
+                                                <li class="list-group-item">A third item</li>
+                                                <li class="list-group-item">A fourth item</li>
+                                                <li class="list-group-item">And a fifth one</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <div class="row">
+                                            <h6>Usos mais comum</h6>
+                                            <div>
+                                                <ul class="list-group list-group-flush overflow-hidden">
+                                                    <li class="list-group-item">An item</li>
+                                                    <li class="list-group-item">A second item</li>
+                                                    <li class="list-group-item">A third item</li>
+                                                    <li class="list-group-item">A fourth item</li>
+                                                    <li class="list-group-item">And a fifth one</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <h6>Segurança</h6>
+                                            <div>
+                                                <ul class="list-group list-group-flush overflow-hidden">
+                                                    <li class="list-group-item">An item</li>
+                                                    <li class="list-group-item">A second item</li>
+                                                    <li class="list-group-item">A third item</li>
+                                                    <li class="list-group-item">A fourth item</li>
+                                                    <li class="list-group-item">And a fifth one</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
                     <div class="col-md-4 entries">
                         <article class="entry entry-single">
                             <div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-white">
@@ -174,105 +279,6 @@
                                 </div>
                             </div>
                         </article>
-
-                    </div>
-                    <div class="col-md-8  entries">
-                        <article class="entry entry-single">
-                            <div class="row">
-                                <div class="col-md-6 h-100">
-                                    <div class="align-content-bottom text-center mt-3">
-                                        <h2 class="">Nome Oleo</h1>
-                                        <h4 class="">Nome Oleo Portugues</h3>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="row">
-                                        <div class="col-4 px-0" class="">
-                                            <img src="imgs/Aromatico.png" alt="Aromatico" class="img-thumbnail img-usos">
-                                        </div>
-                                        <div class="col-4 px-0" class="">
-                                            <img src="imgs/Ingerir.png" alt="Aromatico" class="img-thumbnail img-usos grayscale">
-                                        </div>
-                                        <div class="col-4 px-0" class="">
-                                            <img src="imgs/Topico.png" alt="Aromatico" class="img-thumbnail img-usos">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div>
-                                        <h5>Sobre o Oleo</h6>
-                                        <p>
-                                        The peppermint plant is a hybrid of water mint and spearmint and was first described by Carl Linnaeus in 1753.
-                                        Frequently used in toothpaste and chewing gum for oral hygiene, Peppermint oil also helps alleviate occasional stomach upset and promotes healthy respiratory function when taken internally.
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="">
-                                        <img src="imgs/hortela.jpg" alt="aromatico" class="img-fluid rounded">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row mt-3">
-                                <div class="col-md-6">
-                                    <div class="row">
-                                        <h6>Propriedades Principais</h6>
-                                        <div>
-                                            <ul class="list-group list-group-flush overflow-hidden">
-                                                <li class="list-group-item">An item</li>
-                                                <li class="list-group-item">A second item</li>
-                                                <li class="list-group-item">A third item</li>
-                                                <li class="list-group-item">A fourth item</li>
-                                                <li class="list-group-item">And a fifth one</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <h6>Outros Usos</h6>
-                                        <div>
-                                            <ul class="list-group list-group-flush overflow-hidden">
-                                                <li class="list-group-item">An item</li>
-                                                <li class="list-group-item">A second item</li>
-                                                <li class="list-group-item">A third item</li>
-                                                <li class="list-group-item">A fourth item</li>
-                                                <li class="list-group-item">And a fifth one</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="row">
-                                        <div class="row">
-                                            <h6>Usos mais comum</h6>
-                                            <div>
-                                                <ul class="list-group list-group-flush overflow-hidden">
-                                                    <li class="list-group-item">An item</li>
-                                                    <li class="list-group-item">A second item</li>
-                                                    <li class="list-group-item">A third item</li>
-                                                    <li class="list-group-item">A fourth item</li>
-                                                    <li class="list-group-item">And a fifth one</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <h6>Segurança</h6>
-                                            <div>
-                                                <ul class="list-group list-group-flush overflow-hidden">
-                                                    <li class="list-group-item">An item</li>
-                                                    <li class="list-group-item">A second item</li>
-                                                    <li class="list-group-item">A third item</li>
-                                                    <li class="list-group-item">A fourth item</li>
-                                                    <li class="list-group-item">And a fifth one</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                     </div>
                 </div>
                 </article>
