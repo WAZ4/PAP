@@ -1,3 +1,101 @@
+<?php
+include_once("conectarBd.php");
+
+function imprimirProtocolos()
+{
+    $conn = OpenCon();
+
+    $sql = "SELECT * FROM Protocolo_Master";
+    $stmt = $conn->prepare($sql);
+    // $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    CloseCon($conn);
+
+    // var_dump($result);
+    while ($row = $result->fetch_assoc()) {
+        var_dump($result);
+
+?>
+        <div class="card mb-2">
+            <div class="card-body bg-light">
+                <div style="transform: rotate(0);">
+                    <div>
+                        <h5 class="card-title"><?php echo $row["Protocolo_Patologia"]; ?></h5>
+                        <p class="card-text"><?php echo $row["Protocolo_Sintomas"]; ?></p>
+                        <a class="stretched-link" data-toggle="collapse" href="#collapse-collapsed2" aria-expanded="true" aria-controls="collapse-collapsed2" id="heading-collapsed">
+                            Mostrar
+                        </a>
+                    </div>
+                </div>
+                <div id="collapse-collapsed2" class="collapse mt-4" aria-labelledby="heading-collapsed">
+                    <h6 class="card-title">Descrição</h6>
+                    <p><?php echo $row["Protocolo_Descricao"]; ?></p>
+
+                    <h6 class="card-title">Duração Sugerida</h6>
+                    <p class="card-text"><?php echo $row["Protocolo_Duracao"]; ?></p>
+
+                    <h6 class="card-tittle">Protocolo</h6>
+
+                    <ol class="list-group list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">
+                                    <a href="">Copaiba, Frankincense, Yarrow</a>
+                                    <!-- Oleo a utilizar -->
+                                </div>
+                                Aplicar 2 gotas de copaiba na parte de cima do pescoco e nas palmas dos pes
+                            </div>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">Oleo a utilizar</div>
+                                O que fazer
+                            </div>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">Oleo a utilizar</div>
+                                O que fazer
+                            </div>
+                        </li>
+                    </ol>
+
+                    <h6 class="card-title mt-3">Observação</h6>
+                    <p class="card-text"><?php echo $row["Protocolo_Extra"];?></p>
+
+                    <h6 class="card-tittle mt-3">Possiveis Oleos adicioanis</h6>
+
+                    <ol class="list-group list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <a href="">SandalWood</a>
+                            </div>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                O que fazer
+                            </div>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                O que fazer
+                            </div>
+                        </li>
+                    </ol>
+
+
+
+                </div>
+            </div>
+        </div>
+<?php
+
+    }
+}
+
+?>
+
 <!-- 
     <div class="card" style="width: 18rem;">
   <div class="card-body">
@@ -65,6 +163,14 @@
         text-decoration: none;
         transition: 0.5s;
 
+    }
+
+    .z-index-1 {
+        z-index: 0;
+    }
+
+    .z-index-2 {
+        z-index: 2;
     }
 
     .btn-get-started:hover {
@@ -192,6 +298,79 @@
 
                     <div class="col-lg-4 col-md-4">
                         <div class="card mb-2">
+                            <div class="card-body bg-light">
+                                <div style="transform: rotate(0);">
+                                    <div>
+                                        <h5 class="card-title">Dor de costas</h5>
+                                        <p class="card-text">Inflamacao e dor de costas devido a acident, envelhecimento ou outras razoes</p>
+                                        <a class="stretched-link" data-toggle="collapse" href="#collapse-collapsed2" aria-expanded="true" aria-controls="collapse-collapsed2" id="heading-collapsed">
+                                            Mostrar
+                                        </a>
+                                    </div>
+                                </div>
+                                <div id="collapse-collapsed2" class="collapse mt-4" aria-labelledby="heading-collapsed">
+                                    <h6 class="card-title">Descrição</h6>
+                                    <p>Aumentar a circulacao, reduzir tecido sicatricial, ajudar a recuperar</p>
+
+                                    <h6 class="card-title">Duração Sugerida</h6>
+                                    <p class="card-text">1 a 3 anos</p>
+
+                                    <h6 class="card-tittle">Protocolo</h6>
+
+                                    <ol class="list-group list-group">
+                                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                                            <div class="ms-2 me-auto">
+                                                <div class="fw-bold">
+                                                    <a href="">Copaiba, Frankincense, Yarrow</a>
+                                                    <!-- Oleo a utilizar -->
+                                                </div>
+                                                Aplicar 2 gotas de copaiba na parte de cima do pescoco e nas palmas dos pes
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                                            <div class="ms-2 me-auto">
+                                                <div class="fw-bold">Oleo a utilizar</div>
+                                                O que fazer
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                                            <div class="ms-2 me-auto">
+                                                <div class="fw-bold">Oleo a utilizar</div>
+                                                O que fazer
+                                            </div>
+                                        </li>
+                                    </ol>
+
+                                    <h6 class="card-title mt-3">Observação</h6>
+                                    <p class="card-text">Aplicar gradualmente</p>
+
+                                    <h6 class="card-tittle mt-3">Possiveis Oleos adicioanis</h6>
+
+                                    <ol class="list-group list-group">
+                                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                                            <div class="ms-2 me-auto">
+                                                <a href="">SandalWood</a>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                                            <div class="ms-2 me-auto">
+                                                O que fazer
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                                            <div class="ms-2 me-auto">
+                                                O que fazer
+                                            </div>
+                                        </li>
+                                    </ol>
+
+
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card mb-2">
                             <div class="card-body">
                                 <h5 class="card-title">Nome da patologia</h5>
                                 <p class="card-text">Sintomas -> A ideia e ter aqui os sintomas que o protocolo tenta ajudar.</p>
@@ -236,7 +415,110 @@
                                 </div>
                             </div>
                         </div>
-                        
+
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                <h5 class="card-title">Nome da patologia</h5>
+                                <p class="card-text">Sintomas -> A ideia e ter aqui os sintomas que o protocolo tenta ajudar.</p>
+
+                                <a class="stretched-link" data-toggle="collapse" href="#collapse-collapsed4" aria-expanded="true" aria-controls="collapse-collapsed4" id="heading-collapsed">
+                                    Ver mais
+                                </a>
+                                <div id="collapse-collapsed4" class="collapse mt-4" aria-labelledby="heading-collapsed">
+                                    <h6 class="card-title">Descrição</h6>
+                                    <p>Descrição do protocolo e.g este protcolo tem como objetivo</p>
+
+                                    <h6 class="card-title">Duração Sugerida</h6>
+                                    <p class="card-text">6 a 12 semanas</p>
+
+                                    <h6 class="card-tittle">Protocolo</h6>
+
+                                    <ol class="list-group list-group">
+                                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                                            <div class="ms-2 me-auto">
+                                                <div class="fw-bold">Oleo a utilizar</div>
+                                                O que fazer
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                                            <div class="ms-2 me-auto">
+                                                <div class="fw-bold">Oleo a utilizar</div>
+                                                O que fazer
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                                            <div class="ms-2 me-auto">
+                                                <div class="fw-bold">Oleo a utilizar</div>
+                                                O que fazer
+                                            </div>
+                                        </li>
+
+                                    </ol>
+
+
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-lg-4 col-md-4">
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                <div>
+                                    <h5 class="card-title">Nome da patologia</h5>
+                                    <p class="card-text">Sintomas -> A ideia e ter aqui os sintomas que o protocolo tenta ajudar.</p>
+                                    <div style="transform: rotate(0);">
+
+                                        <a class="stretched-link" data-toggle="collapse" href="#collapse-collapsed2" aria-expanded="true" aria-controls="collapse-collapsed2" id="heading-collapsed">
+                                            Ver mais
+                                        </a>
+                                    </div>
+                                </div>
+                                <div id="collapse-collapsed2" class="collapse mt-4" aria-labelledby="heading-collapsed">
+                                    <h6 class="card-title">Descrição</h6>
+                                    <p>Descrição do protocolo e.g este protcolo tem como objetivo</p>
+
+                                    <h6 class="card-title">Duração Sugerida</h6>
+                                    <p class="card-text">6 a 12 semanas</p>
+
+                                    <h6 class="card-tittle">Protocolo</h6>
+
+                                    <ol class="list-group list-group">
+                                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                                            <div class="ms-2 me-auto">
+                                                <div class="fw-bold">
+                                                    <a href="awdawd" class="z-index-2">link</a>
+                                                    <button class="btn btn-primary z-index-2">waza</button>
+                                                    Oleo a utilizar
+                                                </div>
+                                                O que fazer
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                                            <div class="ms-2 me-auto">
+                                                <div class="fw-bold">Oleo a utilizar</div>
+                                                O que fazer
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                                            <div class="ms-2 me-auto">
+                                                <div class="fw-bold">Oleo a utilizar</div>
+                                                O que fazer
+                                            </div>
+                                        </li>
+
+                                    </ol>
+
+
+
+
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="card mb-2">
                             <div class="card-body">
                                 <h5 class="card-title">Nome da patologia</h5>
@@ -377,7 +659,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="card mb-2">
                             <div class="card-body">
                                 <h5 class="card-title">Nome da patologia</h5>
@@ -423,148 +705,7 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="card mb-2">
-                            <div class="card-body">
-                                <h5 class="card-title">Nome da patologia</h5>
-                                <p class="card-text">Sintomas -> A ideia e ter aqui os sintomas que o protocolo tenta ajudar.</p>
 
-                                <a class="stretched-link" data-toggle="collapse" href="#collapse-collapsed4" aria-expanded="true" aria-controls="collapse-collapsed4" id="heading-collapsed">
-                                    Ver mais
-                                </a>
-                                <div id="collapse-collapsed4" class="collapse mt-4" aria-labelledby="heading-collapsed">
-                                    <h6 class="card-title">Descrição</h6>
-                                    <p>Descrição do protocolo e.g este protcolo tem como objetivo</p>
-
-                                    <h6 class="card-title">Duração Sugerida</h6>
-                                    <p class="card-text">6 a 12 semanas</p>
-
-                                    <h6 class="card-tittle">Protocolo</h6>
-
-                                    <ol class="list-group list-group">
-                                        <li class="list-group-item d-flex justify-content-between align-items-start">
-                                            <div class="ms-2 me-auto">
-                                                <div class="fw-bold">Oleo a utilizar</div>
-                                                O que fazer
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-start">
-                                            <div class="ms-2 me-auto">
-                                                <div class="fw-bold">Oleo a utilizar</div>
-                                                O que fazer
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-start">
-                                            <div class="ms-2 me-auto">
-                                                <div class="fw-bold">Oleo a utilizar</div>
-                                                O que fazer
-                                            </div>
-                                        </li>
-
-                                    </ol>
-
-
-
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-
-                    <div class="col-lg-4 col-md-4">
-                        <div class="card mb-2">
-                            <div class="card-body">
-                                <h5 class="card-title">Nome da patologia</h5>
-                                <p class="card-text">Sintomas -> A ideia e ter aqui os sintomas que o protocolo tenta ajudar.</p>
-
-                                <a class="stretched-link" data-toggle="collapse" href="#collapse-collapsed4" aria-expanded="true" aria-controls="collapse-collapsed4" id="heading-collapsed">
-                                    Ver mais
-                                </a>
-                                <div id="collapse-collapsed4" class="collapse mt-4" aria-labelledby="heading-collapsed">
-                                    <h6 class="card-title">Descrição</h6>
-                                    <p>Descrição do protocolo e.g este protcolo tem como objetivo</p>
-
-                                    <h6 class="card-title">Duração Sugerida</h6>
-                                    <p class="card-text">6 a 12 semanas</p>
-
-                                    <h6 class="card-tittle">Protocolo</h6>
-
-                                    <ol class="list-group list-group">
-                                        <li class="list-group-item d-flex justify-content-between align-items-start">
-                                            <div class="ms-2 me-auto">
-                                                <div class="fw-bold">Oleo a utilizar</div>
-                                                O que fazer
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-start">
-                                            <div class="ms-2 me-auto">
-                                                <div class="fw-bold">Oleo a utilizar</div>
-                                                O que fazer
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-start">
-                                            <div class="ms-2 me-auto">
-                                                <div class="fw-bold">Oleo a utilizar</div>
-                                                O que fazer
-                                            </div>
-                                        </li>
-
-                                    </ol>
-
-
-
-
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="card mb-2">
-                            <div class="card-body">
-                                <h5 class="card-title">Nome da patologia</h5>
-                                <p class="card-text">Sintomas -> A ideia e ter aqui os sintomas que o protocolo tenta ajudar.</p>
-
-                                <a class="stretched-link" data-toggle="collapse" href="#collapse-collapsed4" aria-expanded="true" aria-controls="collapse-collapsed4" id="heading-collapsed">
-                                    Ver mais
-                                </a>
-                                <div id="collapse-collapsed4" class="collapse mt-4" aria-labelledby="heading-collapsed">
-                                    <h6 class="card-title">Descrição</h6>
-                                    <p>Descrição do protocolo e.g este protcolo tem como objetivo</p>
-
-                                    <h6 class="card-title">Duração Sugerida</h6>
-                                    <p class="card-text">6 a 12 semanas</p>
-
-                                    <h6 class="card-tittle">Protocolo</h6>
-
-                                    <ol class="list-group list-group">
-                                        <li class="list-group-item d-flex justify-content-between align-items-start">
-                                            <div class="ms-2 me-auto">
-                                                <div class="fw-bold">Oleo a utilizar</div>
-                                                O que fazer
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-start">
-                                            <div class="ms-2 me-auto">
-                                                <div class="fw-bold">Oleo a utilizar</div>
-                                                O que fazer
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-start">
-                                            <div class="ms-2 me-auto">
-                                                <div class="fw-bold">Oleo a utilizar</div>
-                                                O que fazer
-                                            </div>
-                                        </li>
-
-                                    </ol>
-
-
-
-
-                                </div>
-                            </div>
-                        </div>
-                        
                         <div class="card mb-2">
                             <div class="card-body">
                                 <h5 class="card-title">Nome da patologia</h5>
@@ -611,7 +752,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
 
 
                 </div>
