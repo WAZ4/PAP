@@ -1,14 +1,16 @@
-
-                    <!-- <div class="col-lg-4 col-md-4">
+<!-- <div class="col-lg-4 col-md-4">
                     </div> -->
 <?php
 include_once("conectarBd.php");
 
 function imprimirProtocolos()
 {
-    $filtro = ""; //para usar com a barra de pesquisas
+    $filtro = "";
+    if (isset($_GET["pesquisa"]) && $_GET["pesquisa"] != "") {
+        $filtro = " WHERE Protocolo_Patologia LIKE '%". $_GET["pesquisa"] . "%' OR Protocolo_Descricao LIKE '%" . $_GET["pesquisa"]. "%'"; //para usar com a barra de pesquisas
+    }
 
-    $sql = "SELECT * FROM Protocolo_Master";
+    $sql = "SELECT * FROM Protocolo_Master" . $filtro;
     $conn = OpenCon();
     $stmt = $conn->prepare($sql);
     // $stmt->bind_param("i", $id);
@@ -17,119 +19,131 @@ function imprimirProtocolos()
     CloseCon($conn);
 
     if ($result_protocolo_master != false) {
-        while ($row = $result_protocolo_master->fetch_assoc()) {
-            $detalhe_titulo = array();
 
-            $conn = OpenCon();
-            $sql = "SELECT * FROM Protocolo_Detalhe WHERE Protocolo_ID=?";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param('i', $row["Protocolo_ID"]);
-            $stmt->execute();
-            $result_protocolo_detalhe = $stmt->get_result();
-            CloseCon($conn);
 
-            $conn = OpenCon();
-            $sql = "SELECT Protocolo_Detalhe_Oleo.Protocolo_ID, Protocolo_Detalhe_Oleo.Detalhe_ID, Oleo.Oleo_Nome, Oleo.Oleo_ID FROM Protocolo_Detalhe_Oleo INNER JOIN Oleo ON Protocolo_Detalhe_Oleo.Oleo_ID = Oleo.Oleo_ID WHERE Protocolo_Detalhe_Oleo.Protocolo_ID = ?";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param('i', $row["Protocolo_ID"]);
-            $stmt->execute();
-            $result_protocolo_detalhe_oleo = $stmt->get_result();
-            CloseCon($conn);
+        $qntRes = $result_protocolo_master->num_rows;
+        $resto = $qntRes % 3;
 
-            $conn = OpenCon();
-            $sql = "SELECT Protocolo_Suporte.Protocolo_ID, Oleo.Oleo_Nome, Oleo.Oleo_ID FROM Protocolo_Suporte INNER JOIN Oleo ON Protocolo_Suporte.Oleo_ID = Oleo.Oleo_ID WHERE Protocolo_ID = ?";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param('i', $row["Protocolo_ID"]);
-            $stmt->execute();
-            $result_protocolo_suporte = $stmt->get_result();
-            CloseCon($conn);
+        $qntCol = array();
+        $qntCol[0] = $resto == 0 ? $qntRes / 3 :  ($qntRes - $resto) / 3 + 1;
+        $qntCol[1] = $resto == 2 ? ($qntRes - $resto) / 3 + 1 :  ($qntRes-$resto) / 3;
+        $qntCol[2] = ($qntRes-$resto) / 3;
 
-            $qntRes = $result_protocolo_master->num_rows;
+        // var_dump($qntCol);
 
-            $resto = $qntRes%3;
-            
-            $qntCol1 = $resto == 0? $qntRes/3 : ($qntRes-$resto)/3 +1 ;
-            $qntCol2 = $resto != 2? $qntRes/3 : ($qntRes-$resto)/3 +1 ;
-            $qntCol3 = ($qntRes-$resto)/3;
-            
-            var_dump($qntCol1);
-            var_dump($qntCol2);
-            var_dump($qntCol3);
-
-            while ($row_detalhe_oleo = $result_protocolo_detalhe_oleo->fetch_assoc()) {
-                if (!isset($detalhe_titulo[$row_detalhe_oleo["Detalhe_ID"]])) {
-                    $detalhe_titulo += [$row_detalhe_oleo["Detalhe_ID"] => "<a href='oleo-single.php?Oleo_ID=" .  $row_detalhe_oleo["Oleo_ID"] . "'>" . ucfirst($row_detalhe_oleo["Oleo_Nome"]) . "</a>"];
-                } else {
-                    $detalhe_titulo[$row_detalhe_oleo["Detalhe_ID"]] .= ', ' . "<a href='oleo-single.php?Oleo_ID=" .  $row_detalhe_oleo["Oleo_ID"] . "'>" . ucfirst($row_detalhe_oleo["Oleo_Nome"]) . "</a>";
-                }
-            }
+        foreach ($qntCol as $qnt) {
 ?>
-            <div class="card mb-2">
-                <div class="card-body bg-light">
-                    <div style="transform: rotate(0);">
-                        <div>
-                            <h5 class="card-title"><?php echo $row["Protocolo_Patologia"]; ?></h5>
-                            <p class="card-text"><?php echo $row["Protocolo_Sintomas"]; ?></p>
-                            <a class="stretched-link" data-toggle="collapse" href="#collapse-collapsed<?php echo $row["Protocolo_ID"]; ?>" aria-expanded="true" aria-controls="collapse-collapsed<?php echo $row["Protocolo_ID"]; ?>" id="heading-collapsed">
-                                Mostrar
-                            </a>
-                        </div>
-                    </div>
-                    <div id="collapse-collapsed<?php echo $row["Protocolo_ID"]; ?>" class="collapse mt-4" aria-labelledby="heading-collapsed">
-                        <h6 class="card-title">Descrição</h6>
-                        <p><?php echo $row["Protocolo_Descricao"]; ?></p>
+            <div class="col-lg-4 col-md-4">
+                <?php
+                for ($i = 0; $i < $qnt; $i++) {
 
-                        <h6 class="card-title">Duração Sugerida</h6>
-                        <p class="card-text"><?php echo $row["Protocolo_Duracao"]; ?></p>
+                    if ($row = $result_protocolo_master->fetch_assoc()) {
 
-                        <h6 class="card-tittle">Protocolo</h6>
+                        $detalhe_titulo = array();
 
-                        <ol class="list-group list-group">
-                            <?php
-                            while ($row_Detalhe = $result_protocolo_detalhe->fetch_assoc()) {
-                            ?>
-                                <li class="list-group-item d-flex justify-content-between align-items-start">
-                                    <div class="ms-2 me-auto">
-                                        <div class="fw-bold">
-                                            <?php echo $detalhe_titulo[$row_Detalhe["Detalhe_ID"]]; ?>
-                                        </div>
-                                        <?php echo $row_Detalhe["Detalhe_Descricao"]; ?>
-                                    </div>
-                                </li>
-                            <?php
+                        $conn = OpenCon();
+                        $sql = "SELECT * FROM Protocolo_Detalhe WHERE Protocolo_ID=?";
+                        $stmt = $conn->prepare($sql);
+                        $stmt->bind_param('i', $row["Protocolo_ID"]);
+                        $stmt->execute();
+                        $result_protocolo_detalhe = $stmt->get_result();
+                        CloseCon($conn);
+
+                        $conn = OpenCon();
+                        $sql = "SELECT Protocolo_Detalhe_Oleo.Protocolo_ID, Protocolo_Detalhe_Oleo.Detalhe_ID, Oleo.Oleo_Nome, Oleo.Oleo_ID FROM Protocolo_Detalhe_Oleo INNER JOIN Oleo ON Protocolo_Detalhe_Oleo.Oleo_ID = Oleo.Oleo_ID WHERE Protocolo_Detalhe_Oleo.Protocolo_ID = ?";
+                        $stmt = $conn->prepare($sql);
+                        $stmt->bind_param('i', $row["Protocolo_ID"]);
+                        $stmt->execute();
+                        $result_protocolo_detalhe_oleo = $stmt->get_result();
+                        CloseCon($conn);
+
+                        $conn = OpenCon();
+                        $sql = "SELECT Protocolo_Suporte.Protocolo_ID, Oleo.Oleo_Nome, Oleo.Oleo_ID FROM Protocolo_Suporte INNER JOIN Oleo ON Protocolo_Suporte.Oleo_ID = Oleo.Oleo_ID WHERE Protocolo_ID = ?";
+                        $stmt = $conn->prepare($sql);
+                        $stmt->bind_param('i', $row["Protocolo_ID"]);
+                        $stmt->execute();
+                        $result_protocolo_suporte = $stmt->get_result();
+                        CloseCon($conn);
+
+                        while ($row_detalhe_oleo = $result_protocolo_detalhe_oleo->fetch_assoc()) {
+                            if (!isset($detalhe_titulo[$row_detalhe_oleo["Detalhe_ID"]])) {
+                                $detalhe_titulo += [$row_detalhe_oleo["Detalhe_ID"] => "<a href='oleo-single.php?Oleo_ID=" .  $row_detalhe_oleo["Oleo_ID"] . "' rel='noopener noreferrer' target='_blank'>" . ucfirst($row_detalhe_oleo["Oleo_Nome"]) . "</a>"];
+                            } else {
+                                $detalhe_titulo[$row_detalhe_oleo["Detalhe_ID"]] .= ', ' . "<a href='oleo-single.php?Oleo_ID=" .  $row_detalhe_oleo["Oleo_ID"] . "' rel='noopener noreferrer' target='_blank'>" . ucfirst($row_detalhe_oleo["Oleo_Nome"]) . "</a>";
                             }
-                            ?>
-                        </ol>
-
-                        <?php
-                        if ($row["Protocolo_Extra"] != 0) {
-                        ?>
-                            <h6 class="card-title mt-3">Observação</h6>
-                            <p class="card-text"><?php echo $row["Protocolo_Extra"]; ?></p>
-                        <?php
                         }
-                        ?>
-
-                        <h6 class="card-tittle mt-3">Possiveis Oleos adicioanis</h6>
-
-                        <ol class="list-group list-group">
-                            <?php
-                            while ($row_suporte = $result_protocolo_suporte->fetch_assoc()) {
-                            ?>
-                                <li class="list-group-item d-flex justify-content-between align-items-start">
-                                    <div class="ms-2 me-auto">
-                                        <a href="oleo-single.php?Oleo_ID=<?php echo $row_suporte["Oleo_ID"]; ?>"><?php echo ucfirst($row_suporte["Oleo_Nome"]); ?></a>
+                ?>
+                        <div class="card mb-2">
+                            <div class="card-body bg-light">
+                                <div style="transform: rotate(0);">
+                                    <div>
+                                        <h5 class="card-title"><?php echo $row["Protocolo_Patologia"]; ?></h5>
+                                        <p class="card-text"><?php echo $row["Protocolo_Sintomas"]; ?></p>
+                                        <a class="stretched-link" data-toggle="collapse" href="#collapse-collapsed<?php echo $row["Protocolo_ID"]; ?>" aria-expanded="true" aria-controls="collapse-collapsed<?php echo $row["Protocolo_ID"]; ?>" id="heading-collapsed">
+                                            Mostrar
+                                        </a>
                                     </div>
-                                </li>
-                            <?php
-                            }
-                            ?>
-                        </ol>
+                                </div>
+                                <div id="collapse-collapsed<?php echo $row["Protocolo_ID"]; ?>" class="collapse mt-4" aria-labelledby="heading-collapsed">
+                                    <h6 class="card-title">Descrição</h6>
+                                    <p><?php echo $row["Protocolo_Descricao"]; ?></p>
+
+                                    <h6 class="card-title">Duração Sugerida</h6>
+                                    <p class="card-text"><?php echo $row["Protocolo_Duracao"]; ?></p>
+
+                                    <h6 class="card-tittle">Protocolo</h6>
+
+                                    <ol class="list-group list-group">
+                                        <?php
+                                        while ($row_Detalhe = $result_protocolo_detalhe->fetch_assoc()) {
+                                        ?>
+                                            <li class="list-group-item d-flex justify-content-between align-items-start">
+                                                <div class="ms-2 me-auto">
+                                                    <div class="fw-bold">
+                                                        <?php echo $detalhe_titulo[$row_Detalhe["Detalhe_ID"]]; ?>
+                                                    </div>
+                                                    <?php echo $row_Detalhe["Detalhe_Descricao"]; ?>
+                                                </div>
+                                            </li>
+                                        <?php
+                                        }
+                                        ?>
+                                    </ol>
+
+                                    <?php
+                                    if ($row["Protocolo_Extra"] != 0) {
+                                    ?>
+                                        <h6 class="card-title mt-3">Observação</h6>
+                                        <p class="card-text"><?php echo $row["Protocolo_Extra"]; ?></p>
+                                    <?php
+                                    }
+                                    ?>
+
+                                    <h6 class="card-tittle mt-3">Possiveis Oleos adicioanis</h6>
+
+                                    <ol class="list-group list-group">
+                                        <?php
+                                        while ($row_suporte = $result_protocolo_suporte->fetch_assoc()) {
+                                        ?>
+                                            <li class="list-group-item d-flex justify-content-between align-items-start">
+                                                <div class="ms-2 me-auto">
+                                                    <a href="oleo-single.php?Oleo_ID=<?php echo $row_suporte["Oleo_ID"]; ?>" rel='noopener noreferrer' target='_blank'><?php echo ucfirst($row_suporte["Oleo_Nome"]); ?></a>
+                                                </div>
+                                            </li>
+                                        <?php
+                                        }
+                                        ?>
+                                    </ol>
 
 
 
-                    </div>
-                </div>
+                                </div>
+                            </div>
+                        </div>
+                <?php
+                    }
+                }
+                ?>
             </div>
 <?php
         }
@@ -157,7 +171,7 @@ function imprimirProtocolos()
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Portfolio - Company Bootstrap Template</title>
+    <title>Protocolo - Company Bootstrap Template</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
 
@@ -281,7 +295,7 @@ function imprimirProtocolos()
                     </li>
 
                     <li><a href="services.html">Services</a></li>
-                    <li><a href="portfolio.html" class="active">Portfolio</a></li>
+                    <li><a href="protocolo.php" class="active">Protocolos</a></li>
                     <li><a href="pricing.html">Pricing</a></li>
                     <li><a href="blog.html">Blog</a></li>
                     <li><a href="contact.html">Contact</a></li>
@@ -307,10 +321,10 @@ function imprimirProtocolos()
             <div class="container">
 
                 <div class="d-flex justify-content-between align-items-center">
-                    <h2>Portfolio</h2>
+                    <h2>Protocolo</h2>
                     <ol>
                         <li><a href="index.html">Home</a></li>
-                        <li>Portfolio</li>
+                        <li>Protocolo</li>
                     </ol>
                 </div>
 
@@ -337,7 +351,7 @@ function imprimirProtocolos()
                 <!-- WAZA ACABAR O DESIGN DA MODAL -->
                 <!-- Lista de Protocolos -->
                 <div class="row">
-                    
+
                     <?php
                     imprimirProtocolos();
                     ?>
