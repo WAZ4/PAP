@@ -1,19 +1,17 @@
-<!-- <div class="col-lg-4 col-md-4">
-                    </div> -->
+<!-- Arranjar links quando o Oleo e do tipo 3 -->
 <?php
 include_once("conectarBd.php");
 
 function imprimirProtocolos()
 {
-    $filtro = "";
+    $filtro = " WHERE Protocolo_ID != -1";
     if (isset($_GET["pesquisa"]) && $_GET["pesquisa"] != "") {
-        $filtro = " WHERE Protocolo_Patologia LIKE '%". $_GET["pesquisa"] . "%' OR Protocolo_Descricao LIKE '%" . $_GET["pesquisa"]. "%'"; //para usar com a barra de pesquisas
+        $filtro .= " AND Protocolo_Patologia LIKE '%". $_GET["pesquisa"] . "%' OR Protocolo_Descricao LIKE '%" . $_GET["pesquisa"]. "%'"; //para usar com a barra de pesquisas
     }
 
     $sql = "SELECT * FROM Protocolo_Master" . $filtro;
     $conn = OpenCon();
     $stmt = $conn->prepare($sql);
-    // $stmt->bind_param("i", $id);
     $stmt->execute();
     $result_protocolo_master = $stmt->get_result();
     CloseCon($conn);
@@ -50,7 +48,7 @@ function imprimirProtocolos()
                         CloseCon($conn);
 
                         $conn = OpenCon();
-                        $sql = "SELECT Protocolo_Detalhe_Oleo.Protocolo_ID, Protocolo_Detalhe_Oleo.Detalhe_ID, Oleo.Oleo_Nome, Oleo.Oleo_ID FROM Protocolo_Detalhe_Oleo INNER JOIN Oleo ON Protocolo_Detalhe_Oleo.Oleo_ID = Oleo.Oleo_ID WHERE Protocolo_Detalhe_Oleo.Protocolo_ID = ?";
+                        $sql = "SELECT Protocolo_Detalhe_Oleo.Protocolo_ID, Protocolo_Detalhe_Oleo.Detalhe_ID, Oleo_Master.Oleo_Nome, Oleo_Master.Oleo_ID FROM Protocolo_Detalhe_Oleo INNER JOIN Oleo_Master ON Protocolo_Detalhe_Oleo.Oleo_ID = Oleo_Master.Oleo_ID WHERE Protocolo_Detalhe_Oleo.Protocolo_ID = ?";
                         $stmt = $conn->prepare($sql);
                         $stmt->bind_param('i', $row["Protocolo_ID"]);
                         $stmt->execute();
@@ -58,7 +56,7 @@ function imprimirProtocolos()
                         CloseCon($conn);
 
                         $conn = OpenCon();
-                        $sql = "SELECT Protocolo_Suporte.Protocolo_ID, Oleo.Oleo_Nome, Oleo.Oleo_ID FROM Protocolo_Suporte INNER JOIN Oleo ON Protocolo_Suporte.Oleo_ID = Oleo.Oleo_ID WHERE Protocolo_ID = ?";
+                        $sql = "SELECT Protocolo_Suporte.Protocolo_ID, Oleo_Master.Oleo_Nome, Oleo_Master.Oleo_ID FROM Protocolo_Suporte INNER JOIN Oleo_Master ON Protocolo_Suporte.Oleo_ID = Oleo_Master.Oleo_ID WHERE Protocolo_ID = ?";
                         $stmt = $conn->prepare($sql);
                         $stmt->bind_param('i', $row["Protocolo_ID"]);
                         $stmt->execute();
@@ -202,6 +200,7 @@ function imprimirProtocolos()
 
     <!-- Template Main CSS File -->
     <link href="assets/css/style.css" rel="stylesheet">
+    
 
     <!-- =======================================================
   * Template Name: Company - v4.6.1
@@ -341,7 +340,7 @@ function imprimirProtocolos()
                     <div class="col-lg-4 d-flex justify-content-center">
                         <form action="#" method="get" class="w-100">
                             <div class="input-group mb-3 mt-3">
-                                <input type="text" class="form-control border-end-0 " name="pesquisa" placeholder="Patologia ou Sintomas associados" aria-label="Recipient's username" aria-describedby="button-addon2">
+                                <input type="text" class="form-control border-end-0 " name="pesquisa" placeholder="Patologia ou Sintomas associados" aria-label="Recipient's username" aria-describedby="button-addon2" value="<?php if(isset($_GET["pesquisa"])) echo $_GET["pesquisa"];?>">
                                 <button class="btn border border-start-0 material-symbols-outlined font fs-4" type="submit" id="button-addon2">find_in_page</button>
                             </div>
                         </form>

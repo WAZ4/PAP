@@ -1,5 +1,6 @@
 <?php
-
+//Windows - pass = ""
+//MAC - pass = "root"
 function OpenCon()
 {
     $dbhost = "localhost";
