@@ -1,7 +1,7 @@
 <?php
 include_once("conectarBd.php");
 
-$Oleo_ID = 1;
+$Oleo_ID = 2;
 if (isset($_GET["Oleo_ID"])) {
     $Oleo_ID = $_GET["Oleo_ID"];
 }
@@ -186,7 +186,6 @@ function apresentarOleo()
                         <h6>Ingredientes Principais</h6>
                         <ul class="list-group list-group-flush overflow-hidden">
                             <?php
-
                             while ($row_blend = $resultado_oleo_blend_ingredientes->fetch_assoc()) {
                                 if ($row_blend["Ingrediente_ID"] == "-1") {
                             ?>
