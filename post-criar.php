@@ -8,11 +8,11 @@ $errormsg;
 
 function dataParaPortugues($data)
 {
-  // jan. fev. mar. abr. maio jun. jul. ago. set. out. nov. dez.
-  $mesesPt = array('01' => "jan", '02' => "fev", '03' => "mar", '04' => "abr", '05' => "maio", '06' => "jun", '07' => "jul", '08' => "ago", '09' => "set", '10' => "out", '11' => 'nov', '12' => "dez");
-  $mesIng = substr($data, 0, 2);
-  $mes = $mesesPt[$mesIng] . substr($data, 2, strlen($data) - 2);
-  return $mes;
+    // jan. fev. mar. abr. maio jun. jul. ago. set. out. nov. dez.
+    $mesesPt = array('01' => "jan", '02' => "fev", '03' => "mar", '04' => "abr", '05' => "maio", '06' => "jun", '07' => "jul", '08' => "ago", '09' => "set", '10' => "out", '11' => 'nov', '12' => "dez");
+    $mesIng = substr($data, 0, 2);
+    $mes = $mesesPt[$mesIng] . substr($data, 2, strlen($data) - 2);
+    return $mes;
 }
 
 function getNrPost()
@@ -25,7 +25,7 @@ function getNrPost()
 
     CloseCon($conn);
 
-    return mysqli_fetch_assoc($result_post)["numeroDePosts"];
+    return mysqli_fetch_assoc($result_post)["numeroDePosts"]+1;
 }
 //Inserir conteudo do editor de texto na base de dados
 function inserirPostConteudoBaseDeDados($nr_post)
@@ -170,6 +170,26 @@ function inserirTagsBaseDados($nr_post, $tags)
     return mysqli_fetch_assoc($result_post)["numeroDePosts"];
 }
 
+function listarCategorias()
+{
+    $conn = OpenCon();
+
+    $stmt = $conn->prepare("SELECT * FROM post_categoria");
+    $stmt->execute();
+
+    $resultado_post_categoria = $stmt->get_result();
+
+    $stmt->free_result();
+    $stmt->close();
+
+    while ($row = $resultado_post_categoria->fetch_assoc()) {
+?>
+        <option value="<?php echo $row["Categoria_ID"];?>"><?php echo $row["Categoria_Nome"];?></option>
+
+<?php
+    }
+}
+
 if (isset($_POST["post-criar-submit"])) {
     $nr_post = getNrPost();
     //Inserir ImagemCapa
@@ -188,7 +208,6 @@ if (isset($_POST["post-criar-submit"])) {
     }
     header('Location: post-single.php?id_post=' . $nr_post);
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -198,22 +217,20 @@ if (isset($_POST["post-criar-submit"])) {
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
     <title>Criar Post</title>
-    <meta content="" name="description">
-    <meta content="" name="keywords">
 
     <!-- CSS BASE-->
-    <?php 
+    <?php
     include("estruturaPrincipal/head-css.php");
     ?>
 
     <!-- JS BASE-->
-    <?php 
+    <?php
     include("estruturaPrincipal/head-js.php");
     ?>
-    
+
     <!-- CSS PESSOAL -->
     <link rel="stylesheet" href="estilo-post-criar.css">
-    
+
     <!-- EditorJS -->
     <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@editorjs/paragraph@latest"></script>
@@ -221,13 +238,13 @@ if (isset($_POST["post-criar-submit"])) {
     <script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@editorjs/quote@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@editorjs/image@2.3.0"></script>
-    
+
     <script src="editorJS/editor.js"></script>
-    
+
     <!-- Tags -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://unpkg.com/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
-    
+
 
     <!-- =======================================================
   * Template Name: Company - v4.6.1
@@ -240,7 +257,7 @@ if (isset($_POST["post-criar-submit"])) {
 <body>
 
     <!-- ======= Header ======= -->
-    <?php 
+    <?php
     include("estruturaPrincipal/header.php");
     ?>
     <!-- End Header -->
@@ -251,7 +268,7 @@ if (isset($_POST["post-criar-submit"])) {
     // echo "espaco <br>";
     // var_dump($_POST);
     ?>
-<!-- </pre> -->
+    <!-- </pre> -->
 
     <main id="main">
 
@@ -299,8 +316,9 @@ if (isset($_POST["post-criar-submit"])) {
                                     <label for="categoria">Escolha a categoria que o seu post aborda: </label>
                                     <select required class="form-select" aria-label="Default select example" name="categoria" id="categoria">
                                         <option disabled selected hidden>Clique para ver as categorias</option>
-                                        <option value="Geral">Geral</option>
-                                        <option value="Lifestyle">Lifestyle</option>
+                                        <?php listarCategorias()?>
+                                        <!-- <option value="Geral">Geral</option>
+                                        <option value="Lifestyle">Lifestyle</option> -->
                                     </select>
                                 </div>
 
@@ -361,7 +379,7 @@ if (isset($_POST["post-criar-submit"])) {
 
     </main><!-- End #main -->
 
-    <?php include("estruturaPrincipal/footer.php");?>
+    <?php include("estruturaPrincipal/footer.php"); ?>
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 

@@ -8,22 +8,25 @@ function getTotalComentarios($id_post)
 
     $sql = "SELECT * FROM post_comentarios WHERE id_post = " . $id_post;
 
-    $result_post_comentarios = mysqli_query($conn, $sql);
+    $resultado_post_comentarios = mysqli_query($conn, $sql);
 
-    $totalComentarios = mysqli_num_rows($result_post_comentarios);
+    $totalComentarios = mysqli_num_rows($resultado_post_comentarios);
 
     return $totalComentarios;
 }
 
-function getTotalPosts()
+function getTotalPosts($pesquisa = "")
 {
+    if (isset($_GET["pesquisa"]) && $pesquisa == "") $pesquisa .= " WHERE titulo LIKE '%" . $_GET["pesquisa"] . "%'";
+    else if (isset($_GET["categoria"]) && $pesquisa == "") $pesquisa = " WHERE categoria =" . $_GET["categoria"];
+
     $conn = OpenCon();
 
-    $sql = "SELECT * FROM post";
+    $sql = "SELECT * FROM post " . $pesquisa;
 
-    $result_post = mysqli_query($conn, $sql);
+    $resultado_post = mysqli_query($conn, $sql);
 
-    $totalPosts = mysqli_num_rows($result_post);
+    $totalPosts = mysqli_num_rows($resultado_post);
 
     return $totalPosts;
 }
@@ -34,8 +37,8 @@ function getParagrafoInicial($id_post)
 
     $sql = "SELECT tipo, var1 FROM post_conteudo_detail WHERE id_post = " . $id_post . " AND ordem = 0";
 
-    $result_post_conteudo_detail = mysqli_query($conn, $sql);
-    $row = mysqli_fetch_assoc($result_post_conteudo_detail);
+    $resultado_post_conteudo_detail = mysqli_query($conn, $sql);
+    $row = mysqli_fetch_assoc($resultado_post_conteudo_detail);
     // var_dump($row);
 
     if (isset($row["tipo"]) && $row["tipo"] == 0) {
@@ -45,22 +48,26 @@ function getParagrafoInicial($id_post)
     }
 }
 
-function imprimirPosts()
+function imprimirPosts($pesquisa = "")
 {
     global $pagina;
+    if (isset($_GET["pesquisa"])) $pesquisa .= "WHERE titulo LIKE '%" . $_GET["pesquisa"] . "%'";
+    else if (isset($_GET["categoria"])) $pesquisa = " WHERE categoria LIKE '%" . $_GET["categoria"] . "%'";
+
+
     $conn = OpenCon();
 
-    $sql = "SELECT * FROM post LIMIT 4 OFFSET ". ($pagina-1) *4;
+    // $sql = "SELECT * FROM post LIMIT 4 OFFSET ". ($pagina-1) *4 . " WHERE titulo LIKE '$". $a ."%'";
+    $sql = "SELECT * FROM post " . $pesquisa . " LIMIT 4 OFFSET " . ($pagina - 1) * 4;
 
-    $result_post = mysqli_query($conn, $sql);
+    $resultado_post = mysqli_query($conn, $sql);
 
     CloseCon($conn);
 
     $i = 1 * $pagina;
 
     $numeroDePaginas = ceil(getTotalPosts() / 4);
-
-    while ($row = mysqli_fetch_assoc($result_post)) {
+    while ($row = mysqli_fetch_assoc($resultado_post)) {
 
 ?>
         <article class="entry">
@@ -84,8 +91,8 @@ function imprimirPosts()
             <div class="entry-content">
                 <p><?php echo getParagrafoInicial($row["id_post"]); ?></p>
                 <div class="read-more">
-                    <form action="post-single.php" method="get" id="form<?php echo $row["id_post"]; ?>"><input type="hidden" name="id_post" value="<?php echo $row['id_post'];?>"></form>
-                    <a onclick="document.getElementById('<?php echo 'form'.$row['id_post'] ?>').submit();">Ler Mais</a>
+                    <form action="post-single.php" method="get" id="form<?php echo $row["id_post"]; ?>"><input type="hidden" name="id_post" value="<?php echo $row['id_post']; ?>"></form>
+                    <a onclick="document.getElementById('<?php echo 'form' . $row['id_post'] ?>').submit();">Ler Mais</a>
                 </div>
             </div>
 
@@ -119,8 +126,66 @@ function imprimirPaginacao($pagina)
             <li>
                 <form action="#" method="get" id="<?php echo $pagina + 1; ?>"><a onclick="document.getElementById('<?php echo $pagina + 1; ?>').submit();"><?php echo $pagina + 1; ?></a>
             </li><input type="hidden" name="pagina" value="<?php echo $pagina + 1; ?>"></form>
-<?php
+        <?php
         }
+    }
+}
+
+function imprimirCategorias()
+{
+
+    $sql = "SELECT * FROM post_categoria ORDER BY categoria_nome ASC";
+    $conn = OpenCon();
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $resultado_post_categoria = $stmt->get_result();
+    CloseCon($conn);
+
+    while ($row = $resultado_post_categoria->fetch_assoc()) {
+        ?>
+        <li><a href="blog.php?categoria=<?php echo $row["Categoria_ID"]; ?>">
+                <?php echo $row["Categoria_Nome"]; ?>
+                <span>(<?php echo getTotalPosts(" WHERE categoria = " . $row["Categoria_ID"]) ?>)</span>
+            </a></li>
+    <?php
+    }
+}
+
+function imprimirPostsRecentes()
+{
+    $sql = "SELECT * from post ORDER BY id_post DESC Limit 5";
+    $conn = OpenCon();
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $resultado_post = $stmt->get_result();
+    CloseCon($conn);
+    while ($row = $resultado_post->fetch_assoc()) {
+    ?>
+        <div class="post-item clearfix">
+            <img src="<?php echo $row["url_img"]; ?>" alt="">
+            <h4><a href="post-single.php?id_post=<?php echo $row["id_post"]; ?>"><?php echo $row["titulo"]; ?></a></h4>
+            <time datetime="2020-01-01"><?php echo $row["timestamp"]; ?></time>
+        </div>
+    <?php
+    }
+}
+
+function imprimirTags()
+{
+    $conn = OpenCon();
+
+    $stmt = $conn->prepare("SELECT * FROM tag_parameterizacao");
+    $stmt->execute();
+
+    $result_post_tags_detail = $stmt->get_result();
+
+    $stmt->free_result();
+    $stmt->close();
+    //falta associar cada tag a uma pesquisa pelas mesma
+    while ($row = $result_post_tags_detail->fetch_assoc()) {
+    ?>
+        <li><a href="blog.php?tag=<?php echo $row["id_tag"]; ?>"><?php echo $row["titulo"]; ?></a></li>
+<?php
     }
 }
 
@@ -137,7 +202,7 @@ function imprimirPaginacao($pagina)
     <meta content="" name="keywords">
 
     <!-- CSS BASE-->
-    <?php 
+    <?php
     include("estruturaPrincipal/head-css.php");
     ?>
 
@@ -148,56 +213,32 @@ function imprimirPaginacao($pagina)
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
 </head>
+<style>
+    .criar-post {
+        display: block;
+        background: #bf46e8;
+        color: #fff;
+        padding: 6px 20px;
+        transition: 0.3s;
+        font-size: 14px;
+        border-radius: 4px;
+    }
+    .criar-post:hover {
+        /* display: block;
+        background: #bf46e8; */
+        color: #fff;
+        /* padding: 6px 20px;
+        transition: 0.3s;
+        font-size: 14px;
+        border-radius: 4px; */
+    }
+</style>
 
 <body>
     <!-- ======= Header ======= -->
-    <header id="header" class="fixed-top">
-        <div class="container d-flex align-items-center">
-
-            <h1 class="logo me-auto"><a href="index.html"><span>Com</span>pany</a></h1>
-            <!-- Uncomment below if you prefer to use an image logo -->
-            <!-- <a href="index.html" class="logo me-auto me-lg-0"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
-
-            <nav id="navbar" class="navbar order-last order-lg-0">
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-
-                    <li class="dropdown"><a href="#"><span>About</span> <i class="bi bi-chevron-down"></i></a>
-                        <ul>
-                            <li><a href="about.html">About Us</a></li>
-                            <li><a href="team.html">Team</a></li>
-                            <li><a href="testimonials.html">Testimonials</a></li>
-                            <li class="dropdown"><a href="#"><span>Deep Drop Down</span> <i class="bi bi-chevron-right"></i></a>
-                                <ul>
-                                    <li><a href="#">Deep Drop Down 1</a></li>
-                                    <li><a href="#">Deep Drop Down 2</a></li>
-                                    <li><a href="#">Deep Drop Down 3</a></li>
-                                    <li><a href="#">Deep Drop Down 4</a></li>
-                                    <li><a href="#">Deep Drop Down 5</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <li><a href="services.html">Services</a></li>
-                    <li><a href="portfolio.html">Portfolio</a></li>
-                    <li><a href="pricing.html">Pricing</a></li>
-                    <li><a href="blog.html" class="active">Blog</a></li>
-                    <li><a href="contact.html">Contact</a></li>
-
-                </ul>
-                <i class="bi bi-list mobile-nav-toggle"></i>
-            </nav><!-- .navbar -->
-
-            <div class="header-social-links d-flex">
-                <a href="#" class="twitter"><i class="bu bi-twitter"></i></a>
-                <a href="#" class="facebook"><i class="bu bi-facebook"></i></a>
-                <a href="#" class="instagram"><i class="bu bi-instagram"></i></a>
-                <a href="#" class="linkedin"><i class="bu bi-linkedin"></i></i></a>
-            </div>
-
-        </div>
-    </header><!-- End Header -->
+    <?php
+    include("estruturaPrincipal/header.php");
+    ?>
 
     <main id="main">
 
@@ -242,8 +283,8 @@ function imprimirPaginacao($pagina)
 
                             <h3 class="sidebar-title">Search</h3>
                             <div class="sidebar-item search-form">
-                                <form action="">
-                                    <input type="text">
+                                <form action="#" method="get">
+                                    <input type="text" name="pesquisa">
                                     <button type="submit"><i class="bi bi-search"></i></button>
                                 </form>
                             </div><!-- End sidebar search formn-->
@@ -251,67 +292,33 @@ function imprimirPaginacao($pagina)
                             <h3 class="sidebar-title">Categories</h3>
                             <div class="sidebar-item categories">
                                 <ul>
-                                    <li><a href="#">General <span>(25)</span></a></li>
-                                    <li><a href="#">Lifestyle <span>(12)</span></a></li>
-                                    <li><a href="#">Travel <span>(5)</span></a></li>
-                                    <li><a href="#">Design <span>(22)</span></a></li>
-                                    <li><a href="#">Creative <span>(8)</span></a></li>
-                                    <li><a href="#">Educaion <span>(14)</span></a></li>
+                                    <?php
+                                    imprimirCategorias();
+                                    ?>
                                 </ul>
                             </div><!-- End sidebar categories-->
 
                             <h3 class="sidebar-title">Recent Posts</h3>
                             <div class="sidebar-item recent-posts">
-                                <div class="post-item clearfix">
-                                    <img src="assets/img/blog/blog-recent-1.jpg" alt="">
-                                    <h4><a href="blog-single.html">Nihil blanditiis at in nihil autem</a></h4>
-                                    <time datetime="2020-01-01">Jan 1, 2020</time>
-                                </div>
-
-                                <div class="post-item clearfix">
-                                    <img src="assets/img/blog/blog-recent-2.jpg" alt="">
-                                    <h4><a href="blog-single.html">Quidem autem et impedit</a></h4>
-                                    <time datetime="2020-01-01">Jan 1, 2020</time>
-                                </div>
-
-                                <div class="post-item clearfix">
-                                    <img src="assets/img/blog/blog-recent-3.jpg" alt="">
-                                    <h4><a href="blog-single.html">Id quia et et ut maxime similique occaecati ut</a></h4>
-                                    <time datetime="2020-01-01">Jan 1, 2020</time>
-                                </div>
-
-                                <div class="post-item clearfix">
-                                    <img src="assets/img/blog/blog-recent-4.jpg" alt="">
-                                    <h4><a href="blog-single.html">Laborum corporis quo dara net para</a></h4>
-                                    <time datetime="2020-01-01">Jan 1, 2020</time>
-                                </div>
-
-                                <div class="post-item clearfix">
-                                    <img src="assets/img/blog/blog-recent-5.jpg" alt="">
-                                    <h4><a href="blog-single.html">Et dolores corrupti quae illo quod dolor</a></h4>
-                                    <time datetime="2020-01-01">Jan 1, 2020</time>
-                                </div>
-
+                                <?php
+                                imprimirPostsRecentes();
+                                ?>
                             </div><!-- End sidebar recent posts-->
 
-                            <h3 class="sidebar-title">Tags</h3>
+                            <!-- <h3 class="sidebar-title">Tags</h3>
                             <div class="sidebar-item tags">
                                 <ul>
-                                    <li><a href="#">App</a></li>
-                                    <li><a href="#">IT</a></li>
-                                    <li><a href="#">Business</a></li>
-                                    <li><a href="#">Mac</a></li>
-                                    <li><a href="#">Design</a></li>
-                                    <li><a href="#">Office</a></li>
-                                    <li><a href="#">Creative</a></li>
-                                    <li><a href="#">Studio</a></li>
-                                    <li><a href="#">Smart</a></li>
-                                    <li><a href="#">Tips</a></li>
-                                    <li><a href="#">Marketing</a></li>
+                                    <?php
+                                    // imprimirTags();
+                                    ?>
                                 </ul>
-                            </div><!-- End sidebar tags-->
+                            </div>End sidebar tags -->
 
                         </div><!-- End sidebar -->
+
+                        <div class="sidebar">
+                            <a href="post-criar.php" class="criar-post">Criar Post</a>
+                        </div>
 
                     </div><!-- End blog sidebar -->
 

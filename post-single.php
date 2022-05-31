@@ -143,7 +143,7 @@ function definirCabecalho()
   $stmt->close();
 
   // var_dump($result_post_conteudo_detail);
-  
+
   if ($result_post_conteudo_detail) {
     $row = $result_post_conteudo_detail->fetch_assoc();
     $cabecalho["nomeUser"] = $row["username"];
@@ -203,10 +203,10 @@ function imprimirComentarios()
         <div class="d-flex">
           <div class="comment-img"><img src="assets/img/blog/comments-1.jpg" alt=""></div>
           <div>
-            <h5><a href=""><?php echo $row["username"] ?></a> 
-            <!-- <a href="#" class="reply"><i class="bi bi-reply-fill"></i> Reply</a> -->
-            <button id="comentario-reply-abrir-<?php echo $row["id_comentario"] ?>" class="reply btn" onclick="toggleComentario(<?php echo $row['id_comentario']; ?>, true);"><span class="material-icons">reply</span></button>
-          </h5>
+            <h5><a href=""><?php echo $row["username"] ?></a>
+              <!-- <a href="#" class="reply"><i class="bi bi-reply-fill"></i> Reply</a> -->
+              <button id="comentario-reply-abrir-<?php echo $row["id_comentario"] ?>" class="reply btn" onclick="toggleComentario(<?php echo $row['id_comentario']; ?>, true);"><span class="material-icons">reply</span></button>
+            </h5>
             <time datetime="2020-01-01"><?php echo $row["timestamp"] ?></time>
             <p>
               <?php echo $row["conteudo"] ?>
@@ -339,6 +339,62 @@ function getComentario($id_comentario)
 
   return $comentario;
 }
+
+function imprimirCategorias()
+{
+
+    $sql = "SELECT * FROM post_categoria ORDER BY categoria_nome ASC";
+    $conn = OpenCon();
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $resultado_post_categoria = $stmt->get_result();
+    CloseCon($conn);
+
+    while ($row = $resultado_post_categoria->fetch_assoc()) {
+        ?>
+        <li><a href="blog.php?categoria=<?php echo $row["Categoria_ID"]; ?>">
+                <?php echo $row["Categoria_Nome"]; ?>
+                <span>(<?php echo getTotalPosts(" WHERE categoria = " . $row["Categoria_ID"]) ?>)</span>
+            </a></li>
+    <?php
+    }
+}
+
+function imprimirPostsRecentes()
+{
+    $sql = "SELECT * from post ORDER BY id_post DESC Limit 5";
+    $conn = OpenCon();
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $resultado_post = $stmt->get_result();
+    CloseCon($conn);
+    while ($row = $resultado_post->fetch_assoc()) {
+    ?>
+        <div class="post-item clearfix">
+            <img src="<?php echo $row["url_img"];?>" alt="">
+            <h4><a href="post-single.php?id_post=<?php echo $row["id_post"];?>"><?php echo $row["titulo"];?></a></h4>
+            <time datetime="2020-01-01"><?php echo $row["timestamp"];?></time>
+        </div>
+<?php
+    }
+}
+
+function getTotalPosts($pesquisa = "")
+{
+    if (isset($_GET["pesquisa"]) && $pesquisa == "") $pesquisa .= " WHERE titulo LIKE '%" . $_GET["pesquisa"] . "%'";
+    else if (isset($_GET["categoria"]) && $pesquisa == "") $pesquisa = " WHERE categoria =" . $_GET["categoria"];
+
+    $conn = OpenCon();
+
+    $sql = "SELECT * FROM post " . $pesquisa;
+
+    $resultado_post = mysqli_query($conn, $sql);
+
+    $totalPosts = mysqli_num_rows($resultado_post);
+
+    return $totalPosts;
+}
+
 
 //Função que corre no inicio do programa
 function main()
@@ -475,7 +531,7 @@ main();
 
     <!-- ======= Blog Single Section ======= -->
     <section id="blog" class="blog">
-      <div class="container" data-aos="fade-up">
+      <div class="container" data-aos="fade-down">
 
         <div class="row">
 
@@ -495,7 +551,8 @@ main();
                 <ul>
                   <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a href="blog-single.html"><?php echo $cabecalho["nomeUser"]; ?></a></li>
                   <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a href="blog-single.html"><time datetime="2020-01-01"><?php echo $cabecalho["timeStamp"]; ?></time></a></li>
-                  <!-- <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> <a href="blog-single.html"><?php //echo $totalComentarios; ?> Comentários</a></li> -->
+                  <!-- <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> <a href="blog-single.html"><?php //echo $totalComentarios; 
+                                                                                                                        ?> Comentários</a></li> -->
                 </ul>
               </div>
 
@@ -574,82 +631,52 @@ main();
 
           <div class="col-lg-4">
 
-            <div class="sidebar">
+                        <div class="sidebar">
 
-              <h3 class="sidebar-title">Search</h3>
-              <div class="sidebar-item search-form">
-                <form action="">
-                  <input type="text">
-                  <button type="submit"><i class="bi bi-search"></i></button>
-                </form>
-              </div><!-- End sidebar search formn-->
+                            <h3 class="sidebar-title">Search</h3>
+                            <div class="sidebar-item search-form">
+                                <form action="blog.php" method="get">
+                                    <input type="text" name="pesquisa">
+                                    <button type="submit"><i class="bi bi-search"></i></button>
+                                </form>
+                            </div><!-- End sidebar search formn-->
 
-              <h3 class="sidebar-title">Categories</h3>
-              <div class="sidebar-item categories">
-                <ul>
-                  <li><a href="#">General <span>(25)</span></a></li>
-                  <li><a href="#">Lifestyle <span>(12)</span></a></li>
-                  <li><a href="#">Travel <span>(5)</span></a></li>
-                  <li><a href="#">Design <span>(22)</span></a></li>
-                  <li><a href="#">Creative <span>(8)</span></a></li>
-                  <li><a href="#">Educaion <span>(14)</span></a></li>
-                </ul>
-              </div><!-- End sidebar categories-->
+                            <h3 class="sidebar-title">Categories</h3>
+                            <div class="sidebar-item categories">
+                                <ul>
+                                    <?php
+                                    imprimirCategorias();
+                                    ?>
+                                </ul>
+                            </div><!-- End sidebar categories-->
 
-              <h3 class="sidebar-title">Recent Posts</h3>
-              <div class="sidebar-item recent-posts">
-                <div class="post-item clearfix">
-                  <img src="assets/img/blog/blog-recent-1.jpg" alt="">
-                  <h4><a href="blog-single.html">Nihil blanditiis at in nihil autem</a></h4>
-                  <time datetime="2020-01-01">Jan 1, 2020</time>
-                </div>
+                            <h3 class="sidebar-title">Recent Posts</h3>
+                            <div class="sidebar-item recent-posts">
+                                <?php
+                                imprimirPostsRecentes();
+                                ?>
+                            </div><!-- End sidebar recent posts-->
 
-                <div class="post-item clearfix">
-                  <img src="assets/img/blog/blog-recent-2.jpg" alt="">
-                  <h4><a href="blog-single.html">Quidem autem et impedit</a></h4>
-                  <time datetime="2020-01-01">Jan 1, 2020</time>
-                </div>
+                            <h3 class="sidebar-title">Tags</h3>
+                            <div class="sidebar-item tags">
+                                <ul>
+                                    <li><a href="#">App</a></li>
+                                    <li><a href="#">IT</a></li>
+                                    <li><a href="#">Business</a></li>
+                                    <li><a href="#">Mac</a></li>
+                                    <li><a href="#">Design</a></li>
+                                    <li><a href="#">Office</a></li>
+                                    <li><a href="#">Creative</a></li>
+                                    <li><a href="#">Studio</a></li>
+                                    <li><a href="#">Smart</a></li>
+                                    <li><a href="#">Tips</a></li>
+                                    <li><a href="#">Marketing</a></li>
+                                </ul>
+                            </div><!-- End sidebar tags-->
 
-                <div class="post-item clearfix">
-                  <img src="assets/img/blog/blog-recent-3.jpg" alt="">
-                  <h4><a href="blog-single.html">Id quia et et ut maxime similique occaecati ut</a></h4>
-                  <time datetime="2020-01-01">Jan 1, 2020</time>
-                </div>
+                        </div><!-- End sidebar -->
 
-                <div class="post-item clearfix">
-                  <img src="assets/img/blog/blog-recent-4.jpg" alt="">
-                  <h4><a href="blog-single.html">Laborum corporis quo dara net para</a></h4>
-                  <time datetime="2020-01-01">Jan 1, 2020</time>
-                </div>
-
-                <div class="post-item clearfix">
-                  <img src="assets/img/blog/blog-recent-5.jpg" alt="">
-                  <h4><a href="blog-single.html">Et dolores corrupti quae illo quod dolor</a></h4>
-                  <time datetime="2020-01-01">Jan 1, 2020</time>
-                </div>
-
-              </div><!-- End sidebar recent posts-->
-
-              <h3 class="sidebar-title">Tags</h3>
-              <div class="sidebar-item tags">
-                <ul>
-                  <li><a href="#">App</a></li>
-                  <li><a href="#">IT</a></li>
-                  <li><a href="#">Business</a></li>
-                  <li><a href="#">Mac</a></li>
-                  <li><a href="#">Design</a></li>
-                  <li><a href="#">Office</a></li>
-                  <li><a href="#">Creative</a></li>
-                  <li><a href="#">Studio</a></li>
-                  <li><a href="#">Smart</a></li>
-                  <li><a href="#">Tips</a></li>
-                  <li><a href="#">Marketing</a></li>
-                </ul>
-              </div><!-- End sidebar tags-->
-
-            </div><!-- End sidebar -->
-
-          </div><!-- End blog sidebar -->
+                    </div><!-- End blog sidebar -->
 
         </div>
 

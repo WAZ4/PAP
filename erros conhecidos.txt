@@ -1,0 +1,2 @@
+nao e possivel ir para a segunda pagina de uma pesquisa por categoria ou texto
+nome da categoria nao aparece no post-single

@@ -48,7 +48,7 @@ function imprimirProtocolos()
                         CloseCon($conn);
 
                         $conn = OpenCon();
-                        $sql = "SELECT Protocolo_Detalhe_Oleo.Protocolo_ID, Protocolo_Detalhe_Oleo.Detalhe_ID, Oleo_Master.Oleo_Nome, Oleo_Master.Oleo_ID FROM Protocolo_Detalhe_Oleo INNER JOIN Oleo_Master ON Protocolo_Detalhe_Oleo.Oleo_ID = Oleo_Master.Oleo_ID WHERE Protocolo_Detalhe_Oleo.Protocolo_ID = ?";
+                        $sql = "SELECT Protocolo_Detalhe_Oleo.Protocolo_ID, Protocolo_Detalhe_Oleo.Detalhe_ID, Oleo_Master.Oleo_Nome, Oleo_Master.Oleo_ID, Oleo_Master.Oleo_Tipo FROM Protocolo_Detalhe_Oleo INNER JOIN Oleo_Master ON Protocolo_Detalhe_Oleo.Oleo_ID = Oleo_Master.Oleo_ID WHERE Protocolo_Detalhe_Oleo.Protocolo_ID = ?";
                         $stmt = $conn->prepare($sql);
                         $stmt->bind_param('i', $row["Protocolo_ID"]);
                         $stmt->execute();
@@ -64,10 +64,20 @@ function imprimirProtocolos()
                         CloseCon($conn);
 
                         while ($row_detalhe_oleo = $result_protocolo_detalhe_oleo->fetch_assoc()) {
-                            if (!isset($detalhe_titulo[$row_detalhe_oleo["Detalhe_ID"]])) {
-                                $detalhe_titulo += [$row_detalhe_oleo["Detalhe_ID"] => "<a href='oleo-single.php?Oleo_ID=" .  $row_detalhe_oleo["Oleo_ID"] . "' rel='noopener noreferrer' target='_blank'>" . ucfirst($row_detalhe_oleo["Oleo_Nome"]) . "</a>"];
-                            } else {
-                                $detalhe_titulo[$row_detalhe_oleo["Detalhe_ID"]] .= ', ' . "<a href='oleo-single.php?Oleo_ID=" .  $row_detalhe_oleo["Oleo_ID"] . "' rel='noopener noreferrer' target='_blank'>" . ucfirst($row_detalhe_oleo["Oleo_Nome"]) . "</a>";
+                            if ($row_detalhe_oleo["Oleo_Tipo"] == 3) {
+                                    
+                                if (!isset($detalhe_titulo[$row_detalhe_oleo["Detalhe_ID"]])) {
+                                    $detalhe_titulo += [$row_detalhe_oleo["Detalhe_ID"] => ucfirst($row_detalhe_oleo["Oleo_Nome"])];
+                                } else {
+                                    $detalhe_titulo[$row_detalhe_oleo["Detalhe_ID"]] .= ', ' . ucfirst($row_detalhe_oleo["Oleo_Nome"]);
+                                }
+                            }
+                            else {
+                                if (!isset($detalhe_titulo[$row_detalhe_oleo["Detalhe_ID"]])) {
+                                    $detalhe_titulo += [$row_detalhe_oleo["Detalhe_ID"] => "<a href='oleo-single.php?Oleo_ID=" .  $row_detalhe_oleo["Oleo_ID"] . "' rel='noopener noreferrer' target='_blank'>" . ucfirst($row_detalhe_oleo["Oleo_Nome"]) . "</a>"];
+                                } else {
+                                    $detalhe_titulo[$row_detalhe_oleo["Detalhe_ID"]] .= ', ' . "<a href='oleo-single.php?Oleo_ID=" .  $row_detalhe_oleo["Oleo_ID"] . "' rel='noopener noreferrer' target='_blank'>" . ucfirst($row_detalhe_oleo["Oleo_Nome"]) . "</a>";
+                                }
                             }
                         }
                 ?>

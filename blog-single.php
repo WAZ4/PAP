@@ -163,16 +163,14 @@ function imprimirTags()
   global $id_post; // trocar por post ou sessao
   $conn = OpenCon();
 
-  $stmt = $conn->prepare("SELECT tag_parameterizacao.titulo 
-                          FROM post_tags_detail INNER JOIN tag_parameterizacao ON post_tags_detail.id_tag = tag_parameterizacao.id_tag 
-                          WHERE id_post = " . $id_post);
+  $stmt = $conn->prepare("SELECT * FROM tag_parametrizacao");
   $stmt->execute();
 
   $result_post_tags_detail = $stmt->get_result();
 
   $stmt->free_result();
   $stmt->close();
-
+  var_dump($result_post_tags_detail);
   //falta associar cada tag a uma pesquisa pelas mesma
   while ($row = $result_post_tags_detail->fetch_assoc()) {
     ?>
