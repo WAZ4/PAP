@@ -324,7 +324,7 @@ function apresentarOleo()
 
         <!-- ======= Blog Single Section ======= -->
         <section id="blog" class="blog">
-            <div class="container" data-aos="fade-up">
+            <div class="container" >
                 <!-- Header -->
                 <div class="row">
                     <div class="col-md-8  entries">

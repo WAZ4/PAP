@@ -73,7 +73,7 @@ function imprimirPosts($pesquisa = "")
         <article class="entry">
 
             <div class="entry-img">
-                <img src="<?php echo $row["url_img"]; ?>" alt="" class="img-fluid">
+                <img src="<?php echo $row["url_img"]; ?>" alt="" class="img-fluid w-100">
             </div>
 
             <h2 class="entry-title">

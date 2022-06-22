@@ -1,0 +1,17 @@
+INSERT INTO `post_comentarios` (`id_post`, `id_comentario`, `alvo`, `conteudo`, `username`, `timestamp`) VALUES (2, 0, 'post', 'Gostei muito do post!', 'goncalo', 'fev 22, 2022');
+INSERT INTO `post_comentarios` (`id_post`, `id_comentario`, `alvo`, `conteudo`, `username`, `timestamp`) VALUES (2, 1, '0', 'Concordo!', 'goncalo', 'fev 22, 2022');
+INSERT INTO `post_comentarios` (`id_post`, `id_comentario`, `alvo`, `conteudo`, `username`, `timestamp`) VALUES (2, 2, 'post', 'Não percebi uma parte, pode me ajudar?', 'goncalo', 'fev 22, 2022');
+INSERT INTO `post_comentarios` (`id_post`, `id_comentario`, `alvo`, `conteudo`, `username`, `timestamp`) VALUES (2, 3, '2', 'Claro é assim que se faz...', 'goncalo', 'fev 22, 2022');
+INSERT INTO `post_comentarios` (`id_post`, `id_comentario`, `alvo`, `conteudo`, `username`, `timestamp`) VALUES (2, 4, '3', 'Obrigado!', 'goncalo', 'fev 22, 2022');
+INSERT INTO `post_comentarios` (`id_post`, `id_comentario`, `alvo`, `conteudo`, `username`, `timestamp`) VALUES (3, 0, 'post', 'Wow gostei muito do conteudo!', 'goncalo', 'fev 23, 2022');
+INSERT INTO `post_comentarios` (`id_post`, `id_comentario`, `alvo`, `conteudo`, `username`, `timestamp`) VALUES (3, 1, 'post', 'Funcionou obrigado', 'goncalo', 'fev 23, 2022');
+INSERT INTO `post_comentarios` (`id_post`, `id_comentario`, `alvo`, `conteudo`, `username`, `timestamp`) VALUES (3, 2, '0', 'Obrigado!', 'goncalo', 'fev 23, 2022');
+INSERT INTO `post_comentarios` (`id_post`, `id_comentario`, `alvo`, `conteudo`, `username`, `timestamp`) VALUES (3, 3, '2', 'Comentario de terceiro nivel', 'goncalo', 'fev 23, 2022');
+INSERT INTO `post_comentarios` (`id_post`, `id_comentario`, `alvo`, `conteudo`, `username`, `timestamp`) VALUES (3, 4, '0', 'Espetacular!', 'goncalo', 'fev 23, 2022');
+INSERT INTO `post_comentarios` (`id_post`, `id_comentario`, `alvo`, `conteudo`, `username`, `timestamp`) VALUES (3, 5, '3', 'Comentario de quarto nivel', 'goncalo', 'fev 23, 2022');
+INSERT INTO `post_comentarios` (`id_post`, `id_comentario`, `alvo`, `conteudo`, `username`, `timestamp`) VALUES (3, 6, '1', 'Comentario de segundo nivel', 'goncalo', 'fev 23, 2022');
+INSERT INTO `post_comentarios` (`id_post`, `id_comentario`, `alvo`, `conteudo`, `username`, `timestamp`) VALUES (8, 0, 'post', 'gostei do post', 'goncalo', 'jun 01, 2022');
+INSERT INTO `post_comentarios` (`id_post`, `id_comentario`, `alvo`, `conteudo`, `username`, `timestamp`) VALUES (8, 1, '0', 'concordo', 'goncalo', 'jun 01, 2022');
+INSERT INTO `post_comentarios` (`id_post`, `id_comentario`, `alvo`, `conteudo`, `username`, `timestamp`) VALUES (8, 2, '1', 'sim', 'goncalo', 'jun 01, 2022');
+INSERT INTO `post_comentarios` (`id_post`, `id_comentario`, `alvo`, `conteudo`, `username`, `timestamp`) VALUES (8, 3, '1', 'nao', 'goncalo', 'jun 01, 2022');
+INSERT INTO `post_comentarios` (`id_post`, `id_comentario`, `alvo`, `conteudo`, `username`, `timestamp`) VALUES (8, 4, '0', 'Discordo', 'goncalo', 'jun 01, 2022');

@@ -1,0 +1,17 @@
+INSERT INTO `Protocolo_Detalhe` (`Protocolo_ID`, `Detalhe_ID`, `Detalhe_Descricao`) VALUES (0, 0, 'Take 2 capsules in the morning on an empty stomach');
+INSERT INTO `Protocolo_Detalhe` (`Protocolo_ID`, `Detalhe_ID`, `Detalhe_Descricao`) VALUES (0, 1, 'Apply a drop of each to back of neck and bottoms of feet 2xdaily');
+INSERT INTO `Protocolo_Detalhe` (`Protocolo_ID`, `Detalhe_ID`, `Detalhe_Descricao`) VALUES (0, 2, 'Apply 2-4 drops to spine 2x daily. Also take 2 softgels 2x daily');
+INSERT INTO `Protocolo_Detalhe` (`Protocolo_ID`, `Detalhe_ID`, `Detalhe_Descricao`) VALUES (0, 3, 'Apply 2 drops to sides od nek 2x daily');
+INSERT INTO `Protocolo_Detalhe` (`Protocolo_ID`, `Detalhe_ID`, `Detalhe_Descricao`) VALUES (1, 0, 'Take 2 capsules in the morning.');
+INSERT INTO `Protocolo_Detalhe` (`Protocolo_ID`, `Detalhe_ID`, `Detalhe_Descricao`) VALUES (1, 1, 'Massage 1-2 drops each into affected area in the morning');
+INSERT INTO `Protocolo_Detalhe` (`Protocolo_ID`, `Detalhe_ID`, `Detalhe_Descricao`) VALUES (1, 2, 'Apply a frop of each ontospine and painfull areas 3x daily');
+INSERT INTO `Protocolo_Detalhe` (`Protocolo_ID`, `Detalhe_ID`, `Detalhe_Descricao`) VALUES (1, 3, 'Take 2 capsules in the evening before bed');
+INSERT INTO `Protocolo_Detalhe` (`Protocolo_ID`, `Detalhe_ID`, `Detalhe_Descricao`) VALUES (2, 0, 'Take 2 capsules in the morning on an empty stomach');
+INSERT INTO `Protocolo_Detalhe` (`Protocolo_ID`, `Detalhe_ID`, `Detalhe_Descricao`) VALUES (2, 1, 'Take 2 capsules daily');
+INSERT INTO `Protocolo_Detalhe` (`Protocolo_ID`, `Detalhe_ID`, `Detalhe_Descricao`) VALUES (2, 2, 'Apply 2-4 drops to spine 2x daily');
+INSERT INTO `Protocolo_Detalhe` (`Protocolo_ID`, `Detalhe_ID`, `Detalhe_Descricao`) VALUES (2, 3, 'Appply to web of hands and base of skull. Diffuse throught the day');
+INSERT INTO `Protocolo_Detalhe` (`Protocolo_ID`, `Detalhe_ID`, `Detalhe_Descricao`) VALUES (3, 0, 'Apply a drop of each over the chest and bottom of feet 2x daily');
+INSERT INTO `Protocolo_Detalhe` (`Protocolo_ID`, `Detalhe_ID`, `Detalhe_Descricao`) VALUES (3, 1, 'Take 2 drops each un a capsule 2x daily');
+INSERT INTO `Protocolo_Detalhe` (`Protocolo_ID`, `Detalhe_ID`, `Detalhe_Descricao`) VALUES (4, 0, 'Massage a drop of each into affected area in the morning');
+INSERT INTO `Protocolo_Detalhe` (`Protocolo_ID`, `Detalhe_ID`, `Detalhe_Descricao`) VALUES (4, 1, 'Massage into affected area as needed throught the day');
+INSERT INTO `Protocolo_Detalhe` (`Protocolo_ID`, `Detalhe_ID`, `Detalhe_Descricao`) VALUES (4, 2, 'Take softgels 3x daily');

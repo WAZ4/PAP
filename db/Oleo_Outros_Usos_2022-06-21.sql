@@ -1,0 +1,17 @@
+INSERT INTO `Oleo_Outros_Usos` (`Oleo_ID`, `Uso_ID`, `Protocolo_ID`, `Uso_Nome`) VALUES (2, 0, -1, 'Bhehavioral Ussyes');
+INSERT INTO `Oleo_Outros_Usos` (`Oleo_ID`, `Uso_ID`, `Protocolo_ID`, `Uso_Nome`) VALUES (2, 1, -1, 'Mood Disorders');
+INSERT INTO `Oleo_Outros_Usos` (`Oleo_ID`, `Uso_ID`, `Protocolo_ID`, `Uso_Nome`) VALUES (2, 2, -1, 'Postpartum');
+INSERT INTO `Oleo_Outros_Usos` (`Oleo_ID`, `Uso_ID`, `Protocolo_ID`, `Uso_Nome`) VALUES (2, 3, -1, 'Seasonal Depresssion');
+INSERT INTO `Oleo_Outros_Usos` (`Oleo_ID`, `Uso_ID`, `Protocolo_ID`, `Uso_Nome`) VALUES (2, 4, -1, 'Sleep Issues');
+INSERT INTO `Oleo_Outros_Usos` (`Oleo_ID`, `Uso_ID`, `Protocolo_ID`, `Uso_Nome`) VALUES (2, 5, -1, 'Social Anxiety');
+INSERT INTO `Oleo_Outros_Usos` (`Oleo_ID`, `Uso_ID`, `Protocolo_ID`, `Uso_Nome`) VALUES (4, 0, -1, 'Aneurysm');
+INSERT INTO `Oleo_Outros_Usos` (`Oleo_ID`, `Uso_ID`, `Protocolo_ID`, `Uso_Nome`) VALUES (4, 1, -1, 'Breast Enlargement');
+INSERT INTO `Oleo_Outros_Usos` (`Oleo_ID`, `Uso_ID`, `Protocolo_ID`, `Uso_Nome`) VALUES (4, 2, -1, 'Cholesterol');
+INSERT INTO `Oleo_Outros_Usos` (`Oleo_ID`, `Uso_ID`, `Protocolo_ID`, `Uso_Nome`) VALUES (4, 3, 2, NULL);
+INSERT INTO `Oleo_Outros_Usos` (`Oleo_ID`, `Uso_ID`, `Protocolo_ID`, `Uso_Nome`) VALUES (4, 4, -1, 'Endometriosis');
+INSERT INTO `Oleo_Outros_Usos` (`Oleo_ID`, `Uso_ID`, `Protocolo_ID`, `Uso_Nome`) VALUES (4, 5, -1, 'Epilepsy');
+INSERT INTO `Oleo_Outros_Usos` (`Oleo_ID`, `Uso_ID`, `Protocolo_ID`, `Uso_Nome`) VALUES (4, 6, -1, 'Fragile Hair');
+INSERT INTO `Oleo_Outros_Usos` (`Oleo_ID`, `Uso_ID`, `Protocolo_ID`, `Uso_Nome`) VALUES (4, 7, -1, 'Hot Flashs');
+INSERT INTO `Oleo_Outros_Usos` (`Oleo_ID`, `Uso_ID`, `Protocolo_ID`, `Uso_Nome`) VALUES (4, 8, -1, 'Impotence');
+INSERT INTO `Oleo_Outros_Usos` (`Oleo_ID`, `Uso_ID`, `Protocolo_ID`, `Uso_Nome`) VALUES (4, 9, -1, 'Lactantion');
+INSERT INTO `Oleo_Outros_Usos` (`Oleo_ID`, `Uso_ID`, `Protocolo_ID`, `Uso_Nome`) VALUES (4, 10, -1, 'Parkinson\'s');
