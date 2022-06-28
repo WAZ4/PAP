@@ -1,7 +1,8 @@
 <?php
 include_once("conectarBd.php");
 session_start();
-session_unset();
+
+if (!isset($_SESSION["user_ID"])) header("Location: index.php");
 
 $errormsg;
 //nr de posts criados com index 1 , que por consequencia do index 1 passa a ser o numero do novo post. Se existirem 2 posts os seus index vao ser 0 e 1 mas a funcao devolve 2, logo o novo post vai ser o nr 2
@@ -25,7 +26,7 @@ function getNrPost()
 
     CloseCon($conn);
 
-    return mysqli_fetch_assoc($result_post)["numeroDePosts"]+1;
+    return mysqli_fetch_assoc($result_post)["numeroDePosts"] + 1;
 }
 //Inserir conteudo do editor de texto na base de dados
 function inserirPostConteudoBaseDeDados($nr_post)
@@ -73,13 +74,15 @@ function inserirPostConteudoBaseDeDados($nr_post)
                     break;
             }
 
-            $sql = "INSERT INTO `post_conteudo_detail` (`id_post`, `ordem`, `tipo`, `var1`, `var2`) VALUES ('" . $nr_post . "', '" . $ordem . "', '" . $tipo . "', '" . $var1 . "', '" . $var2 . "')";
+            // $sql = "INSERT INTO `post_conteudo_detail` (`id_post`, `ordem`, `tipo`, `var1`, `var2`) VALUES ('" . $nr_post . "', '" . $ordem . "', '" . $tipo . "', '" . $var1 . "', '" . $var2 . "')";
+            $sql = "INSERT INTO `post_conteudo_detail` (`id_post`, `ordem`, `tipo`, `var1`, `var2`) VALUES ('" . $nr_post . "', '" . $ordem . "', '" . $tipo . "', '" . strip_tags($var1) . "', '" . strip_tags($var2) . "')";
+
 
             $conn = OpenCon();
 
             $result_post_conteudo_detail = mysqli_query($conn, $sql);
 
-            var_dump($result_post_conteudo_detail);
+            // var_dump($result_post_conteudo_detail);
 
             CloseCon($conn);
         }
@@ -137,12 +140,11 @@ function inserirPostBaseDeDados($nr_post)
         if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
             // echo "The file " . htmlspecialchars(basename($_FILES["fileToUpload"]["name"])) . " has been uploaded.";
 
-            $username = 'goncalo';
+            $user_ID = $_SESSION["user_ID"];
             $categoria = $_POST["categoria"];
             $titulo = $_POST["postTitulo"];
             $timestamp = dataParaPortugues(gmdate("m d, Y", time()));
-            $sql = "INSERT INTO post VALUES ( '" . $nr_post . "' ,'" . $username . "', '" . $titulo . "', '" . $timestamp . "', '1' , '" . $categoria . "',  '" . $urlPrefix . $target_file . "')";
-
+            $sql = "INSERT INTO post VALUES ( '" . $nr_post . "' ," . $user_ID . ", '" . $titulo . "', '" . $timestamp . "', '1' , '" . $categoria . "',  '" . $urlPrefix . $target_file . "', '" . $_POST["submitEditor"] . "')";
             $conn = OpenCon();
 
             $result_post = mysqli_query($conn, $sql);
@@ -184,28 +186,28 @@ function listarCategorias()
 
     while ($row = $resultado_post_categoria->fetch_assoc()) {
 ?>
-        <option value="<?php echo $row["Categoria_ID"];?>"><?php echo $row["Categoria_Nome"];?></option>
+        <option value="<?php echo $row["Categoria_ID"]; ?>"><?php echo $row["Categoria_Nome"]; ?></option>
 
 <?php
     }
 }
 
 if (isset($_POST["post-criar-submit"])) {
-    $nr_post = getNrPost();
-    //Inserir ImagemCapa
+    $nr_post = getNrPost() + 1;
+    //atualizar ImagemCapa
     if (isset($_FILES["fileToUpload"])) {
-        inserirPostBaseDeDados($nr_post);
+        atualizarPostBaseDeDados($nr_post);
     }
 
-    //Inserir Conteudo
+    //atualizar Conteudo
     if (isset($_POST["submitEditor"])) {
-        inserirPostConteudoBaseDeDados($nr_post);
+        atualizarPostConteudoBaseDeDados($nr_post);
     }
 
     //Inserir Tags
-    if (isset($_POST["tags"])) {
-        inserirTagsBaseDados($nr_post, $_POST["tags"]);
-    }
+    // if (isset($_POST["tags"])) {
+    //     inserirTagsBaseDados($nr_post, $_POST["tags"]);
+    // }
     header('Location: post-single.php?id_post=' . $nr_post);
 }
 ?>
@@ -262,24 +264,16 @@ if (isset($_POST["post-criar-submit"])) {
     ?>
     <!-- End Header -->
 
-
-    <!-- <pre> -->
-    <?php
-    // echo "espaco <br>";
-    // var_dump($_POST);
-    ?>
-    <!-- </pre> -->
-
     <main id="main">
 
         <!-- ======= Breadcrumbs ======= -->
-        <section id="breadcrumbs" class="breadcrumbs">
+        <section id="breadcrumbs" class="breadcrumbs pt-4">
             <div class="container">
 
                 <div class="d-flex justify-content-between align-items-center">
                     <h2>Criar Post</h2>
                     <ol>
-                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index.php">Home</a></li>
                         <li><a href="blog.php">Blog</a></li>
                         <li>Criar Post</li>
                     </ol>
@@ -316,7 +310,7 @@ if (isset($_POST["post-criar-submit"])) {
                                     <label for="categoria">Escolha a categoria que o seu post aborda: </label>
                                     <select required class="form-select" aria-label="Default select example" name="categoria" id="categoria">
                                         <option disabled selected hidden>Clique para ver as categorias</option>
-                                        <?php listarCategorias()?>
+                                        <?php listarCategorias() ?>
                                         <!-- <option value="Geral">Geral</option>
                                         <option value="Lifestyle">Lifestyle</option> -->
                                     </select>
@@ -402,6 +396,15 @@ if (isset($_POST["post-criar-submit"])) {
         </div>
     </div>
 </body>
+
+<!-- Vendor JS Files -->
+<script src="assets/vendor/aos/aos.js"></script>
+<script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+<script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+<script src="assets/vendor/php-email-form/validate.js"></script>
+<script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+<script src="assets/vendor/waypoints/noframework.waypoints.js"></script>
 
 <script>
     function gravarEditor() {

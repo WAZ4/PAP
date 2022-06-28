@@ -19,17 +19,18 @@
 </script>
 
 <?php
-
 include_once "conectarBd.php";
+session_start();
+
 $id_post = 0;
-$username = "goncalo";
+$criador = NULL;
 if (isset($_GET["id_post"])) $id_post = $_GET["id_post"];
 else if (isset($_SESSION["username"])) $username = $_SESSION["username"];
 else if (isset($_SESSION["post-criar"])) {
   $id_post = $_SESSION["post-criar"];
   unset($_SESSION["post_criar"]);
 }
-$cabecalho = $arrayName = array('titulo' => "", 'nomeUser' => "", 'timeStamp' => "", 'categoria' => "", 'imagemPrincipalUrl' => "");
+$cabecalho = $arrayName = array('titulo' => "", 'nomeUser' => "", 'timeStamp' => "", 'categoria' => "", 'categoria_ID' => "", 'imagemPrincipalUrl' => "");
 $totalComentarios = 12;
 
 function dataParaPortugues($data)
@@ -43,9 +44,8 @@ function dataParaPortugues($data)
 
 function adicionarComentario()
 {
-  global $username;
   global $id_post;
-  $conteudo = $_POST["comentario"];
+  $conteudo = strip_tags(trim($_POST["comentario"]));
   $id_post = $_POST["id_post"];
   $alvo = $_POST["comentario_alvo"];
   $timestamp = dataParaPortugues(gmdate("m d, Y", time()));
@@ -54,7 +54,7 @@ function adicionarComentario()
 
   $nrDeComentario = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(id_comentario) AS numeroDeComentarios FROM post_comentarios WHERE id_post = " . $id_post))["numeroDeComentarios"];
 
-  $sql = "INSERT INTO post_comentarios VALUES (" . $id_post . ", " . $nrDeComentario . ", '" . $alvo . "', '" . $conteudo . "', '" . $username . "', '" . $timestamp . "');";
+  $sql = "INSERT INTO post_comentarios VALUES (" . $id_post . ", " . $nrDeComentario . ", '" . $alvo . "', '" . $conteudo . "', '" . $_SESSION["user_ID"] . "', '" . $timestamp . "');";
 
   $result_post_comentarios = mysqli_query($conn, $sql);
 
@@ -131,10 +131,11 @@ function definirCabecalho()
 {
   global $cabecalho;
   global $id_post;
+  global $criador;
 
   $conn = OpenCon();
 
-  $stmt = $conn->prepare("SELECT * FROM post WHERE id_post = " . $id_post);
+  $stmt = $conn->prepare("SELECT post.*, user.user_nome as username, user.user_img, post_categoria.Categoria_nome FROM post RIGHT JOIN user ON user.user_ID = post.user_ID RIGHT JOIN post_categoria ON post.categoria = post_categoria.Categoria_ID WHERE id_post = " . $id_post);
   $stmt->execute();
 
   $result_post_conteudo_detail = $stmt->get_result();
@@ -149,8 +150,10 @@ function definirCabecalho()
     $cabecalho["nomeUser"] = $row["username"];
     $cabecalho["titulo"] = $row["titulo"];
     $cabecalho["timeStamp"] = $row["timestamp"];
-    $cabecalho["categoria"] = $row["categoria"];
+    $cabecalho["categoria_ID"] = $row["categoria"];
+    $cabecalho["categoria"] = $row["Categoria_nome"];
     $cabecalho["imagemPrincipalUrl"]  = $row["url_img"];
+    $criador = $row["user_ID"];
   } else {
     echo "Erro na conexão à base de dados!";
   }
@@ -184,7 +187,8 @@ function imprimirComentarios()
   global $id_post;
   $conn = OpenCon();
 
-  $stmt = $conn->prepare("SELECT * FROM post_comentarios WHERE id_post = " . $id_post);
+
+  $stmt = $conn->prepare("SELECT post_comentarios.*, user.user_nome as username, user.user_img FROM post_comentarios RIGHT JOIN user ON user.user_ID = post_comentarios.user_ID WHERE id_post = " . $id_post);
   $stmt->execute();
 
   $result_post_comentarios = $stmt->get_result();
@@ -201,7 +205,7 @@ function imprimirComentarios()
   ?>
       <div class="comment">
         <div class="d-flex">
-          <div class="comment-img"><img src="assets/img/blog/comments-1.jpg" alt=""></div>
+          <div class="comment-img"><img src="<?php echo $row["user_img"]; ?>" alt="" width="60" height="100"></div>
           <div>
             <h5><a href=""><?php echo $row["username"] ?></a>
               <!-- <a href="#" class="reply"><i class="bi bi-reply-fill"></i> Reply</a> -->
@@ -213,23 +217,38 @@ function imprimirComentarios()
             </p>
           </div>
         </div>
-
         <div id="comentario-novo-<?php echo $row["id_comentario"] ?>" class="comment comment-reply d-none">
           <div class="d-flex reply-form">
             <div class="w-100">
               <h4><span class="material-icons">north</span> Deixe a sua resposta <button class="float-end btn" onclick="toggleComentario(<?php echo $row['id_comentario']; ?>, false);"><span class="material-icons btn-comentario">close</span></button></h4>
+              <?php
+              if (isset($_SESSION["user_nome"])) {
+              ?>
 
-              <form action="#" method="POST">
-                <div class="row mt-2 ">
-                  <div class="col form-group ">
-                    <textarea name="comentario" class="form-control " placeholder="A sua resposta* " rows="5 "></textarea>
+
+                <form action="#" method="POST">
+                  <div class="row mt-2 ">
+                    <div class="col form-group ">
+                      <textarea name="comentario" class="form-control " placeholder="A sua resposta* " rows="5 "></textarea>
+                    </div>
                   </div>
-                </div>
-                <input type="hidden" name="id_post" value="<?php echo $id_post; ?>">
-                <input type="hidden" name="comentario_alvo" value="<?php echo $row["id_comentario"] ?>">
-                <button type="submit" class="btn btn-primary" name="comentario_principal_submit">Responder</button>
+                  <input type="hidden" name="id_post" value="<?php echo $id_post; ?>">
+                  <input type="hidden" name="comentario_alvo" value="<?php echo $row["id_comentario"] ?>">
+                  <button type="submit" class="btn btn-primary" name="comentario_principal_submit">Responder</button>
 
-              </form>
+                </form>
+              <?php
+              } else {
+              ?>
+                <!-- //WAZATAG -->
+                <div class="container coment-div">
+                  <span class="material-icons coment-span">lock</span>
+                  <p class="coment-span text-center">Para para responder é necessário ter uma conta</p>
+                  <a class="coment-span" href="criarConta/">Crie uma conta aqui!</a>
+                </div>
+              <?php
+              }
+              ?>
             </div>
           </div>
         </div>
@@ -257,7 +276,7 @@ function imprimirSubComentariosRecursiva($id_comentario) // arranjar isto WAZA
     ?>
       <div id="comment-reply-1" class="comment comment-reply">
         <div class="d-flex">
-          <div class="comment-img"><img src="assets/img/blog/comments-3.jpg" alt=""></div>
+          <div class="comment-img"><img src="<?php echo $dados["user_img"] ?>" alt=""></div>
           <div>
             <h5><a href=""><?php echo $dados["username"] ?></a>
               <button id="comentario-reply-abrir-<?php echo $dados["id_comentario"] ?>" class="reply btn" onclick="toggleComentario(<?php echo $dados['id_comentario']; ?>, true);"><span class="material-icons">reply</span></button>
@@ -274,18 +293,34 @@ function imprimirSubComentariosRecursiva($id_comentario) // arranjar isto WAZA
           <div class="d-flex reply-form">
             <div class="w-100">
               <h4><span class="material-icons">north</span> Deixe a sua resposta <button class="float-end btn" onclick="toggleComentario(<?php echo $dados['id_comentario']; ?>, false);"><span class="material-icons btn-comentario">close</span></button></h4>
+              <?php
+              if (isset($_SESSION["user_nome"])) {
+              ?>
 
-              <form action="#" method="POST">
-                <div class="row mt-2 ">
-                  <div class="col form-group ">
-                    <textarea name="comentario" class="form-control " placeholder="A sua resposta* " rows="5 "></textarea>
+
+                <form action="#" method="POST">
+                  <div class="row mt-2 ">
+                    <div class="col form-group ">
+                      <textarea name="comentario" class="form-control " placeholder="A sua resposta* " rows="5 "></textarea>
+                    </div>
                   </div>
-                </div>
-                <input type="hidden" name="id_post" value="<?php echo $id_post; ?>">
-                <input type="hidden" name="comentario_alvo" value="<?php echo $dados["id_comentario"] ?>">
-                <button type="submit" class="btn btn-primary" name="comentario_principal_submit">Responder</button>
+                  <input type="hidden" name="id_post" value="<?php echo $id_post; ?>">
+                  <input type="hidden" name="comentario_alvo" value="<?php echo $dados["id_comentario"] ?>">
+                  <button type="submit" class="btn btn-primary" name="comentario_principal_submit">Responder</button>
 
-              </form>
+                </form>
+              <?php
+              } else {
+              ?>
+                <!-- //WAZATAG -->
+                <div class="container coment-div">
+                  <span class="material-icons coment-span">lock</span>
+                  <p class="coment-span text-center">Para responder é necessário ter uma conta</p>
+                  <a class="coment-span" href="criarConta/">Crie uma conta aqui!</a>
+                </div>
+              <?php
+              }
+              ?>
             </div>
           </div>
         </div>
@@ -293,7 +328,7 @@ function imprimirSubComentariosRecursiva($id_comentario) // arranjar isto WAZA
         <?php imprimirSubComentariosRecursiva($comentario); ?>
 
       </div>
-<?php
+    <?php
     }
   }
 }
@@ -301,6 +336,7 @@ function imprimirSubComentariosRecursiva($id_comentario) // arranjar isto WAZA
 function getSubComentario($id_comentario)
 {
   global $id_post;
+
   $sql = "SELECT * FROM post_comentarios WHERE id_post = '" . $id_post . "' AND alvo = '" . $id_comentario . "'";
 
   $conn = OpenCon();
@@ -327,7 +363,7 @@ function getComentario($id_comentario)
   global $id_post;
   $conn = OpenCon();
 
-  $stmt = $conn->prepare("SELECT * FROM post_comentarios WHERE id_comentario = '" . $id_comentario . "' AND id_post =" . $id_post); //verificar se encontra a certa ou a amis de outros comentarios
+  $stmt = $conn->prepare("SELECT post_comentarios.*, user.user_nome as username, user.user_img FROM post_comentarios RIGHT JOIN user ON user.user_ID = post_comentarios.user_ID WHERE id_comentario = '" . $id_comentario . "' AND id_post =" . $id_post); //verificar se encontra a certa ou a amis de outros comentarios
   $stmt->execute();
 
   $result_post_comentarios = $stmt->get_result();
@@ -343,56 +379,56 @@ function getComentario($id_comentario)
 function imprimirCategorias()
 {
 
-    $sql = "SELECT * FROM post_categoria ORDER BY categoria_nome ASC";
-    $conn = OpenCon();
-    $stmt = $conn->prepare($sql);
-    $stmt->execute();
-    $resultado_post_categoria = $stmt->get_result();
-    CloseCon($conn);
+  $sql = "SELECT * FROM post_categoria ORDER BY categoria_nome ASC";
+  $conn = OpenCon();
+  $stmt = $conn->prepare($sql);
+  $stmt->execute();
+  $resultado_post_categoria = $stmt->get_result();
+  CloseCon($conn);
 
-    while ($row = $resultado_post_categoria->fetch_assoc()) {
-        ?>
-        <li><a href="blog.php?categoria=<?php echo $row["Categoria_ID"]; ?>">
-                <?php echo $row["Categoria_Nome"]; ?>
-                <span>(<?php echo getTotalPosts(" WHERE categoria = " . $row["Categoria_ID"]) ?>)</span>
-            </a></li>
-    <?php
-    }
+  while ($row = $resultado_post_categoria->fetch_assoc()) {
+    ?>
+    <li><a href="blog.php?categoria=<?php echo $row["Categoria_ID"]; ?>">
+        <?php echo $row["Categoria_Nome"]; ?>
+        <span>(<?php echo getTotalPosts(" WHERE categoria = " . $row["Categoria_ID"]) ?>)</span>
+      </a></li>
+  <?php
+  }
 }
 
 function imprimirPostsRecentes()
 {
-    $sql = "SELECT * from post ORDER BY id_post DESC Limit 5";
-    $conn = OpenCon();
-    $stmt = $conn->prepare($sql);
-    $stmt->execute();
-    $resultado_post = $stmt->get_result();
-    CloseCon($conn);
-    while ($row = $resultado_post->fetch_assoc()) {
-    ?>
-        <div class="post-item clearfix">
-            <img src="<?php echo $row["url_img"];?>" alt="">
-            <h4><a href="post-single.php?id_post=<?php echo $row["id_post"];?>"><?php echo $row["titulo"];?></a></h4>
-            <time datetime="2020-01-01"><?php echo $row["timestamp"];?></time>
-        </div>
+  $sql = "SELECT * from post ORDER BY id_post DESC Limit 5";
+  $conn = OpenCon();
+  $stmt = $conn->prepare($sql);
+  $stmt->execute();
+  $resultado_post = $stmt->get_result();
+  CloseCon($conn);
+  while ($row = $resultado_post->fetch_assoc()) {
+  ?>
+    <div class="post-item clearfix">
+      <img src="<?php echo $row["url_img"]; ?>" alt="">
+      <h4><a href="post-single.php?id_post=<?php echo $row["id_post"]; ?>"><?php echo $row["titulo"]; ?></a></h4>
+      <time datetime="2020-01-01"><?php echo $row["timestamp"]; ?></time>
+    </div>
 <?php
-    }
+  }
 }
 
 function getTotalPosts($pesquisa = "")
 {
-    if (isset($_GET["pesquisa"]) && $pesquisa == "") $pesquisa .= " WHERE titulo LIKE '%" . $_GET["pesquisa"] . "%'";
-    else if (isset($_GET["categoria"]) && $pesquisa == "") $pesquisa = " WHERE categoria =" . $_GET["categoria"];
+  if (isset($_GET["pesquisa"]) && $pesquisa == "") $pesquisa .= " WHERE titulo LIKE '%" . $_GET["pesquisa"] . "%'";
+  else if (isset($_GET["categoria"]) && $pesquisa == "") $pesquisa = " WHERE categoria =" . $_GET["categoria"];
 
-    $conn = OpenCon();
+  $conn = OpenCon();
 
-    $sql = "SELECT * FROM post " . $pesquisa;
+  $sql = "SELECT * FROM post " . $pesquisa;
 
-    $resultado_post = mysqli_query($conn, $sql);
+  $resultado_post = mysqli_query($conn, $sql);
 
-    $totalPosts = mysqli_num_rows($resultado_post);
+  $totalPosts = mysqli_num_rows($resultado_post);
 
-    return $totalPosts;
+  return $totalPosts;
 }
 
 
@@ -461,55 +497,9 @@ main();
 
 
   <!-- ======= Header ======= -->
-  <header id="header" class="fixed-top">
-    <div class="container d-flex align-items-center">
-
-      <h1 class="logo me-auto"><a href="index.html"><span>Com</span>pany</a></h1>
-      <!-- Uncomment below if you prefer to use an image logo -->
-      <!-- <a href="index.html" class="logo me-auto me-lg-0"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
-
-      <nav id="navbar" class="navbar order-last order-lg-0">
-        <ul>
-          <li><a href="index.html">Home</a></li>
-
-          <li class="dropdown"><a href="#"><span>About</span> <i class="bi bi-chevron-down"></i></a>
-            <ul>
-              <li><a href="about.html">About Us</a></li>
-              <li><a href="team.html">Team</a></li>
-              <li><a href="testimonials.html">Testimonials</a></li>
-              <li class="dropdown"><a href="#"><span>Deep Drop Down</span> <i class="bi bi-chevron-right"></i></a>
-                <ul>
-                  <li><a href="#">Deep Drop Down 1</a></li>
-                  <li><a href="#">Deep Drop Down 2</a></li>
-                  <li><a href="#">Deep Drop Down 3</a></li>
-                  <li><a href="#">Deep Drop Down 4</a></li>
-                  <li><a href="#">Deep Drop Down 5</a></li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-
-          <li><a href="services.html">Services</a></li>
-          <li><a href="portfolio.html">Portfolio</a></li>
-          <li><a href="pricing.html">Pricing</a></li>
-          <li><a href="blog.php" class="active">Blog</a></li>
-          <li><a href="contact.html">Contact</a></li>
-
-        </ul>
-        <i class="bi bi-list mobile-nav-toggle"></i>
-      </nav>
-      <!-- .navbar -->
-
-      <div class="header-social-links d-flex">
-        <a href="#" class="twitter"><i class="bu bi-twitter"></i></a>
-        <a href="#" class="facebook"><i class="bu bi-facebook"></i></a>
-        <a href="#" class="instagram"><i class="bu bi-instagram"></i></a>
-        <a href="#" class="linkedin"><i class="bu bi-linkedin"></i></i></a>
-      </div>
-
-    </div>
-  </header>
-  <!-- End Header -->
+  <?php
+  include("estruturaPrincipal/header.php");
+  ?>
 
   <main id="main">
 
@@ -520,7 +510,7 @@ main();
         <div class="d-flex justify-content-between align-items-center">
           <h2>Blog Single</h2>
           <ol>
-            <li><a href="index.html">Home</a></li>
+            <li><a href="index.php">Home</a></li>
             <li><a href="blog.php">Blog</a></li>
             <li>Blog Single</li>
           </ol>
@@ -545,14 +535,24 @@ main();
 
               <h2 class="entry-title">
                 <a href="blog-single.html"><?php echo $cabecalho["titulo"]; ?></a>
+
+                <?php
+                if (isset($_SESSION["user_ID"]) && $_SESSION["user_ID"] == $criador) {
+                ?>
+                  <div class="float-end">
+                    <a href="<?php echo "post-editar.php?id_post=" . $id_post?>"><i class="bi bi-pencil-square"> Editar </i></a>
+                  </div>
+                <?php
+                }
+                ?>
               </h2>
 
               <div class="entry-meta">
                 <ul>
                   <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a href="blog-single.html"><?php echo $cabecalho["nomeUser"]; ?></a></li>
                   <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a href="blog-single.html"><time datetime="2020-01-01"><?php echo $cabecalho["timeStamp"]; ?></time></a></li>
-                  <!-- <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> <a href="blog-single.html"><?php //echo $totalComentarios; 
-                                                                                                                        ?> Comentários</a></li> -->
+                  <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> <a href="blog-single.html"><?php echo $totalComentarios;
+                                                                                                                    ?> Comentários</a></li>
                 </ul>
               </div>
 
@@ -566,13 +566,14 @@ main();
               <div class="entry-footer">
                 <i class="bi bi-folder"></i>
                 <ul class="cats">
-                  <li><a href="#"><?php echo $cabecalho["categoria"]; ?></a></li>
+                  <li><a href="<?php echo "blog.php?categoria=" . $cabecalho["categoria_ID"]; ?>"><?php echo $cabecalho["categoria"]; ?></a></li>
                 </ul>
 
-                <i class="bi bi-tags"></i>
+                <!-- <i class="bi bi-tags"></i>
                 <ul class="tags">
-                  <?php imprimirTags(); ?>
-                </ul>
+                  <?php //imprimirTags(); 
+                  ?>
+                </ul> -->
               </div>
 
             </article><!-- End blog entry -->
@@ -598,7 +599,7 @@ main();
               ?>
               <div class="reply-form">
                 <?php
-                if (isset($username) && $username != "") {
+                if (isset($_SESSION["user_nome"])) {
                 ?>
                   <h4>Deixe o seu comentário</h4>
                   <form action="#" method="post">
@@ -618,7 +619,7 @@ main();
                   <div class="container coment-div">
                     <span class="material-icons coment-span">lock</span>
                     <p class="coment-span text-center">Para comentar é necessário ter uma conta</p>
-                    <a class="coment-span" href="">Crie uma conta aqui!</a>
+                    <a class="coment-span" href="criarConta/">Crie uma conta aqui!</a>
                   </div>
                 <?php
                 }
@@ -631,52 +632,52 @@ main();
 
           <div class="col-lg-4">
 
-                        <div class="sidebar">
+            <div class="sidebar">
 
-                            <h3 class="sidebar-title">Search</h3>
-                            <div class="sidebar-item search-form">
-                                <form action="blog.php" method="get">
-                                    <input type="text" name="pesquisa">
-                                    <button type="submit"><i class="bi bi-search"></i></button>
-                                </form>
-                            </div><!-- End sidebar search formn-->
+              <h3 class="sidebar-title">Search</h3>
+              <div class="sidebar-item search-form">
+                <form action="blog.php" method="get">
+                  <input type="text" name="pesquisa">
+                  <button type="submit"><i class="bi bi-search"></i></button>
+                </form>
+              </div><!-- End sidebar search formn-->
 
-                            <h3 class="sidebar-title">Categories</h3>
-                            <div class="sidebar-item categories">
-                                <ul>
-                                    <?php
-                                    imprimirCategorias();
-                                    ?>
-                                </ul>
-                            </div><!-- End sidebar categories-->
+              <h3 class="sidebar-title">Categories</h3>
+              <div class="sidebar-item categories">
+                <ul>
+                  <?php
+                  imprimirCategorias();
+                  ?>
+                </ul>
+              </div><!-- End sidebar categories-->
 
-                            <h3 class="sidebar-title">Recent Posts</h3>
-                            <div class="sidebar-item recent-posts">
-                                <?php
-                                imprimirPostsRecentes();
-                                ?>
-                            </div><!-- End sidebar recent posts-->
+              <h3 class="sidebar-title">Recent Posts</h3>
+              <div class="sidebar-item recent-posts">
+                <?php
+                imprimirPostsRecentes();
+                ?>
+              </div><!-- End sidebar recent posts-->
 
-                            <h3 class="sidebar-title">Tags</h3>
-                            <div class="sidebar-item tags">
-                                <ul>
-                                    <li><a href="#">App</a></li>
-                                    <li><a href="#">IT</a></li>
-                                    <li><a href="#">Business</a></li>
-                                    <li><a href="#">Mac</a></li>
-                                    <li><a href="#">Design</a></li>
-                                    <li><a href="#">Office</a></li>
-                                    <li><a href="#">Creative</a></li>
-                                    <li><a href="#">Studio</a></li>
-                                    <li><a href="#">Smart</a></li>
-                                    <li><a href="#">Tips</a></li>
-                                    <li><a href="#">Marketing</a></li>
-                                </ul>
-                            </div><!-- End sidebar tags-->
+              <h3 class="sidebar-title">Tags</h3>
+              <div class="sidebar-item tags">
+                <ul>
+                  <li><a href="#">App</a></li>
+                  <li><a href="#">IT</a></li>
+                  <li><a href="#">Business</a></li>
+                  <li><a href="#">Mac</a></li>
+                  <li><a href="#">Design</a></li>
+                  <li><a href="#">Office</a></li>
+                  <li><a href="#">Creative</a></li>
+                  <li><a href="#">Studio</a></li>
+                  <li><a href="#">Smart</a></li>
+                  <li><a href="#">Tips</a></li>
+                  <li><a href="#">Marketing</a></li>
+                </ul>
+              </div><!-- End sidebar tags-->
 
-                        </div><!-- End sidebar -->
+            </div><!-- End sidebar -->
 
-                    </div><!-- End blog sidebar -->
+          </div><!-- End blog sidebar -->
 
         </div>
 

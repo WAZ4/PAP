@@ -1,11 +1,16 @@
 <?php
 include("../conectarBd.php");
+session_start();
+
 $tipo = false;
+
+if (isset($_SESSION["user_email"]) || isset($_SESSION["user_nome"]) || isset($_SESSION["NIVEL_UTILIZADOR"])) header("Location: ../index.php");
+
 if (isset($_GET["hash"]) && verificarHash($_GET["hash"])) {
   $tipo = true;
   header("refresh:5;url=../login/");
 } else if (isset($_GET["hash"])) {
-    header("Location: ../index.html");
+    header("Location: ../index.php");
 }
 function verificarHash($hash)
 {

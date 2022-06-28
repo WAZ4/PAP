@@ -1,12 +1,13 @@
 <!-- Arranjar links quando o Oleo e do tipo 3 -->
 <?php
 include_once("conectarBd.php");
+session_start();
 
 function imprimirProtocolos()
 {
     $filtro = " WHERE Protocolo_ID != -1";
     if (isset($_GET["pesquisa"]) && $_GET["pesquisa"] != "") {
-        $filtro .= " AND Protocolo_Patologia LIKE '%". $_GET["pesquisa"] . "%' OR Protocolo_Descricao LIKE '%" . $_GET["pesquisa"]. "%'"; //para usar com a barra de pesquisas
+        $filtro .= " AND Protocolo_Patologia LIKE '%" . $_GET["pesquisa"] . "%' OR Protocolo_Descricao LIKE '%" . $_GET["pesquisa"] . "%'"; //para usar com a barra de pesquisas
     }
 
     $sql = "SELECT * FROM Protocolo_Master" . $filtro;
@@ -23,9 +24,9 @@ function imprimirProtocolos()
         $resto = $qntRes % 3;
 
         $qntCol = array();
-        $qntCol[0] = $resto == 0 ? $qntRes / 3 :  ($qntRes - $resto) / 3 + 1;
-        $qntCol[1] = $resto == 2 ? ($qntRes - $resto) / 3 + 1 :  ($qntRes-$resto) / 3;
-        $qntCol[2] = ($qntRes-$resto) / 3;
+        $qntCol[0] = $resto == 0 ? $qntRes / 3 : ($qntRes - $resto) / 3 + 1;
+        $qntCol[1] = $resto == 2 ? ($qntRes - $resto) / 3 + 1 : ($qntRes - $resto) / 3;
+        $qntCol[2] = ($qntRes - $resto) / 3;
 
         // var_dump($qntCol);
 
@@ -65,14 +66,13 @@ function imprimirProtocolos()
 
                         while ($row_detalhe_oleo = $result_protocolo_detalhe_oleo->fetch_assoc()) {
                             if ($row_detalhe_oleo["Oleo_Tipo"] == 3) {
-                                    
+
                                 if (!isset($detalhe_titulo[$row_detalhe_oleo["Detalhe_ID"]])) {
                                     $detalhe_titulo += [$row_detalhe_oleo["Detalhe_ID"] => ucfirst($row_detalhe_oleo["Oleo_Nome"])];
                                 } else {
                                     $detalhe_titulo[$row_detalhe_oleo["Detalhe_ID"]] .= ', ' . ucfirst($row_detalhe_oleo["Oleo_Nome"]);
                                 }
-                            }
-                            else {
+                            } else {
                                 if (!isset($detalhe_titulo[$row_detalhe_oleo["Detalhe_ID"]])) {
                                     $detalhe_titulo += [$row_detalhe_oleo["Detalhe_ID"] => "<a href='oleo-single.php?Oleo_ID=" .  $row_detalhe_oleo["Oleo_ID"] . "' rel='noopener noreferrer' target='_blank'>" . ucfirst($row_detalhe_oleo["Oleo_Nome"]) . "</a>"];
                                 } else {
@@ -210,7 +210,7 @@ function imprimirProtocolos()
 
     <!-- Template Main CSS File -->
     <link href="assets/css/style.css" rel="stylesheet">
-    
+
 
     <!-- =======================================================
   * Template Name: Company - v4.6.1
@@ -275,53 +275,9 @@ function imprimirProtocolos()
     </div>
 
     <!-- ======= Header ======= -->
-    <header id="header" class="fixed-top">
-        <div class="container d-flex align-items-center">
-
-            <h1 class="logo me-auto"><a href="index.html"><span>Com</span>pany</a></h1>
-            <!-- Uncomment below if you prefer to use an image logo -->
-            <!-- <a href="index.html" class="logo me-auto me-lg-0"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
-
-            <nav id="navbar" class="navbar order-last order-lg-0">
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-
-                    <li class="dropdown"><a href="#"><span>About</span> <i class="bi bi-chevron-down"></i></a>
-                        <ul>
-                            <li><a href="about.html">About Us</a></li>
-                            <li><a href="team.html">Team</a></li>
-                            <li><a href="testimonials.html">Testimonials</a></li>
-                            <li class="dropdown"><a href="#"><span>Deep Drop Down</span> <i class="bi bi-chevron-right"></i></a>
-                                <ul>
-                                    <li><a href="#">Deep Drop Down 1</a></li>
-                                    <li><a href="#">Deep Drop Down 2</a></li>
-                                    <li><a href="#">Deep Drop Down 3</a></li>
-                                    <li><a href="#">Deep Drop Down 4</a></li>
-                                    <li><a href="#">Deep Drop Down 5</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <li><a href="services.html">Services</a></li>
-                    <li><a href="protocolo.php" class="active">Protocolos</a></li>
-                    <li><a href="pricing.html">Pricing</a></li>
-                    <li><a href="blog.html">Blog</a></li>
-                    <li><a href="contact.html">Contact</a></li>
-
-                </ul>
-                <i class="bi bi-list mobile-nav-toggle"></i>
-            </nav><!-- .navbar -->
-
-            <div class="header-social-links d-flex">
-                <a href="#" class="twitter"><i class="bu bi-twitter"></i></a>
-                <a href="#" class="facebook"><i class="bu bi-facebook"></i></a>
-                <a href="#" class="instagram"><i class="bu bi-instagram"></i></a>
-                <a href="#" class="linkedin"><i class="bu bi-linkedin"></i></i></a>
-            </div>
-
-        </div>
-    </header><!-- End Header -->
+    <?php
+    include("estruturaPrincipal/header.php");
+    ?>
 
     <main id="main">
 
@@ -332,7 +288,7 @@ function imprimirProtocolos()
                 <div class="d-flex justify-content-between align-items-center">
                     <h2>Protocolo</h2>
                     <ol>
-                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index.php">Home</a></li>
                         <li>Protocolo</li>
                     </ol>
                 </div>
@@ -350,7 +306,7 @@ function imprimirProtocolos()
                     <div class="col-lg-4 d-flex justify-content-center">
                         <form action="#" method="get" class="w-100">
                             <div class="input-group mb-3 mt-3">
-                                <input type="text" class="form-control border-end-0 " name="pesquisa" placeholder="Patologia ou Sintomas associados" aria-label="Recipient's username" aria-describedby="button-addon2" value="<?php if(isset($_GET["pesquisa"])) echo $_GET["pesquisa"];?>">
+                                <input type="text" class="form-control border-end-0 " name="pesquisa" placeholder="Patologia ou Sintomas associados" aria-label="Recipient's username" aria-describedby="button-addon2" value="<?php if (isset($_GET["pesquisa"])) echo $_GET["pesquisa"]; ?>">
                                 <button class="btn border border-start-0 material-symbols-outlined font fs-4" type="submit" id="button-addon2">find_in_page</button>
                             </div>
                         </form>

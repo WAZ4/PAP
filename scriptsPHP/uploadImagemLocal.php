@@ -3,7 +3,7 @@
 //formato de dados no servidor
 //com o post eu consigo tirar o id da pagina    
 // Allowed origins to upload images
-$accepted_origins = array("http://localhost", "");
+$accepted_origins = array("http://localhost", "http://localhost:8888");
 
 // Images upload path
 $imageFolder = "../uploads/";

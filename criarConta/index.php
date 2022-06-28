@@ -1,11 +1,65 @@
 <?php
 include("../conectarBd.php");
-
-$erro ="";
-
+session_start();
+if (isset($_SESSION["user_email"]) || isset($_SESSION["user_nome"]) || isset($_SESSION["NIVEL_UTILIZADOR"])) header("Location: ../index.php");
+$erro = "";
 // var_dump($_POST);
 
 //Esta funcao verifica se existe um utilizador com o email na base de dados, caso exista retorna false caso nao exista retorna true
+function inserirImagem($imgurl)
+{
+    $erro = "";
+    $target_dir = "imgsPerfil/";
+    $target_file = $target_dir . $imgurl . substr($_FILES["fileToUpload"]["name"], strpos($_FILES["fileToUpload"]["name"], '.'));
+    $uploadOk = 1;
+    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+    // Check if image file is a actual image or fake image
+    if (isset($_POST["submit"])) {
+        $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
+        if ($check !== false) {
+            // echo "File is an image - " . $check["mime"] . ".";
+            $uploadOk = 1;
+        } else {
+            $erro = "File is not an image.";
+            $uploadOk = 0;
+        }
+    }
+
+    // Check if file already exists
+    if (file_exists($target_file)) {
+        $erro = "Sorry, file already exists.";
+        $uploadOk = 0;
+    }
+
+    // Check file size
+    if ($_FILES["fileToUpload"]["size"] > 500000) {
+        $erro = "Sorry, your file is too large.";
+        $uploadOk = 0;
+    }
+
+    // Allow certain file formats
+    if (
+        $imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+    ) {
+        $erro = "Sorry, only JPG, JPEG, PNG files are allowed.";
+        $uploadOk = 0;
+    }
+    // Check if $uploadOk is set to 0 by an error
+    if ($uploadOk == 0) {
+        $erro = "Sorry, your file was not uploaded.";
+        // if everything is ok, try to upload file
+        return false;
+    } else {
+        if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], "../" . $target_file)) {
+            return $target_file;
+            // echo "The file " . htmlspecialchars(basename($_FILES["fileToUpload"]["name"])) . " has been uploaded.";
+        } else {
+            return 0;
+            $erro = "Sorry, there was an error uploading your file.";
+        }
+    }
+}
 function verificarEmail($email)
 {
     $sql = "SELECT user_email FROM user WHERE user_email = ?";
@@ -26,28 +80,44 @@ function registar($email, $nome, $password)
     $nome = strip_tags(trim($nome));
     $email = strip_tags(trim($email));
     $hash = md5(uniqid(rand()));
+    $imgurl = uniqid(time());
+    $mark = 0;
 
-    // verificar se o email já exise na base de dados
+    if (strlen($nome) <= 2) {
+        $erro = "Nome tem de ter no minimo 3 caracteres";
+        return;
+    }
+
+    if (isset($_POST["mark"]) && $_POST["mark"] == "on") {
+        $mark = 1;
+    }
+    
+
     if (!verificarEmail($email)) {
         $erro = "Email já está associado a uma conta existente, por favor utilize outro email ou recupere a sua conta.";
         return;
     }
-    
+
+    if (($imgurl = inserirImagem($imgurl)) == false) {
+        $erro = $imgurl;
+        return;
+    }
+
     $password = password_hash($password, PASSWORD_DEFAULT);
 
     $nome = trim($nome);
 
     $conn = OpenCon();
 
-    $sql = "INSERT INTO user (user_nome, user_email, user_password, user_nivel, user_hash) VALUES ( ?, ?, ?, 0, ?)";
+    $sql = "INSERT INTO user (user_nome, user_email, user_password, user_nivel, user_hash, user_img, user_mark) VALUES ( ?, ?, ?, 0, ?, ?, ?)";
     $conn = OpenCon();
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssss", $nome, $email, $password, $hash);
+    $stmt->bind_param("sssssi", $nome, $email, $password, $hash, $imgurl, $mark);
     $stmt->execute();
     $resultado_user = $stmt->get_result();
     CloseCon($conn);
 
-    header("Location: ativarConta.php?temp=".$hash);
+    header("Location: ativarConta.php?temp=" . $hash);
 }
 
 if (isset($_POST)) {
@@ -74,6 +144,9 @@ if (isset($_POST)) {
     <link rel="stylesheet" type="text/css" href="assets/css/style.css" />
 </head>
 
+<style>
+</style>
+
 <body>
     <div class="container-fluid conya">
         <div class="side-left">
@@ -87,7 +160,7 @@ if (isset($_POST)) {
             </div>
         </div>
         <div class="side-right">
-            <form action="#" method="post">
+            <form action="#" method="post" enctype="multipart/form-data">
 
                 <?php
                 if ($erro != "") {
@@ -103,9 +176,20 @@ if (isset($_POST)) {
                 ?>
 
                 <input type="hidden" name="registarForm">
-                <a href="index.html" style="font-size: 2rem;"><span style="color: #bf46e8">Oil</span>Central</a>
+                <a href="../index.php" style="font-size: 2rem;"><span style="color: #bf46e8">Oil</span>Central</a>
 
                 <h2>Introduza os dados para criar a conta</h2>
+
+                <div class="form-row">
+                    <div class="col-sm-12 text-center">
+                        <img id="frame" src="../imgs/abstract-user-flat-3.png" alt="Example image" class="d-inline-block w-50" />
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label for="">Imagem de perfil</label>
+                    <input class="form-control form-control-sm" type="file" id="formFile" onchange="preview()" name="fileToUpload" required>
+                </div>
 
                 <div class="form-row">
                     <label for="">Nome</label>
@@ -127,17 +211,13 @@ if (isset($_POST)) {
                     <label for="">Reintroduza a Password</label>
                     <input type="password" placeholder="Password" class="form-control form-control-sm" name="password2" required>
                 </div>
-
-
+                
                 <div class="form-row row skjh">
-                    <div class="col-7 left no-padding">
-                        <input type="checkbox" name="lembrarDispositivo"> Lembrar-me neste dispositivo
-                        <!-- Perguntar ao professor a linguagem certa dos campos-->
+                    <div class="col-12 left no-padding">
+                        <input type="checkbox" name="mark"> Newsletter de eventos e promocões
+                        <!-- Perguntar ao professor a linguagem -->
                     </div>
-
-
                 </div>
-
 
                 <div class="form-row dfr">
                     <button class="btn btn-sm btn-success">Criar Conta</button>
@@ -165,5 +245,15 @@ if (isset($_POST)) {
 <script src="assets/js/bootstrap.min.js"></script>
 <script src="assets/js/script.js"></script>
 
+<script>
+    function preview() {
+        frame.src = URL.createObjectURL(event.target.files[0]);
+    }
+
+    function clearImage() {
+        document.getElementById('formFile').value = "../imgs/abstract-user-flat-3.png";
+        frame.src = "";
+    }
+</script>
 
 </html>

@@ -1,7 +1,7 @@
 <?php
 include("../conectarBd.php");
 session_start();
-if (isset($_SESSION["user_email"]) || isset($_SESSION["user_nome"]) || isset($_SESSION["NIVEL_UTILIZADOR"])) header("Location: ../index.html");
+if (isset($_SESSION["user_email"]) || isset($_SESSION["user_nome"]) || isset($_SESSION["NIVEL_UTILIZADOR"])) header("Location: ../index.php");
 
 $erro = "";
 
@@ -23,13 +23,19 @@ function verificarLogin($email, $password)
     if ($resultado_user->num_rows != 0) {
 
         $row = $resultado_user->fetch_assoc();
-
-        if ($row["user_email"] == $email && password_verify($password, $row["user_password"])) {
+        if ($row["user_nivel"] == 0) {
+            $erro = "Para iniciar sessão percisa de ativar a conta.";
+        }
+        else if ($row["user_email"] == $email && password_verify($password, $row["user_password"])) {
+            $_SESSION["user_password"] = $row["user_password"];
+            $_SESSION["user_ID"] = $row["user_ID"];
             $_SESSION["user_email"] = $email;
+            $_SESSION["user_img"] = $row["user_img"];
             $_SESSION["user_nome"] = $row["user_nome"];
             $_SESSION["NIVEL_UTILIZADOR"] = $row["user_nivel"];
+            $_SESSION["user_mark"] = $row["user_mark"];
 
-            header("Location: ../index.html");
+            header("Location: ../index.php");
             return;
         } else {
             $erro = "Dados Incorretos";
@@ -86,7 +92,7 @@ if (isset($_POST["formLogin"])) {
 
                 <input type="hidden" name="formLogin">
 
-                <a href="index.html" style="font-size: 2rem;"><span style="color: #bf46e8">Oil</span>Central</a>
+                <a href="../index.php" style="font-size: 2rem;"><span style="color: #bf46e8">Oil</span>Central</a>
 
                 <h2>Faça login na sua conta</h2>
 

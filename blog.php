@@ -58,7 +58,7 @@ function imprimirPosts($pesquisa = "")
     $conn = OpenCon();
 
     // $sql = "SELECT * FROM post LIMIT 4 OFFSET ". ($pagina-1) *4 . " WHERE titulo LIKE '$". $a ."%'";
-    $sql = "SELECT * FROM post " . $pesquisa . " LIMIT 4 OFFSET " . ($pagina - 1) * 4;
+    $sql = "SELECT post.*, user.user_nome as username FROM post RIGHT JOIN user ON user.user_ID = post.user_ID " . $pesquisa . " LIMIT 4 OFFSET " . ($pagina - 1) * 4;
 
     $resultado_post = mysqli_query($conn, $sql);
 
@@ -223,6 +223,7 @@ function imprimirTags()
         font-size: 14px;
         border-radius: 4px;
     }
+
     .criar-post:hover {
         /* display: block;
         background: #bf46e8; */
@@ -249,7 +250,7 @@ function imprimirTags()
                 <div class="d-flex justify-content-between align-items-center">
                     <h2>Blog</h2>
                     <ol>
-                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index.php">Home</a></li>
                         <li>Blog</li>
                     </ol>
                 </div>
@@ -278,6 +279,20 @@ function imprimirTags()
                     </div><!-- End blog entries list -->
 
                     <div class="col-lg-4">
+
+                        <div class="sidebar text-center mb-4">
+                            <?php
+                            if (isset($_SESSION["user_ID"])) {
+                            ?>
+                                <a href="post-criar.php" class="criar-post"> <i class="bi bi-plus"></i> Criar Publicação</a>
+                                <?php
+                            } else {
+                                ?>
+                                Para publicar, precisa de <a href="login/"> iniciar sessão</a> ou <a href="criarConta/"> criar uma conta!</a>
+                            <?php
+                            }
+                            ?>
+                        </div>
 
                         <div class="sidebar">
 
@@ -315,10 +330,6 @@ function imprimirTags()
                             </div>End sidebar tags -->
 
                         </div><!-- End sidebar -->
-
-                        <div class="sidebar">
-                            <a href="post-criar.php" class="criar-post">Criar Post</a>
-                        </div>
 
                     </div><!-- End blog sidebar -->
 
