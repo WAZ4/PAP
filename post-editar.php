@@ -20,7 +20,7 @@ function verificarCriador($id_post)
     return true;
 }
 
-if (!(isset($_GET["id_post"]) && verificarCriador($_GET["id_post"]))) {
+if ((!(isset($_GET["id_post"]) && verificarCriador($_GET["id_post"]))) && $_SESSION["NIVEL_UTILIZADOR"] != 2) {
     header("Location: index.php");
 }
 $nr_post = $_GET["id_post"];
@@ -47,27 +47,6 @@ function lerDadosBd($id_post)
     $jsonString = $row["jsonString"];
 }
 
-function dataParaPortugues($data)
-{
-    // jan. fev. mar. abr. maio jun. jul. ago. set. out. nov. dez.
-    $mesesPt = array('01' => "jan", '02' => "fev", '03' => "mar", '04' => "abr", '05' => "maio", '06' => "jun", '07' => "jul", '08' => "ago", '09' => "set", '10' => "out", '11' => 'nov', '12' => "dez");
-    $mesIng = substr($data, 0, 2);
-    $mes = $mesesPt[$mesIng] . substr($data, 2, strlen($data) - 2);
-    return $mes;
-}
-
-function getNrPost()
-{
-    $sql = "SELECT COUNT(id_post) AS numeroDePosts FROM post;";
-
-    $conn = OpenCon();
-
-    $result_post = mysqli_query($conn, $sql);
-
-    CloseCon($conn);
-
-    return mysqli_fetch_assoc($result_post)["numeroDePosts"] + 1;
-}
 //Atualizar conteudo do editor de texto na base de dados
 function atualizarPostConteudoBaseDeDados($nr_post)
 {
@@ -135,6 +114,7 @@ function atualizarPostConteudoBaseDeDados($nr_post)
         }
     }
 }
+
 //Atualizar os dados do cabecalho do post na base de dados
 function atualizarPostBaseDeDados($nr_post)
 {
@@ -148,42 +128,6 @@ function atualizarPostBaseDeDados($nr_post)
     $result_protocolo_detalhe = $stmt->get_result();
     CloseCon($conn);
 }
-//Inserir as tags na base de dados ACABAR
-function inserirTagsBaseDados($nr_post, $tags)
-{
-    // foreach ($ags as $key ) {
-    //     # code...
-    // }
-    $sql = "SELECT COUNT(id_post) AS numeroDePosts FROM post;";
-
-    $conn = OpenCon();
-
-    $result_post = mysqli_query($conn, $sql);
-
-    CloseCon($conn);
-
-    return mysqli_fetch_assoc($result_post)["numeroDePosts"];
-}
-
-function listarCategorias()
-{
-    $conn = OpenCon();
-
-    $stmt = $conn->prepare("SELECT * FROM post_categoria");
-    $stmt->execute();
-
-    $resultado_post_categoria = $stmt->get_result();
-
-    $stmt->free_result();
-    $stmt->close();
-
-    while ($row = $resultado_post_categoria->fetch_assoc()) {
-?>
-        <option value="<?php echo $row["Categoria_ID"]; ?>"><?php echo $row["Categoria_Nome"]; ?></option>
-
-<?php
-    }
-}
 
 lerDadosBd($nr_post);
 
@@ -196,10 +140,6 @@ if (isset($_POST["post-criar-submit"])) {
         atualizarPostConteudoBaseDeDados($nr_post);
     }
 
-    //Inserir Tags
-    // if (isset($_POST["tags"])) {
-    //     inserirTagsBaseDados($nr_post, $_POST["tags"]);
-    // }
     header('Location: post-single.php?id_post=' . $nr_post);
 }
 // var_dump($_POST);

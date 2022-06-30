@@ -17,15 +17,15 @@ function getTotalComentarios($id_post)
 
 function getTotalPosts($pesquisa = "")
 {
-    if (isset($_GET["pesquisa"]) && $pesquisa == "") $pesquisa .= " WHERE titulo LIKE '%" . $_GET["pesquisa"] . "%'";
-    else if (isset($_GET["categoria"]) && $pesquisa == "") $pesquisa = " WHERE categoria =" . $_GET["categoria"];
+    if (isset($_GET["pesquisa"]) && $pesquisa == "") $pesquisa .= " AND titulo LIKE '%" . $_GET["pesquisa"] . "%'";
+    else if (isset($_GET["categoria"]) && $pesquisa == "") $pesquisa .= " AND categoria =" . $_GET["categoria"];
 
     $conn = OpenCon();
 
-    $sql = "SELECT * FROM post " . $pesquisa;
+    $sql = "SELECT * FROM post WHERE estado != 0 " . $pesquisa;
 
     $resultado_post = mysqli_query($conn, $sql);
-
+    // var_dump($sql);
     $totalPosts = mysqli_num_rows($resultado_post);
 
     return $totalPosts;
@@ -51,14 +51,16 @@ function getParagrafoInicial($id_post)
 function imprimirPosts($pesquisa = "")
 {
     global $pagina;
-    if (isset($_GET["pesquisa"])) $pesquisa .= "WHERE titulo LIKE '%" . $_GET["pesquisa"] . "%'";
-    else if (isset($_GET["categoria"])) $pesquisa = " WHERE categoria LIKE '%" . $_GET["categoria"] . "%'";
+
+    //  Filtros
+    if (isset($_GET["pesquisa"]) && $pesquisa == "") $pesquisa .= " AND titulo LIKE '%" . $_GET["pesquisa"] . "%'";
+    else if (isset($_GET["categoria"]) && $pesquisa == "") $pesquisa .= " AND categoria =" . $_GET["categoria"];
 
 
     $conn = OpenCon();
 
     // $sql = "SELECT * FROM post LIMIT 4 OFFSET ". ($pagina-1) *4 . " WHERE titulo LIKE '$". $a ."%'";
-    $sql = "SELECT post.*, user.user_nome as username FROM post RIGHT JOIN user ON user.user_ID = post.user_ID " . $pesquisa . " LIMIT 4 OFFSET " . ($pagina - 1) * 4;
+    $sql = "SELECT post.*, user.user_nome as username FROM post RIGHT JOIN user ON user.user_ID = post.user_ID WHERE estado != 0 " . $pesquisa . " LIMIT 4 OFFSET " . ($pagina - 1) * 4;
 
     $resultado_post = mysqli_query($conn, $sql);
 
@@ -68,7 +70,7 @@ function imprimirPosts($pesquisa = "")
 
     $numeroDePaginas = ceil(getTotalPosts() / 4);
     while ($row = mysqli_fetch_assoc($resultado_post)) {
-
+        if ($row["id_post"] == NULL) break;
 ?>
         <article class="entry">
 
@@ -107,24 +109,49 @@ function imprimirPaginacao($pagina)
     ?>
         <li class="active">
             <form action="#" method="get" id="0"><a onclick="document.getElementById('1').submit();">1</a>
+                <?php if (isset($_GET["categoria"])) { ?>
+                    <input type="hidden" name="categoria" value="<?php echo $_GET["categoria"]; ?>">
+                <?php
+                }
+                ?>
         </li><input type="hidden" name="pagina" value="1"></form>
         <li>
             <form action="#" method="get" id="2"><a onclick="document.getElementById('2').submit();">2</a>
+                <?php if (isset($_GET["categoria"])) { ?>
+                    <input type="hidden" name="categoria" value="<?php echo $_GET["categoria"]; ?>">
+                <?php
+                }
+                ?>
         </li><input type="hidden" name="pagina" value="2"></form>
     <?php
     } else if ($pagina != 1) {
     ?>
         <li>
             <form action="#" method="get" id="<?php echo $pagina - 1; ?>"><a onclick="document.getElementById('<?php echo $pagina - 1; ?>').submit();"><?php echo $pagina - 1; ?></a>
+                <?php if (isset($_GET["categoria"])) { ?>
+                    <input type="hidden" name="categoria" value="<?php echo $_GET["categoria"]; ?>">
+                <?php
+                }
+                ?>
         </li><input type="hidden" name="pagina" value="<?php echo $pagina - 1; ?>"></form>
         <li class="active">
             <form action="#" method="get" id="<?php echo $pagina; ?>"><a onclick="document.getElementById('<?php echo $pagina; ?>').submit();"><?php echo $pagina; ?></a>
+                <?php if (isset($_GET["categoria"])) { ?>
+                    <input type="hidden" name="categoria" value="<?php echo $_GET["categoria"]; ?>">
+                <?php
+                }
+                ?>
         </li><input type="hidden" name="pagina" value="<?php echo $pagina; ?>"></form>
         <?php
         if ($pagina <= floor(getTotalPosts() / 4)) {
         ?>
             <li>
                 <form action="#" method="get" id="<?php echo $pagina + 1; ?>"><a onclick="document.getElementById('<?php echo $pagina + 1; ?>').submit();"><?php echo $pagina + 1; ?></a>
+                    <?php if (isset($_GET["categoria"])) { ?>
+                        <input type="hidden" name="categoria" value="<?php echo $_GET["categoria"]; ?>">
+                    <?php
+                    }
+                    ?>
             </li><input type="hidden" name="pagina" value="<?php echo $pagina + 1; ?>"></form>
         <?php
         }
@@ -145,7 +172,13 @@ function imprimirCategorias()
         ?>
         <li><a href="blog.php?categoria=<?php echo $row["Categoria_ID"]; ?>">
                 <?php echo $row["Categoria_Nome"]; ?>
-                <span>(<?php echo getTotalPosts(" WHERE categoria = " . $row["Categoria_ID"]) ?>)</span>
+                <span>(<?php
+                        $temp = NULL;
+                        if (isset($_GET["categoria"])) $temp = $_GET["categoria"];
+                        $_GET["categoria"] = $row["Categoria_ID"];
+                        echo getTotalPosts();
+                        if ($temp != NULL) $_GET["categoria"] = $temp;
+                        ?>)</span>
             </a></li>
     <?php
     }
@@ -248,10 +281,10 @@ function imprimirTags()
             <div class="container">
 
                 <div class="d-flex justify-content-between align-items-center">
-                    <h2>Blog</h2>
+                    <h2><a href="blog.php" class="text-white">Post's</a></h2>
                     <ol>
                         <li><a href="index.php">Home</a></li>
-                        <li>Blog</li>
+                        <li><a href="blog.php">Post's</a></li>
                     </ol>
                 </div>
 
@@ -260,7 +293,7 @@ function imprimirTags()
 
         <!-- ======= Blog Section ======= -->
         <section id="blog" class="blog">
-            <div class="container" data-aos="fade-up">
+            <div class="container" data-aos="">
 
                 <div class="row">
 
@@ -285,9 +318,9 @@ function imprimirTags()
                             if (isset($_SESSION["user_ID"])) {
                             ?>
                                 <a href="post-criar.php" class="criar-post"> <i class="bi bi-plus"></i> Criar Publicação</a>
-                                <?php
+                            <?php
                             } else {
-                                ?>
+                            ?>
                                 Para publicar, precisa de <a href="login/"> iniciar sessão</a> ou <a href="criarConta/"> criar uma conta!</a>
                             <?php
                             }
@@ -296,15 +329,15 @@ function imprimirTags()
 
                         <div class="sidebar">
 
-                            <h3 class="sidebar-title">Search</h3>
+                            <h3 class="sidebar-title">Procurar</h3>
                             <div class="sidebar-item search-form">
-                                <form action="#" method="get">
+                                <form action="blog.php" method="get">
                                     <input type="text" name="pesquisa">
                                     <button type="submit"><i class="bi bi-search"></i></button>
                                 </form>
                             </div><!-- End sidebar search formn-->
 
-                            <h3 class="sidebar-title">Categories</h3>
+                            <h3 class="sidebar-title">Categorias</h3>
                             <div class="sidebar-item categories">
                                 <ul>
                                     <?php
@@ -313,7 +346,7 @@ function imprimirTags()
                                 </ul>
                             </div><!-- End sidebar categories-->
 
-                            <h3 class="sidebar-title">Recent Posts</h3>
+                            <h3 class="sidebar-title">Post's Recentes</h3>
                             <div class="sidebar-item recent-posts">
                                 <?php
                                 imprimirPostsRecentes();
@@ -322,11 +355,19 @@ function imprimirTags()
 
                             <!-- <h3 class="sidebar-title">Tags</h3>
                             <div class="sidebar-item tags">
-                                <ul>
-                                    <?php
-                                    // imprimirTags();
-                                    ?>
-                                </ul>
+                              <ul>
+                                <li><a href="#">App</a></li>
+                                <li><a href="#">IT</a></li>
+                                <li><a href="#">Business</a></li>
+                                <li><a href="#">Mac</a></li>
+                                <li><a href="#">Design</a></li>
+                                <li><a href="#">Office</a></li>
+                                <li><a href="#">Creative</a></li>
+                                <li><a href="#">Studio</a></li>
+                                <li><a href="#">Smart</a></li>
+                                <li><a href="#">Tips</a></li>
+                                <li><a href="#">Marketing</a></li>
+                              </ul>
                             </div>End sidebar tags -->
 
                         </div><!-- End sidebar -->

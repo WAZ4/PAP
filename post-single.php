@@ -30,8 +30,70 @@ else if (isset($_SESSION["post-criar"])) {
   $id_post = $_SESSION["post-criar"];
   unset($_SESSION["post_criar"]);
 }
+
+if (!verificarDisponibilidade($id_post) && $_SESSION["NIVEL_UTILIZADOR"] != 2) {
+  header("Location: blog.php");
+}
+
 $cabecalho = $arrayName = array('titulo' => "", 'nomeUser' => "", 'timeStamp' => "", 'categoria' => "", 'categoria_ID' => "", 'imagemPrincipalUrl' => "");
-$totalComentarios = 12;
+$totalComentarios = getTotalComentarios($id_post);
+
+function fazerDenuncia($id_post, $user_ID, $razao)
+{
+  $sql = "SELECT COUNT(id_post) as nrDenuncias FROM post_denuncia WHERE id_post = ? AND user_ID = ?";
+  $conn = OpenCon();
+  $stmt = $conn->prepare($sql);
+  $stmt->bind_param("ii", $id_post, $user_ID);
+  $stmt->execute();
+  $resultado_post_denuncia = $stmt->get_result();
+  CloseCon($conn);
+
+  if ($resultado_post_denuncia->fetch_assoc()["nrDenuncias"] !=  0) {
+
+    $sql = "UPDATE post_denuncia SET razao = ? WHERE id_post = ? AND user_ID = ?";
+    $conn = OpenCon();
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sii", $razao, $id_post, $user_ID);
+    $stmt->execute();
+    $resultado_post_comentarios = $stmt->get_result();
+    CloseCon($conn);
+  } else {
+    $sql = "INSERT INTO post_denuncia(user_ID, id_post, razao) VALUES (?, ?, ?)";
+    $conn = OpenCon();
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("iis", $user_ID, $id_post, $razao);
+    $stmt->execute();
+    $resultado_post_comentarios = $stmt->get_result();
+    CloseCon($conn);
+  }
+}
+
+function verificarDisponibilidade($id_post)
+{
+  $sql = "SELECT estado FROM post WHERE id_post = ?";
+  $conn = OpenCon();
+  $stmt = $conn->prepare($sql);
+  $stmt->bind_param("i", $id_post);
+  $stmt->execute();
+  $resultado_post_comentarios = $stmt->get_result();
+  CloseCon($conn);
+  $estado = $resultado_post_comentarios->fetch_assoc()["estado"];
+  if ($estado == 0) return false;
+  return true;
+}
+
+function getTotalComentarios($id_post)
+{
+  $sql = "SELECT COUNT(id_post) as nrComentarios FROM post_comentarios WHERE id_post = ?";
+  $conn = OpenCon();
+  $stmt = $conn->prepare($sql);
+  $stmt->bind_param("i", $id_post);
+  $stmt->execute();
+  $resultado_post_comentarios = $stmt->get_result();
+  CloseCon($conn);
+
+  return $resultado_post_comentarios->fetch_assoc()["nrComentarios"];
+}
 
 function dataParaPortugues($data)
 {
@@ -443,6 +505,10 @@ function main()
   if (isset($_POST["comentario_principal_submit"])) {
     adicionarComentario();
   }
+  if (isset($_POST["razaoDenuncia"])) {
+    var_dump($_POST);
+    fazerDenuncia($_POST["id_post"], $_POST["user_ID"], $_POST["razaoDenuncia"]);
+  }
 }
 
 main();
@@ -508,11 +574,11 @@ main();
       <div class="container">
 
         <div class="d-flex justify-content-between align-items-center">
-          <h2>Blog Single</h2>
+          <h2><a href="#" class="text-white">Post</a></h2>
           <ol>
             <li><a href="index.php">Home</a></li>
-            <li><a href="blog.php">Blog</a></li>
-            <li>Blog Single</li>
+            <li><a href="blog.php">Post's</a></li>
+            <li><a href="#" class="text-white"><?php echo $cabecalho["titulo"]; ?></a></li>
           </ol>
         </div>
 
@@ -521,7 +587,7 @@ main();
 
     <!-- ======= Blog Single Section ======= -->
     <section id="blog" class="blog">
-      <div class="container" data-aos="fade-down">
+      <div class="container" data-aos="">
 
         <div class="row">
 
@@ -540,7 +606,7 @@ main();
                 if (isset($_SESSION["user_ID"]) && $_SESSION["user_ID"] == $criador) {
                 ?>
                   <div class="float-end">
-                    <a href="<?php echo "post-editar.php?id_post=" . $id_post?>"><i class="bi bi-pencil-square"> Editar </i></a>
+                    <a href="<?php echo "post-editar.php?id_post=" . $id_post ?>"><i class="bi bi-pencil-square"> Editar </i></a>
                   </div>
                 <?php
                 }
@@ -568,7 +634,15 @@ main();
                 <ul class="cats">
                   <li><a href="<?php echo "blog.php?categoria=" . $cabecalho["categoria_ID"]; ?>"><?php echo $cabecalho["categoria"]; ?></a></li>
                 </ul>
-
+                <?php
+                if (isset($_SESSION["user_ID"])) {
+                ?>
+                  <div class="float-end">
+                    <a href="" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="bi bi-flag-fill"> Denunciar </i></a>
+                  </div>
+                <?php
+                }
+                ?>
                 <!-- <i class="bi bi-tags"></i>
                 <ul class="tags">
                   <?php //imprimirTags(); 
@@ -577,21 +651,6 @@ main();
               </div>
 
             </article><!-- End blog entry -->
-
-            <div class="blog-author d-flex align-items-center">
-              <img src="assets/img/blog/blog-author.jpg" class="rounded-circle float-left" alt="">
-              <div>
-                <h4>Jane Smith</h4>
-                <div class="social-links">
-                  <a href="https://twitters.com/#"><i class="bi bi-twitter"></i></a>
-                  <a href="https://facebook.com/#"><i class="bi bi-facebook"></i></a>
-                  <a href="https://instagram.com/#"><i class="biu bi-instagram"></i></a>
-                </div>
-                <p>
-                  Itaque quidem optio quia voluptatibus dolorem dolor. Modi eum sed possimus accusantium. Quas repellat voluptatem officia numquam sint aspernatur voluptas. Esse et accusantium ut unde voluptas.
-                </p>
-              </div>
-            </div><!-- End blog author bio -->
 
             <div class="blog-comments">
               <?php
@@ -634,7 +693,7 @@ main();
 
             <div class="sidebar">
 
-              <h3 class="sidebar-title">Search</h3>
+              <h3 class="sidebar-title">Procurar</h3>
               <div class="sidebar-item search-form">
                 <form action="blog.php" method="get">
                   <input type="text" name="pesquisa">
@@ -642,7 +701,7 @@ main();
                 </form>
               </div><!-- End sidebar search formn-->
 
-              <h3 class="sidebar-title">Categories</h3>
+              <h3 class="sidebar-title">Categorias</h3>
               <div class="sidebar-item categories">
                 <ul>
                   <?php
@@ -651,14 +710,14 @@ main();
                 </ul>
               </div><!-- End sidebar categories-->
 
-              <h3 class="sidebar-title">Recent Posts</h3>
+              <h3 class="sidebar-title">Post's Recentes</h3>
               <div class="sidebar-item recent-posts">
                 <?php
                 imprimirPostsRecentes();
                 ?>
               </div><!-- End sidebar recent posts-->
 
-              <h3 class="sidebar-title">Tags</h3>
+              <!-- <h3 class="sidebar-title">Tags</h3>
               <div class="sidebar-item tags">
                 <ul>
                   <li><a href="#">App</a></li>
@@ -673,7 +732,7 @@ main();
                   <li><a href="#">Tips</a></li>
                   <li><a href="#">Marketing</a></li>
                 </ul>
-              </div><!-- End sidebar tags-->
+              </div>End sidebar tags -->
 
             </div><!-- End sidebar -->
 
@@ -686,6 +745,39 @@ main();
 
   </main><!-- End #main -->
 
+  <!-- Modals usadas -->
+  <?php
+  if (isset($_SESSION["user_ID"])) {
+  ?>
+    <!-- Modal -->
+    <form action="#" method="post" class="w-0 m-0">
+      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Denunciar Post</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="form-floating">
+                <input type="hidden" name="id_post" value="<?php echo $id_post; ?>">
+                <input type="hidden" name="user_ID" value="<?php echo $_SESSION["user_ID"]; ?>">
+                <textarea class="form-control" placeholder="Escreva qual a razão desta denúncia." name="razaoDenuncia" style="height: 100px" required></textarea>
+                <label for="floatingTextarea2">Razão de denúncia</label>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Submeter Denúncia</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+  <?php
+  }
+  ?>
   <!-- ======= Footer ======= -->
   <footer id="footer" class="d-block">
 

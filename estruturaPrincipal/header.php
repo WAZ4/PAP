@@ -22,15 +22,16 @@ if (session_status() != 2) session_start();
         <nav id="navbar" class="navbar order-last order-lg-0">
             <ul>
                 <li><a href="index.php" class="active">Home</a></li>
+                <li><a href="oleo-single.php">Óleos</a></li>
 
-                <li class="dropdown"><a href="#"><span>About</span> <i class="bi bi-chevron-down"></i></a>
+                <!-- <li class="dropdown"><a href="#"><span>About</span> <i class="bi bi-chevron-down"></i></a>
                     <ul>
                         <li><a href="about.html">About Us</a></li>
                         <li><a href="team.html">Team</a></li>
                         <li><a href="testimonials.html">Testimonials</a></li>
                         <li class="dropdown"><a href="#"><span>Deep Drop Down</span> <i class="bi bi-chevron-right"></i></a>
                             <ul>
-                                <li><a href="#"><?php var_dump(session_status()) ?></a></li>
+                                <li><a href="#"><?php //var_dump(session_status()) ?></a></li>
                                 <li><a href="#">Deep Drop Down 2</a></li>
                                 <li><a href="#">Deep Drop Down 3</a></li>
                                 <li><a href="#">Deep Drop Down 4</a></li>
@@ -39,12 +40,12 @@ if (session_status() != 2) session_start();
                         </li>
                     </ul>
                 </li>
+ -->
 
-                <li><a href="services.html">Services</a></li>
-                <li><a href="portfolio.html">Portfolio</a></li>
+                <li><a href="protocolo.php">Protocolos</a></li>
                 <li><a href="guia.html">GUIA</a></li>
-                <li><a href="pricing.html">Pricing</a></li>
-                <li><a href="blog.php">Blog</a></li>
+                <!-- <li><a href="pricing.html">Pricing</a></li> -->
+                <li><a href="blog.php">Post´s</a></li>
                 <li class="pe-lg-2"><a href="contact.html">Contact</a></li>
                 <?php
                 if (!isset($_SESSION["user_nome"])) {

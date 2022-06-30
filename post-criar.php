@@ -18,7 +18,7 @@ function dataParaPortugues($data)
 
 function getNrPost()
 {
-    $sql = "SELECT COUNT(id_post) AS numeroDePosts FROM post;";
+    $sql = "SELECT MAX(id_post) as numeroDePosts FROM post;";
 
     $conn = OpenCon();
 
@@ -193,7 +193,7 @@ function listarCategorias()
 }
 
 if (isset($_POST["post-criar-submit"])) {
-    $nr_post = getNrPost() + 1;
+    $nr_post = getNrPost();
     //atualizar ImagemCapa
     if (isset($_FILES["fileToUpload"])) {
         atualizarPostBaseDeDados($nr_post);

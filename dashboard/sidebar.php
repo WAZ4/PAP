@@ -6,7 +6,7 @@
     <div class="sidebar-brand-icon rotate-n-15">
         <i class="fas fa-laugh-wink"></i>
     </div>
-    <div class="sidebar-brand-text mx-3">SB Admin <sup>2</sup></div>
+    <div class="sidebar-brand-text mx-3"><span style="color: #bf46e8;">Oil</span>Central</div>
 </a>
 
 <!-- Divider -->
@@ -24,6 +24,13 @@
     <a class="nav-link" href="utilizadores.php">
         <i class="fas fa-fw fa-tachometer-alt"></i>
         <span>Utilizadores</span></a>
+</li>
+
+<!-- Nav Item - Utilizadores -->
+<li class="nav-item active">
+    <a class="nav-link" href="posts.php">
+        <i class="fas fa-fw fa-user"></i>
+        <span>Post's</span></a>
 </li>
 
 <!-- Divider -->

@@ -118,27 +118,20 @@ if (isset($_POST["formsubmit"])) {
             break;
 
         case 'apagarConta':
+            $user_ID = $_SESSION["user_ID"];
 
-            $sql = "DELETE FROM post WHERE user_ID = ?";
+            $sql = "UPDATE post SET estado = 0 WHERE user_ID = ?";
             $conn = OpenCon();
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("i", $_SESSION["user_ID"]);
+            $stmt->bind_param("i", $user_ID);
             $stmt->execute();
             $resultado_user = $stmt->get_result();
             CloseCon($conn);
 
-            $sql = "UPDATE post_comentarios SET user_ID = NULL WHERE user_ID = ?";
+            $sql = "UPDATE user SET user_nivel = -1 WHERE user_ID = ?";
             $conn = OpenCon();
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("i", $_SESSION["user_ID"]);
-            $stmt->execute();
-            $resultado_user = $stmt->get_result();
-            CloseCon($conn);
-
-            $sql = "DELETE FROM user WHERE user_ID = ?";
-            $conn = OpenCon();
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("i", $_SESSION["user_ID"]);
+            $stmt->bind_param("i", $user_ID);
             $stmt->execute();
             $resultado_user = $stmt->get_result();
             CloseCon($conn);
@@ -243,7 +236,7 @@ $novoValor = 1 - $_SESSION["user_mark"];
                         <div class="info-wrap">
                             <div class="row">
                                 <div class="col-lg-4 info">
-                                    <img src="<?php echo $_SESSION["user_img"]; ?>" class="img-fluid rounded-cricle" style="max-height: 200px" >
+                                    <img src="<?php echo $_SESSION["user_img"]; ?>" class="img-fluid rounded-cricle" style="max-height: 200px">
                                 </div>
 
                                 <div class="col-lg-4 mt-4 mt-lg-0">

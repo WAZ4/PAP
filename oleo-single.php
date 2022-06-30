@@ -311,11 +311,10 @@ function apresentarOleo()
             <div class="container">
 
                 <div class="d-flex justify-content-between align-items-center">
-                    <h2>Oleo Single</h2>
+                    <h2>Óleos</h2>
                     <ol>
                         <li><a href="index.php">Home</a></li>
-                        <li><a href="blog.html">Placeholder</a></li>
-                        <li>Oleo Single</li>
+                        <li>Óleos</li>
                     </ol>
                 </div>
 

@@ -128,8 +128,8 @@
                     </svg>
                                         <i class="bx bx-tachometer"></i>
                                     </div>
-                                    <h4><a href="blog.php" class="stretched-link">Artigos</a></h4>
-                                    <p>Artigos criados pela comunidade, sobre usos interessantes de óleos esseniais</p>
+                                    <h4><a href="blog.php" class="stretched-link">Post's</a></h4>
+                                    <p>Post's criados pela comunidade, sobre usos interessantes de óleos esseniais</p>
                                 </div>
                             </div>
 
