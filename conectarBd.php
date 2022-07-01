@@ -9,6 +9,8 @@ function OpenCon()
     $db = "postTeste";
     $conn = new mysqli($dbhost, $dbuser, $dbpass, $db);
 
+    mysqli_set_charset($conn, 'utf8mb4');
+
     return $conn;
 }
 

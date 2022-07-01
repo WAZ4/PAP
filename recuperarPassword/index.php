@@ -11,7 +11,7 @@ if (isset($_SESSION["user_email"]) || isset($_SESSION["user_nome"]) || isset($_S
 
 if (isset($_POST["formSubmit"]) && $_POST["formSubmit"] == "alterarPassword") {
     if (($npassword1 = strip_tags(trim($_POST["novapassword1"]))) == ($npassword1 = strip_tags(trim($_POST["novapassword2"])))) {
-        var_dump(($npassword1 = strip_tags(trim($_POST["novapassword1"]))) == ($npassword1 = strip_tags(trim($_POST["novapassword2"]))));
+        // var_dump(($npassword1 = strip_tags(trim($_POST["novapassword1"]))) == ($npassword1 = strip_tags(trim($_POST["novapassword2"]))));
         $passwd = password_hash($npassword1, PASSWORD_DEFAULT);
         $hash = $_POST["hash"];
         $sql = "UPDATE user SET user_password = ?, user_hash = '' WHERE user_hash = ?";
@@ -39,7 +39,7 @@ if (isset($_POST["user_email"])) {
     $stmt->execute();
     $resultado_user = $stmt->get_result();
     CloseCon($conn);
-    var_dump($resultado_user);
+    // var_dump($resultado_user);
     if ($resultado_user->num_rows != 0 && $row = $resultado_user->fetch_assoc()["user_hash"] == "") {
 
         $hash = md5(uniqid(rand()));

@@ -23,7 +23,7 @@ HEMLSPECIALCHARS para remover tags
 
             $result_post_conteudo_detail = mysqli_query($conn, $sql);
 
-            var_dump($result_post_conteudo_detail);
+            // var_dump($result_post_conteudo_detail);
 
             CloseCon($conn);
         }

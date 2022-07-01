@@ -38,6 +38,17 @@ if (!verificarDisponibilidade($id_post) && $_SESSION["NIVEL_UTILIZADOR"] != 2) {
 $cabecalho = $arrayName = array('titulo' => "", 'nomeUser' => "", 'timeStamp' => "", 'categoria' => "", 'categoria_ID' => "", 'imagemPrincipalUrl' => "");
 $totalComentarios = getTotalComentarios($id_post);
 
+function apagarPost($id_post)
+{
+  $sql = "UPDATE post SET estado = 1 WHERE id_post = ?";
+  $conn = OpenCon();
+  $stmt = $conn->prepare($sql);
+  $stmt->bind_param("i", $id_post);
+  $stmt->execute();
+  $resultado_post_denuncia = $stmt->get_result();
+  CloseCon($conn);
+}
+
 function fazerDenuncia($id_post, $user_ID, $razao)
 {
   $sql = "SELECT COUNT(id_post) as nrDenuncias FROM post_denuncia WHERE id_post = ? AND user_ID = ?";
@@ -505,9 +516,11 @@ function main()
   if (isset($_POST["comentario_principal_submit"])) {
     adicionarComentario();
   }
-  if (isset($_POST["razaoDenuncia"])) {
-    var_dump($_POST);
+  else if (isset($_POST["razaoDenuncia"])) {
     fazerDenuncia($_POST["id_post"], $_POST["user_ID"], $_POST["razaoDenuncia"]);
+  }
+  else if (isset($_POST["apagarPost"])) {
+    apagarPost($_POST["apagarPost"]);
   }
 }
 
@@ -598,20 +611,31 @@ main();
               <div class="entry-img">
                 <img src="<?php echo $cabecalho["imagemPrincipalUrl"]; ?>" width="100%" height="auto" class="mx-auto d-block">
               </div>
+              <div class="row">
+                <div class="col">
+                  <h2 class="entry-title">
+                    <a href="blog-single.html"><?php echo $cabecalho["titulo"]; ?></a>
+                    <?php
+                    if ((isset($_SESSION["user_ID"]) && $_SESSION["user_ID"] == $criador) || (isset($_SESSION["NIVEL_UTILIZADOR"]) && $_SESSION["NIVEL_UTILIZADOR"] == 2)) {
+                    ?>
 
-              <h2 class="entry-title">
-                <a href="blog-single.html"><?php echo $cabecalho["titulo"]; ?></a>
+                      <div class="float-end btn-group fs-4 fw-light">
 
-                <?php
-                if (isset($_SESSION["user_ID"]) && $_SESSION["user_ID"] == $criador) {
-                ?>
-                  <div class="float-end">
-                    <a href="<?php echo "post-editar.php?id_post=" . $id_post ?>"><i class="bi bi-pencil-square"> Editar </i></a>
-                  </div>
-                <?php
-                }
-                ?>
+                        <a class="me-4" href="<?php echo "post-editar.php?id_post=" . $id_post ?>"><i class="bi bi-pencil-square"> Editar</i></a>
+
+                        <form action="#" method="post" id="apagarPost1">
+                          <input type="hidden" name="apagarPost" value="<?php echo $id_post; ?>">
+                          <a href="javascript:{}" onclick="document.getElementById('apagarPost1').submit();"><i class="bi bi-trash"> Apagar</i></a>
+
+
+                        </form>
+                      </div>
+                </div>
+              <?php
+                    }
+              ?>
               </h2>
+
 
               <div class="entry-meta">
                 <ul>

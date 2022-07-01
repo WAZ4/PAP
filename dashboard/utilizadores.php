@@ -1,7 +1,7 @@
 <?php
 include("../conectarBd.php");
 session_start();
-// if (!(isset($_SESSION["NIVEL_UTILIZADOR"]) && $_SESSION["NIVEL_UTILIZADOR"] > 1)) header("Location: ../index.php");
+if (!(isset($_SESSION["NIVEL_UTILIZADOR"]) && $_SESSION["NIVEL_UTILIZADOR"] > 1)) header("Location: ../index.php");
 
 function getNrInteracoes($user_ID)
 {
@@ -227,7 +227,7 @@ if (isset($_POST)) {
                             </div>
                         </div>
                         <div class="col-lg-6 py-3">
-                            <div class="card border-left-primary shadow h-100 py-2">
+                            <div class="card border-left-info shadow h-100 py-2">
                                 <a href="javascript:{}" class="stretched-link" onclick="document.getElementById('userNewsletter').submit();"></a> <!-- Usar este link para fazer download do ficheiro -->
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
@@ -235,7 +235,7 @@ if (isset($_POST)) {
                                             <form action="downloadUsers.php" method="post" id="userNewsletter">
                                                 <input type="hidden" name="tipo" value="newsletter">
                                             </form>
-                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
                                                 Utilizadores com Newsletter</div>
                                             <!-- <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div> -->
                                             <p>Faça download de um ficeiro .csv, com todos os utilizadores que querem receber a sua newsletter</p>
@@ -334,15 +334,7 @@ if (isset($_POST)) {
             </div>
             <!-- End of Main Content -->
 
-            <!-- Footer -->
-            <footer class="sticky-footer bg-white">
-                <div class="container my-auto">
-                    <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2020</span>
-                    </div>
-                </div>
-            </footer>
-            <!-- End of Footer -->
+            <?php include("footer.php"); ?>
 
         </div>
         <!-- End of Content Wrapper -->

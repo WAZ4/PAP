@@ -23,6 +23,15 @@ if (session_status() != 2) session_start();
             <ul>
                 <li><a href="index.php" class="active">Home</a></li>
                 <li><a href="oleo-single.php">Óleos</a></li>
+                <?php
+                if ((isset($_SESSION["NIVEL_UTILIZADOR"]) && $_SESSION["NIVEL_UTILIZADOR"] == 2)) {
+
+                ?>
+
+                    <li><a href="dashboard/">Dashboard</a></li>
+                <?php
+                }
+                ?>
 
                 <!-- <li class="dropdown"><a href="#"><span>About</span> <i class="bi bi-chevron-down"></i></a>
                     <ul>
@@ -31,7 +40,6 @@ if (session_status() != 2) session_start();
                         <li><a href="testimonials.html">Testimonials</a></li>
                         <li class="dropdown"><a href="#"><span>Deep Drop Down</span> <i class="bi bi-chevron-right"></i></a>
                             <ul>
-                                <li><a href="#"><?php //var_dump(session_status()) ?></a></li>
                                 <li><a href="#">Deep Drop Down 2</a></li>
                                 <li><a href="#">Deep Drop Down 3</a></li>
                                 <li><a href="#">Deep Drop Down 4</a></li>

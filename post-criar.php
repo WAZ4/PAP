@@ -194,14 +194,14 @@ function listarCategorias()
 
 if (isset($_POST["post-criar-submit"])) {
     $nr_post = getNrPost();
-    //atualizar ImagemCapa
+    //inserir ImagemCapa
     if (isset($_FILES["fileToUpload"])) {
-        atualizarPostBaseDeDados($nr_post);
+        inserirPostBaseDeDados($nr_post);
     }
 
-    //atualizar Conteudo
+    //inserir Conteudo
     if (isset($_POST["submitEditor"])) {
-        atualizarPostConteudoBaseDeDados($nr_post);
+        inserirPostConteudoBaseDeDados($nr_post);
     }
 
     //Inserir Tags
