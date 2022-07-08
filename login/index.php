@@ -4,6 +4,7 @@ session_start();
 if (isset($_SESSION["user_email"]) || isset($_SESSION["user_nome"]) || isset($_SESSION["NIVEL_UTILIZADOR"])) header("Location: ../index.php");
 
 $erro = "";
+$sucesso = "";
 
 function verificarLogin($email, $password)
 {
@@ -25,8 +26,7 @@ function verificarLogin($email, $password)
         $row = $resultado_user->fetch_assoc();
         if ($row["user_nivel"] == 0) {
             $erro = "Para iniciar sessão percisa de ativar a conta.";
-        }
-        else if ($row["user_email"] == $email && password_verify($password, $row["user_password"])) {
+        } else if ($row["user_email"] == $email && password_verify($password, $row["user_password"])) {
             $_SESSION["user_password"] = $row["user_password"];
             $_SESSION["user_ID"] = $row["user_ID"];
             $_SESSION["user_email"] = $email;
@@ -54,7 +54,7 @@ if (isset($_POST["formLogin"])) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title> Free Stylish Login Page Website Template | Smarteyeapps.com</title>
+    <title> Login</title>
 
     <link rel="shortcut icon" href="assets/images/fav.jpg">
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
@@ -77,11 +77,22 @@ if (isset($_POST["formLogin"])) {
         <div class="side-right">
             <form action="#" method="post">
 
-                <?php
+            <?php
                 if ($erro != "") {
                 ?>
                     <div class="alert alert-danger alert-dismissible fade show w-100" role="alert">
                         <?php echo $erro; ?>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                <?php
+                }
+                
+                if ($sucesso != "") {
+                ?>
+                    <div class="alert alert-success alert-dismissible fade show w-100" role="alert">
+                        <?php echo $sucesso; ?>
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -98,7 +109,7 @@ if (isset($_POST["formLogin"])) {
 
                 <div class="form-row">
                     <label for="">Email</label>
-                    <input type="email" placeholder="email@oilcentral.com" class="form-control form-control-sm" name="email">
+                    <input type="email" placeholder="email@oilcentral.pt" class="form-control form-control-sm" name="email">
                 </div>
 
                 <div class="form-row">
@@ -137,9 +148,6 @@ if (isset($_POST["formLogin"])) {
 
 
 
-            </div>
-            <div class="copyco">
-                <p>Copyrigh 2019 @ smarteyeapps.com</p>
             </div>
         </div>
 </body>

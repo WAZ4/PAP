@@ -1,12 +1,79 @@
 <?php
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
+require '../assets/php/PHPMailer-master/src/Exception.php';
+require '../assets/php/PHPMailer-master/src/PHPMailer.php';
+require '../assets/php/PHPMailer-master/src/SMTP.php';
+
 include("../conectarBd.php");
+session_start();
+
 $tipo = 0;
 $hash = "";
 $erro = "";
-
-session_start();
+$sucesso = "";
 
 if (isset($_SESSION["user_email"]) || isset($_SESSION["user_nome"]) || isset($_SESSION["NIVEL_UTILIZADOR"])) header("Location: ../index.php");
+
+function enviarEmailRecuperar($email, $hash)
+{
+    global $sucesso;
+    global $erro;
+    //Create an instance; passing `true` enables exceptions
+    $email = trim($email);
+
+    $mail = new PHPMailer(true);
+
+
+
+    try {
+        //Server settings
+        // $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
+        $mail->isSMTP();                                            //Send using SMTP
+        $mail->Host       = 'smtp-pt.securemail.pro';                     //Set the SMTP server to send through
+        $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+        $mail->Username   = 'contacto@oilcentral.pt';                     //SMTP username
+        $mail->Password   = 'oleosforever254';                               //SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
+        $mail->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+
+        //Recipients
+        $mail->setFrom('contacto@oilcentral.pt', 'OilCentral');
+        $mail->addAddress($email);
+        // $mail->addAddress('ellen@example.com');               //Name is optional
+        // $mail->addReplyTo('info@example.com', 'Information');
+        // $mail->addCC('cc@example.com');
+        // $mail->addBCC('bcc@example.com');
+
+        //Attachments
+        // $mail->addAttachment('/var/tmp/file.tar.gz');         //Add attachments
+        // $mail->addAttachment('/tmp/image.jpg', 'new.jpg');    //Optional name
+
+        //Content
+        $mail->isHTML(true);                                  //Set email format to HTML
+        $mail->Subject = 'Confirmar Email';
+
+        // Open the file using the HTTP headers set above
+        $file = file_get_contents('../email/recuperarPalavraPasse.html');
+
+        // print_r($file);
+
+        $file = str_replace('$hash', $hash, $file);
+
+        $mail->Body = $file;
+        // $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+
+        $mail->send();
+        echo 'Message has been sent';
+        $sucesso = "Email de recuperação enviado com sucesso.";
+    } catch (Exception $e) {
+        $erro = "Falha ao enviar email, por-favor entre em contacto connosco.";
+    }
+}
+
 
 
 if (isset($_POST["formSubmit"]) && $_POST["formSubmit"] == "alterarPassword") {
@@ -39,7 +106,7 @@ if (isset($_POST["user_email"])) {
     $stmt->execute();
     $resultado_user = $stmt->get_result();
     CloseCon($conn);
-    // var_dump($resultado_user);
+
     if ($resultado_user->num_rows != 0 && $row = $resultado_user->fetch_assoc()["user_hash"] == "") {
 
         $hash = md5(uniqid(rand()));
@@ -52,7 +119,7 @@ if (isset($_POST["user_email"])) {
         $resultado_user = $stmt->get_result();
         CloseCon($conn);
 
-        header("Location: paginaTemporaria.php?temp=" . $hash);
+        enviarEmailRecuperar($email, $hash);
     }
 }
 
@@ -118,6 +185,17 @@ if (isset($_GET["hash"])) {
                     </div>
                 <?php
                 }
+
+                if ($sucesso != "") {
+                ?>
+                    <div class="alert alert-success alert-dismissible fade show w-100" role="alert">
+                        <?php echo $sucesso; ?>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                <?php
+                }
                 ?>
 
                 <?php
@@ -133,7 +211,7 @@ if (isset($_GET["hash"])) {
 
 
                         <div class="form-row dfr">
-                            <button class="btn btn-sm btn-success" type="submit" formmethod="post" >Recuperar Palavra-passe</button>
+                            <button class="btn btn-sm btn-success" type="submit" formmethod="post">Recuperar Palavra-passe</button>
                         </div>
                     </form>
 
@@ -168,9 +246,6 @@ if (isset($_GET["hash"])) {
         <?php
                 }
         ?>
-        <div class="copyco">
-            <p>Copyrigh 2022 @ oilcentral.com</p>
-        </div>
         </div>
 </body>
 

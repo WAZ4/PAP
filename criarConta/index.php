@@ -1,9 +1,88 @@
 <?php
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
+require '../assets/php/PHPMailer-master/src/Exception.php';
+require '../assets/php/PHPMailer-master/src/PHPMailer.php';
+require '../assets/php/PHPMailer-master/src/SMTP.php';
+
 include("../conectarBd.php");
+
+
+
+
 session_start();
 if (isset($_SESSION["user_email"]) || isset($_SESSION["user_nome"]) || isset($_SESSION["NIVEL_UTILIZADOR"])) header("Location: ../index.php");
 $erro = "";
 // var_dump($_POST);
+
+function enviarEmailAtivacao($hash, $email, $nome)
+{
+    //Create an instance; passing `true` enables exceptions
+    $mail = new PHPMailer(true);
+
+    try {
+        //Server settings
+        $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
+        $mail->isSMTP();                                            //Send using SMTP
+        $mail->Host       = 'smtp-pt.securemail.pro';                     //Set the SMTP server to send through
+        $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+        $mail->Username   = 'contacto@oilcentral.pt';                     //SMTP username
+        $mail->Password   = 'oleosforever254';                               //SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
+        $mail->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+
+        //Recipients
+        $mail->setFrom('contacto@oilcentral.pt', 'OilCentral');
+        $mail->addAddress($email, $nome);     //Add a recipient
+        // $mail->addAddress('ellen@example.com');               //Name is optional
+        // $mail->addReplyTo('info@example.com', 'Information');
+        // $mail->addCC('cc@example.com');
+        // $mail->addBCC('bcc@example.com');
+
+        //Attachments
+        // $mail->addAttachment('/var/tmp/file.tar.gz');         //Add attachments
+        // $mail->addAttachment('/tmp/image.jpg', 'new.jpg');    //Optional name
+
+        //Content
+        $mail->isHTML(true);                                  //Set email format to HTML
+        $mail->Subject = 'Confirmar Email';
+
+        $postdata = http_build_query(
+            array(
+                'hash' => $hash
+            )
+        );
+
+        $opts = array(
+            'http' =>
+            array(
+                'method'  => 'POST',
+                'header'  => 'Content-Type: application/x-www-form-urlencoded',
+                'content' => $postdata
+            )
+        );
+
+        $context = stream_context_create($opts);
+
+        // Open the file using the HTTP headers set above
+        $file = file_get_contents('../email/activarTemplate.html');
+
+        print_r($file);
+
+        $file = str_replace('$hash', $hash, $file);
+
+        $mail->Body    = $file;
+        // $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+
+        $mail->send();
+        echo 'Message has been sent';
+    } catch (Exception $e) {
+        echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+    }
+}
 
 //Esta funcao verifica se existe um utilizador com o email na base de dados, caso exista retorna false caso nao exista retorna true
 function inserirImagem($imgurl)
@@ -91,7 +170,7 @@ function registar($email, $nome, $password)
     if (isset($_POST["mark"]) && $_POST["mark"] == "on") {
         $mark = 1;
     }
-    
+
 
     if (!verificarEmail($email)) {
         $erro = "Email já está associado a uma conta existente, por favor utilize outro email ou recupere a sua conta.";
@@ -117,7 +196,9 @@ function registar($email, $nome, $password)
     $resultado_user = $stmt->get_result();
     CloseCon($conn);
 
-    header("Location: ativarConta.php?temp=" . $hash);
+    enviarEmailAtivacao($hash, $email, $nome);
+
+    header("Location: ../ativarConta.php");
 }
 
 if (isset($_POST)) {
@@ -199,7 +280,7 @@ if (isset($_POST)) {
 
                 <div class="form-row">
                     <label for="">Email</label>
-                    <input type="email" placeholder="nome@oilcentral.com" class="form-control form-control-sm" name="email" required>
+                    <input type="email" placeholder="nome@oilcentral.pt" class="form-control form-control-sm" name="email" required>
                 </div>
 
                 <div class="form-row">
@@ -211,10 +292,17 @@ if (isset($_POST)) {
                     <label for="">Reintroduza a Password</label>
                     <input type="password" placeholder="Password" class="form-control form-control-sm" name="password2" required>
                 </div>
-                
+
                 <div class="form-row row skjh">
                     <div class="col-12 left no-padding">
                         <input type="checkbox" name="mark"> Newsletter de eventos e promocões
+                        <!-- Perguntar ao professor a linguagem -->
+                    </div>
+                </div>
+
+                <div class="form-row row skjh">
+                    <div class="col-12 left no-padding">
+                        <input type="checkbox" name="mark" required> Concorda com os <a href="">termos e condições</a>
                         <!-- Perguntar ao professor a linguagem -->
                     </div>
                 </div>
@@ -233,9 +321,6 @@ if (isset($_POST)) {
                     <a href="../login/" class="text-secondary">Já tem conta? Faça login!</a>
                 </div>
 
-            </div>
-            <div class="copyco">
-                <p>Copyrigh 2022 @ oilcentral.com</p>
             </div>
         </div>
 </body>

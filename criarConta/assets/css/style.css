@@ -75,6 +75,7 @@ textarea {
 html,
 body {
     height: 100%;
+    color: white;
 }
 
 p {
@@ -126,7 +127,7 @@ strong {
 }
 
 body {
-    background-color: #f7f7ff !important;
+    background-color: #ffff !important;
     font-family: "mouse-300", Arial, Helvetica, sans-serif;
     color: #6A6A6A;
 }

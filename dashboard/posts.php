@@ -20,7 +20,7 @@ function postsHoje()
     $dataPT = dataParaPortugues($data);
 
     $conn = OpenCon();
-    $stmt = $conn->prepare("SELECT COUNT(`timestamp`) as postsHoje FROM post WHERE timestamp = ?");
+    $stmt = $conn->prepare("SELECT COUNT(`timestamp`) as postsHoje FROM post WHERE timestamp = ? AND estado != -1");
     $stmt->bind_param("s", $dataPT);
     $stmt->execute();
     $resultado_post = $stmt->get_result();
@@ -39,7 +39,7 @@ function postsMensal()
     $dataPT = "%" . $dataPT . "%";
 
     $conn = OpenCon();
-    $stmt = $conn->prepare("SELECT COUNT(`timestamp`) as postsMes FROM post WHERE timestamp LIKE ?");
+    $stmt = $conn->prepare("SELECT COUNT(`timestamp`) as postsMes FROM post WHERE timestamp LIKE ? AND estado != -1");
     $stmt->bind_param("s", $dataPT);
     $stmt->execute();
     $resultado_post = $stmt->get_result();
@@ -526,25 +526,6 @@ if (isset($_POST["acaoPost"])) {
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
-
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">x</span>
-                    </button>
-                </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.min.js"></script>

@@ -17,12 +17,13 @@ if (session_status() != 2) session_start();
 
         <h1 class="logo me-auto"><a href="index.php"><span>Oil</span>Central</a></h1>
         <!-- Uncomment below if you prefer to use an image logo -->
-        <!-- <a href="index.php" class="logo me-auto me-lg-0"><img src="assets/img/logo.png" alt="" class="img-fluid"></a> -->
+        <!-- <a href="index.php" class="logo me-auto me-lg-0"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
 
         <nav id="navbar" class="navbar order-last order-lg-0">
             <ul>
-                <li><a href="index.php" class="active">Home</a></li>
-                <li><a href="oleo-single.php">Óleos</a></li>
+
+                <li><a href="index.php">Home</a></li>
+
                 <?php
                 if ((isset($_SESSION["NIVEL_UTILIZADOR"]) && $_SESSION["NIVEL_UTILIZADOR"] == 2)) {
 
@@ -33,28 +34,14 @@ if (session_status() != 2) session_start();
                 }
                 ?>
 
-                <!-- <li class="dropdown"><a href="#"><span>About</span> <i class="bi bi-chevron-down"></i></a>
-                    <ul>
-                        <li><a href="about.html">About Us</a></li>
-                        <li><a href="team.html">Team</a></li>
-                        <li><a href="testimonials.html">Testimonials</a></li>
-                        <li class="dropdown"><a href="#"><span>Deep Drop Down</span> <i class="bi bi-chevron-right"></i></a>
-                            <ul>
-                                <li><a href="#">Deep Drop Down 2</a></li>
-                                <li><a href="#">Deep Drop Down 3</a></li>
-                                <li><a href="#">Deep Drop Down 4</a></li>
-                                <li><a href="#">Deep Drop Down 5</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
- -->
-
+                <li><a href="oleo-single.php">Óleos</a></li>
                 <li><a href="protocolo.php">Protocolos</a></li>
-                <li><a href="guia.html">GUIA</a></li>
-                <!-- <li><a href="pricing.html">Pricing</a></li> -->
+                <li><a href="guias.php">GUIAS</a></li>
                 <li><a href="blog.php">Post´s</a></li>
-                <li class="pe-lg-2"><a href="contact.html">Contact</a></li>
+                <li class="pe-lg-2"><a href="contacto.php">Contacto</a></li>
+
+
+
                 <?php
                 if (!isset($_SESSION["user_nome"])) {
                 ?>
@@ -81,20 +68,21 @@ if (session_status() != 2) session_start();
                 }
                 ?>
 
+
             </ul>
             <i class="bi bi-list mobile-nav-toggle"></i>
         </nav>
         <!-- .navbar -->
 
-        <!-- <div class="header-social-links d-flex">
-                <a href="#" class="twitter"><i class="bu bi-person-circle"></i></a>
-                <a href="#" class="facebook"><i class="bu bi-facebook"></i></a>
-                <a href="#" class="instagram"><i class="bu bi-instagram"></i></a>
-                <a href="guia.html">GUIA</a>
-                <a href="#" class="linkedin"><i class="bu bi-linkedin"></i></i></a>
-            </div> -->
-
     </div>
 </header>
-<!-- Template Main JS File -->
-<script src="assets/js/main.js"></script>
+<!-- End Header -->
+
+<noscript class="d-none">
+    <p class="d-none"><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/101372064ns.gif" /></p>
+    <a class="d-none" title="GDPR-compliant Web Analytics" href="https://clicky.com/101372064"><img alt="Clicky" src="//static.getclicky.com/media/links/badge.gif" border="0" /></a>
+    <script async src="//static.getclicky.com/101372064.js"></script>
+    <noscript>
+        <p class="d-none"><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/101372064ns.gif" /></p>
+    </noscript>
+</noscript>

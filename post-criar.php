@@ -333,7 +333,7 @@ if (isset($_POST["post-criar-submit"])) {
                                 </div> -->
 
                                 <!-- Seccao para o utilizador escolher as tags associadas ao seu post -->
-                                <div class="mt-2">
+                                <!-- <div class="mt-2">
                                     Escolha os temas associados ao seu post:
                                     <input name='tags' value=' ' class="form-control" autofocus placeholder="Por exemplo: 'Guia', 'Uso Tópico'">
                                     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/js/bootstrap.min.js"></script>
@@ -345,7 +345,7 @@ if (isset($_POST["post-criar-submit"])) {
 
                                         // initialize Tagify on the above input node reference
                                         new Tagify(input)
-                                    </script>
+                                    </script> -->
 
                                     <!-- Seccao de publicar ou previsualizar o post -->
                                     <div class="btn-toolbar justify-content-between mt-2" role="toolbar" aria-label="Toolbar with button groups">
