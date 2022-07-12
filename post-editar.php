@@ -152,7 +152,7 @@ if (isset($_POST["post-criar-submit"])) {
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Criar Post</title>
+    <title>OilCentral - Editar publicação</title>
 
     <!-- CSS BASE-->
     <?php
@@ -205,11 +205,11 @@ if (isset($_POST["post-criar-submit"])) {
             <div class="container">
 
                 <div class="d-flex justify-content-between align-items-center">
-                    <h2>Criar Post</h2>
+                    <h2>Editar Post</h2>
                     <ol>
                         <li><a href="index.php">Home</a></li>
-                        <li><a href="blog.php">Blog</a></li>
-                        <li>Criar Post</li>
+                        <li><a href="posts.php">Blog</a></li>
+                        <li>Editar Post</li>
                     </ol>
                 </div>
 

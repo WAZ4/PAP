@@ -11,18 +11,19 @@ if (session_status() != 2) session_start();
         width: 3rem;
     }
 </style>
+<script async src="//static.getclicky.com/101372064.js"></script>
+<noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/101372064ns.gif" /></p></noscript>
 <!-- ======= Header ======= -->
 <header id="header" class="fixed-top <?php if (isset($_SESSION["user_img"])) echo "pt-lg-1 pb-lg-0"; ?>">
     <div class="container d-flex align-items-center">
-
         <h1 class="logo me-auto"><a href="index.php"><span>Oil</span>Central</a></h1>
         <!-- Uncomment below if you prefer to use an image logo -->
-        <!-- <a href="index.php" class="logo me-auto me-lg-0"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
+        <!-- <a href="index.php" class="logo me-auto"><img src="imgs/logo.png" alt="logo" class="img-fluid"></a> -->
 
         <nav id="navbar" class="navbar order-last order-lg-0">
             <ul>
-
-                <li><a href="index.php">Home</a></li>
+                <!-- class="active" -->
+                <li><a href="index.php">Página Principal</a></li>
 
                 <?php
                 if ((isset($_SESSION["NIVEL_UTILIZADOR"]) && $_SESSION["NIVEL_UTILIZADOR"] == 2)) {
@@ -37,7 +38,7 @@ if (session_status() != 2) session_start();
                 <li><a href="oleo-single.php">Óleos</a></li>
                 <li><a href="protocolo.php">Protocolos</a></li>
                 <li><a href="guias.php">GUIAS</a></li>
-                <li><a href="blog.php">Post´s</a></li>
+                <li><a href="posts.php">Post´s</a></li>
                 <li class="pe-lg-2"><a href="contacto.php">Contacto</a></li>
 
 
@@ -77,12 +78,3 @@ if (session_status() != 2) session_start();
     </div>
 </header>
 <!-- End Header -->
-
-<noscript class="d-none">
-    <p class="d-none"><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/101372064ns.gif" /></p>
-    <a class="d-none" title="GDPR-compliant Web Analytics" href="https://clicky.com/101372064"><img alt="Clicky" src="//static.getclicky.com/media/links/badge.gif" border="0" /></a>
-    <script async src="//static.getclicky.com/101372064.js"></script>
-    <noscript>
-        <p class="d-none"><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/101372064ns.gif" /></p>
-    </noscript>
-</noscript>

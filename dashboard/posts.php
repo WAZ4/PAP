@@ -64,7 +64,7 @@ function postsDenuncias()
 function imprimirPosts()
 {
     $conn = OpenCon();
-    $sql = "SELECT post.*, post_categoria.Categoria_Nome, user.user_nome FROM post RIGHT JOIN post_categoria ON post.categoria = post_categoria.Categoria_ID INNER JOIN user ON post.user_ID = user.user_ID";
+    $sql = "SELECT post.*, post_categoria.Categoria_Nome, user.user_nome FROM post RIGHT JOIN post_categoria ON post.categoria = post_categoria.Categoria_ID INNER JOIN user ON post.user_ID = user.user_ID ORDER BY post.id_post DESC";
     $stmt = $conn->prepare($sql);
     // $stmt->bind_param('i', $user_ID);
     $stmt->execute();
@@ -269,7 +269,18 @@ if (isset($_POST["acaoPost"])) {
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Blank</title>
+    <title>OilCentral - Dashboard</title>
+
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="../imgs/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../imgs/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../imgs/favicon/favicon-16x16.png">
+    <link rel="manifest" href="../imgs/favicon/site.webmanifest">
+    <link rel="mask-icon" href="../imgs/favicon/safari-pinned-tab.svg" color="#bf46e8">
+    <link rel="shortcut icon" href="../imgs/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-config" content="../imgs/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -306,8 +317,8 @@ if (isset($_POST["acaoPost"])) {
 
                     <div class="row">
                         <div class="col-lg-12">
-                            <h1 class="h3 mb-2 text-gray-800">Gerir Post's</h1>
-                            <p class="mb-4">Nesta página vai conseguir gerir os Post's do seu website.</p>
+                            <h1 class="h3 mb-2 text-gray-800">Gerir Posts</h1>
+                            <p class="mb-4">Nesta página vai conseguir gerir os Posts do seu website.</p>
                         </div>
                     </div>
 

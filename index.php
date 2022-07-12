@@ -8,13 +8,21 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Company Bootstrap Template - Index</title>
+    <title>OilCentral - Página principal</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
 
+
     <!-- Favicons -->
-    <link href="assets/img/favicon.png" rel="icon">
-    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="imgs/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="imgs/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="imgs/favicon/favicon-16x16.png">
+    <link rel="manifest" href="imgs/favicon/site.webmanifest">
+    <link rel="mask-icon" href="imgs/favicon/safari-pinned-tab.svg" color="#bf46e8">
+    <link rel="shortcut icon" href="imgs/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-config" content="imgs/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Roboto:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
@@ -34,9 +42,6 @@
 
     <!-- Template Main CSS File -->
     <link href="assets/css/style.css" rel="stylesheet">
-
-    <?php include("estruturaPrincipal/googleTrack.html"); ?>
-
 
     <!-- =======================================================
   * Template Name: Company - v4.6.1
@@ -84,19 +89,19 @@
         <!-- ======= Services Section ======= -->
         <div class="container text-center">
             <section id="services" class="services">
-                <div class="row mb-3 mt-3" data-aos="zoom-up" data-aos-delay="100">
+                <div class="row mb-3 mt-3">
                     <div class="bg-light  rounded align-items-center pt-2 opacity90">
                         <h1 class="" style="color: black; font-family: 'Tiro Devanagari Marathi', serif;">Bem vindo!</h1>
                     </div>
 
                 </div>
-                <div class="container" data-aos="fade-up">
+                <div class="container" data-aos="">
                     <!-- 
               Div que da para dar click: onclick="location.href='#';" style="cursor: pointer;"
              -->
                     <div class="align-items-center">
                         <div class="row">
-                            <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="0">
+                            <div class="col-lg-4 col-md-6 d-flex align-items-stretch" style="transform: rotate(0);">
                                 <div class="icon-box iconbox-blue">
                                     <div class="icon">
                                         <svg width="100" height="100" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
@@ -109,7 +114,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-md-0" data-aos="zoom-in" data-aos-delay="0">
+                            <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-md-0" style="transform: rotate(0);">
                                 <div class="icon-box iconbox-orange ">
                                     <div class="icon">
                                         <svg width="100" height="100" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
@@ -122,7 +127,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-lg-0" data-aos="zoom-in" data-aos-delay="0">
+                            <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-lg-0" style="transform: rotate(0);">
                                 <div class="icon-box iconbox-pink">
                                     <div class="icon">
                                         <svg width="100" height="100" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
@@ -130,8 +135,8 @@
                                         </svg>
                                         <i class="bx bx-tachometer"></i>
                                     </div>
-                                    <h4><a href="blog.php" class="stretched-link">Post's</a></h4>
-                                    <p>Post's criados pela comunidade, sobre usos interessantes de óleos esseniais</p>
+                                    <h4><a href="posts.php" class="stretched-link">Posts</a></h4>
+                                    <p>Posts criados pela comunidade, sobre usos interessantes de óleos esseniais</p>
                                 </div>
                             </div>
 
@@ -161,12 +166,13 @@
                     <div class="col-lg-6 pt-4 pt-lg-0">
                         <p class="">
                             Embora esteja cada vez mais disponivel, a informacao sobre como utilizar os oleos essenciais no dia a dia continua a ser transmitida individualmente ou em grupos pouco privados. Com este website pretendemos melhorar este problema ao criar uma fonte de informação
-                            aberta 24 horas por dia e 7 dias por semana, desta forma qualquer pessoa pode consultar como se utiliza os óleos essenciais para uma especifica situação.
-                            <br> Existem tres secções com:
+                            aberta 24 horas por dia e 7 dias por semana, desta forma qualquer pessoa pode consultar como se utilizam os óleos essenciais para uma especifica situação.
+                            <br> Existem quatro secções com:
                         </p>
                         <ul>
                             <li><i class="ri-check-double-line"></i> Informação sobre óleos e misturas unicas</li>
                             <li><i class="ri-check-double-line"></i> Informação sobre como e quando aplicar os óleos</li>
+                            <li><i class="ri-check-double-line"></i> Informação sobre diversos temas relacionados com óleos</li>
                             <li><i class="ri-check-double-line"></i> Informação contribuida pela comunidade sobre como utilizar os óleos</li>
                         </ul>
                         <p class="fst-italic">

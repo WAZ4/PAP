@@ -28,13 +28,13 @@ function enviarEmailContacto($email, $assunto, $mensagem, $nome)
         $mail->isSMTP();                                            //Send using SMTP
         $mail->Host       = 'smtp-pt.securemail.pro';                     //Set the SMTP server to send through
         $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-        $mail->Username   = 'contacto@oilcentral.pt';                     //SMTP username
+        $mail->Username   = 'ajuda@oilcentral.pt';                     //SMTP username
         $mail->Password   = 'oleosforever254';                               //SMTP password
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
         $mail->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 
         //Recipients
-        $mail->setFrom('contacto@oilcentral.pt', 'OilCentral');
+        $mail->setFrom('ajuda@oilcentral.pt', 'OilCentral');
         $mail->addAddress($email, $nome);     //Add a recipient
         // $mail->addAddress('ellen@example.com');               //Name is optional
         // $mail->addReplyTo('info@example.com', 'Information');
@@ -64,7 +64,7 @@ function enviarEmailContacto($email, $assunto, $mensagem, $nome)
         $mail->send();
         // echo 'Message has been sent';
     } catch (Exception $e) {
-        echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+        $erro = "Erro ao enviar a mensagem. Por favor entre em contacto connosco por outro meio.";
     }
 }
 
@@ -80,13 +80,20 @@ if (isset($_POST["formSubmit"])) {
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Contact - Company Bootstrap Template</title>
+    <title>OilCentral - Contacto</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
 
     <!-- Favicons -->
-    <link href="assets/img/favicon.png" rel="icon">
-    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="imgs/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="imgs/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="imgs/favicon/favicon-16x16.png">
+    <link rel="manifest" href="imgs/favicon/site.webmanifest">
+    <link rel="mask-icon" href="imgs/favicon/safari-pinned-tab.svg" color="#bf46e8">
+    <link rel="shortcut icon" href="imgs/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-config" content="imgs/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Roboto:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
@@ -140,7 +147,7 @@ if (isset($_POST["formSubmit"])) {
 
         <!-- ======= Contact Section ======= -->
         <div class="map-section">
-            <iframe style="border:0; width: 100%; height: 350px;" src="https://maps.google.com/maps?q=Alameda%20dos%20Oceanos,%20138&t=&z=11&ie=UTF8&iwloc=&output=embed" frameborder="0" allowfullscreen></iframe>
+            <iframe style="border:0; width: 100%; height: 350px;" src="https://maps.google.com/maps?q=R.%20Eiras%204A,%20Passos&t=&z=13&ie=UTF8&iwloc=&output=embed" frameborder="0" allowfullscreen></iframe>
         </div>
 
         <section id="contact" class="contact">
@@ -155,7 +162,9 @@ if (isset($_POST["formSubmit"])) {
                                 <div class="col-lg-4 info">
                                     <i class="bi bi-geo-alt"></i>
                                     <h4>Localização:</h4>
-                                    <p>Alameda dos Oceanos, 138<br>Lisboa, LIS 1990-394</p>
+
+                                    <p>R. Eiras 4A, Passos<br>Bragança</p>
+
                                 </div>
 
                                 <div class="col-lg-4 info mt-4 mt-lg-0">
@@ -196,7 +205,7 @@ if (isset($_POST["formSubmit"])) {
                                 <textarea required class="form-control" name="mensagem" rows="5" placeholder="Mensagem" required></textarea>
                             </div>
                             <br>
-                            <div class="text-center"><button type="submit" class="btn btn-outline-secondary" name="formSubmit">Enviar Message</button></div>
+                            <div class="text-center"><button type="submit" class="btn btn-outline-secondary" name="formSubmit">Enviar Mensagem</button></div>
                         </form>
                     </div>
 

@@ -24,8 +24,10 @@ function verificarLogin($email, $password)
     if ($resultado_user->num_rows != 0) {
 
         $row = $resultado_user->fetch_assoc();
-        if ($row["user_nivel"] == 0) {
-            $erro = "Para iniciar sessão percisa de ativar a conta.";
+        if ($row["user_nivel"] == 0 && ($row["user_hash"] == "" || $row["user_hash"] == null)) {
+            $erro = "A sua conta foi bloqueada, por favor entre em <a href='../contacto.php'>contacto connosco </a>para resolver a situação.";
+        } else if ($row["user_nivel"] == 0) {
+            $erro = "Para iniciar sessão precisa de ativar a conta.";
         } else if ($row["user_email"] == $email && password_verify($password, $row["user_password"])) {
             $_SESSION["user_password"] = $row["user_password"];
             $_SESSION["user_ID"] = $row["user_ID"];
@@ -54,12 +56,22 @@ if (isset($_POST["formLogin"])) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title> Login</title>
+    <title>Login</title>
 
-    <link rel="shortcut icon" href="assets/images/fav.jpg">
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/fontawsom-all.min.css">
-    <link rel="stylesheet" type="text/css" href="assets/css/style.css" />
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="../imgs/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../imgs/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../imgs/favicon/favicon-16x16.png">
+    <link rel="manifest" href="../imgs/favicon/site.webmanifest">
+    <link rel="mask-icon" href="../imgs/favicon/safari-pinned-tab.svg" color="#bf46e8">
+    <link rel="shortcut icon" href="../imgs/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-config" content="../imgs/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <link rel="stylesheet" href="../assetsLogin/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assetsLogin/css/fontawsom-all.min.css">
+    <link rel="stylesheet" type="text/css" href="../assetsLogin/css/style.css" />
 </head>
 
 <body>
@@ -68,8 +80,8 @@ if (isset($_POST["formLogin"])) {
             <div class="sid-layy">
                 <div class="row slid-roo">
                     <div class="data-portion">
-                        <h2>Manage Your orders</h2>
-                        <p>Ao criar uma conta na OilCentral, vai poder interagir com a nossa comunidade e guardar publicações e oleos para conseguir encontrar-los mais facilmente da proxima vez que os procurar. </p>
+                        <h2>Inicie Sessão</h2>
+                        <p>Ao iniciar sessão na OilCentral, vai poder interagir com a nossa comunidade e criar as suas próprias publicações. </p>
                     </div>
                 </div>
             </div>
@@ -77,7 +89,7 @@ if (isset($_POST["formLogin"])) {
         <div class="side-right">
             <form action="#" method="post">
 
-            <?php
+                <?php
                 if ($erro != "") {
                 ?>
                     <div class="alert alert-danger alert-dismissible fade show w-100" role="alert">
@@ -88,7 +100,7 @@ if (isset($_POST["formLogin"])) {
                     </div>
                 <?php
                 }
-                
+
                 if ($sucesso != "") {
                 ?>
                     <div class="alert alert-success alert-dismissible fade show w-100" role="alert">
@@ -152,10 +164,9 @@ if (isset($_POST["formLogin"])) {
         </div>
 </body>
 
-<script src="assets/js/jquery-3.2.1.min.js"></script>
-<script src="assets/js/popper.min.js"></script>
-<script src="assets/js/bootstrap.min.js"></script>
-<script src="assets/js/script.js"></script>
-
+<script src="../assetsLogin/js/jquery-3.2.1.min.js"></script>
+<script src="../assetsLogin/js/popper.min.js"></script>
+<script src="../assetsLogin/js/bootstrap.min.js"></script>
+<script src="../assetsLogin/js/script.js"></script>
 
 </html>

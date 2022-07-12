@@ -35,13 +35,13 @@ function enviarEmailRecuperar($email, $hash)
         $mail->isSMTP();                                            //Send using SMTP
         $mail->Host       = 'smtp-pt.securemail.pro';                     //Set the SMTP server to send through
         $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-        $mail->Username   = 'contacto@oilcentral.pt';                     //SMTP username
+        $mail->Username   = 'geral@oilcentral.pt';                     //SMTP username
         $mail->Password   = 'oleosforever254';                               //SMTP password
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
         $mail->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 
         //Recipients
-        $mail->setFrom('contacto@oilcentral.pt', 'OilCentral');
+        $mail->setFrom('geral@oilcentral.pt', 'OilCentral');
         $mail->addAddress($email);
         // $mail->addAddress('ellen@example.com');               //Name is optional
         // $mail->addReplyTo('info@example.com', 'Information');
@@ -54,7 +54,7 @@ function enviarEmailRecuperar($email, $hash)
 
         //Content
         $mail->isHTML(true);                                  //Set email format to HTML
-        $mail->Subject = 'Confirmar Email';
+        $mail->Subject = 'Repor palavra-passe';
 
         // Open the file using the HTTP headers set above
         $file = file_get_contents('../email/recuperarPalavraPasse.html');
@@ -67,7 +67,7 @@ function enviarEmailRecuperar($email, $hash)
         // $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
 
         $mail->send();
-        echo 'Message has been sent';
+        // echo 'Message has been sent';
         $sucesso = "Email de recuperação enviado com sucesso.";
     } catch (Exception $e) {
         $erro = "Falha ao enviar email, por-favor entre em contacto connosco.";
@@ -147,12 +147,22 @@ if (isset($_GET["hash"])) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title> Free Stylish Login Page Website Template | Smarteyeapps.com</title>
+    <title>Repor Palavra-passe</title>
 
-    <link rel="shortcut icon" href="assets/images/fav.jpg">
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/fontawsom-all.min.css">
-    <link rel="stylesheet" type="text/css" href="assets/css/style.css" />
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="../imgs/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../imgs/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../imgs/favicon/favicon-16x16.png">
+    <link rel="manifest" href="../imgs/favicon/site.webmanifest">
+    <link rel="mask-icon" href="../imgs/favicon/safari-pinned-tab.svg" color="#bf46e8">
+    <link rel="shortcut icon" href="../imgs/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-config" content="../imgs/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <link rel="stylesheet" href="../assetsLogin/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assetsLogin/css/fontawsom-all.min.css">
+    <link rel="stylesheet" type="text/css" href="../assetsLogin/css/style.css" />
 </head>
 
 <body>
@@ -161,8 +171,8 @@ if (isset($_GET["hash"])) {
             <div class="sid-layy">
                 <div class="row slid-roo">
                     <div class="data-portion">
-                        <h2>Manage Your orders</h2>
-                        <p>Ao criar uma conta na OilCentral, vai poder interagir com a nossa comunidade e guardar publicações e oleos para conseguir encontrar-los mais facilmente da proxima vez que os procurar. </p>
+                        <!-- <h2>Manage Your orders</h2>
+                        <p>Ao criar uma conta na OilCentral, vai poder interagir com a nossa comunidade e guardar publicações e oleos para conseguir encontrar-los mais facilmente da proxima vez que os procurar. </p> -->
                     </div>
                 </div>
             </div>
@@ -211,7 +221,7 @@ if (isset($_GET["hash"])) {
 
 
                         <div class="form-row dfr">
-                            <button class="btn btn-sm btn-success" type="submit" formmethod="post">Recuperar Palavra-passe</button>
+                            <button class="btn btn-sm btn-success" type="submit" formmethod="post">Repor Palavra-passe</button>
                         </div>
                     </form>
 
@@ -239,7 +249,7 @@ if (isset($_GET["hash"])) {
 
 
                 <div class="form-row dfr">
-                    <button class="btn btn-sm btn-success" formmethod="post" submit>Recuperar Palavra-passe</button>
+                    <button class="btn btn-sm btn-success" formmethod="post" submit>Repor Palavra-passe</button>
                 </div>
             </form>
 
@@ -249,10 +259,9 @@ if (isset($_GET["hash"])) {
         </div>
 </body>
 
-<script src="assets/js/jquery-3.2.1.min.js"></script>
-<script src="assets/js/popper.min.js"></script>
-<script src="assets/js/bootstrap.min.js"></script>
-<script src="assets/js/script.js"></script>
-
+<script src="../assetsLogin/js/jquery-3.2.1.min.js"></script>
+<script src="../assetsLogin/js/popper.min.js"></script>
+<script src="../assetsLogin/js/bootstrap.min.js"></script>
+<script src="../assetsLogin/js/script.js"></script>
 
 </html>

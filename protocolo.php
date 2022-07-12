@@ -7,7 +7,7 @@ function imprimirProtocolos()
 {
     $filtro = " WHERE Protocolo_ID != -1";
     if (isset($_GET["pesquisa"]) && $_GET["pesquisa"] != "") {
-        $filtro .= " AND Protocolo_Patologia LIKE '%" . $_GET["pesquisa"] . "%' OR Protocolo_Descricao LIKE '%" . $_GET["pesquisa"] . "%'"; //para usar com a barra de pesquisas
+        $filtro .= " AND Protocolo_Patologia LIKE '%" . $_GET["pesquisa"] . "%' OR Protocolo_Sintomas LIKE '%" . $_GET["pesquisa"] . "%'"; //para usar com a barra de pesquisas
     }
 
     $sql = "SELECT * FROM Protocolo_Master" . $filtro;
@@ -127,7 +127,7 @@ function imprimirProtocolos()
                                     }
                                     ?>
 
-                                    <h6 class="card-tittle mt-3">Possiveis Oleos adicioanis</h6>
+                                    <h6 class="card-tittle mt-3">Possiveis Óleos adicionais</h6>
 
                                     <ol class="list-group list-group">
                                         <?php
@@ -179,13 +179,20 @@ function imprimirProtocolos()
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Protocolo - Company Bootstrap Template</title>
+    <title>Oilcentral - Protocolos</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
 
     <!-- Favicons -->
-    <link href="assets/img/favicon.png" rel="icon">
-    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="imgs/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="imgs/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="imgs/favicon/favicon-16x16.png">
+    <link rel="manifest" href="imgs/favicon/site.webmanifest">
+    <link rel="mask-icon" href="imgs/favicon/safari-pinned-tab.svg" color="#bf46e8">
+    <link rel="shortcut icon" href="imgs/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-config" content="imgs/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Roboto:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
@@ -221,6 +228,10 @@ function imprimirProtocolos()
 </head>
 
 <style>
+    .min-vh-80 {
+        min-height: 80vh;
+    }
+
     .btn-get-started {
         background: #bf46e8;
         border: 2px solid #bf46e8;
@@ -279,7 +290,7 @@ function imprimirProtocolos()
     include("estruturaPrincipal/header.php");
     ?>
 
-    <main id="main">
+    <main id="main" class="container-fluid p-0 min-vh-80">
 
         <!-- ======= Breadcrumbs ======= -->
         <section id="breadcrumbs" class="breadcrumbs">
@@ -321,7 +332,6 @@ function imprimirProtocolos()
                     imprimirProtocolos();
                     ?>
 
-
                 </div>
 
             </div>
@@ -330,7 +340,7 @@ function imprimirProtocolos()
 
     </main><!-- End #main -->
 
-    <?php include("estruturaPrincipal/footer.php");?>
+    <?php include("estruturaPrincipal/footer.php"); ?>
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 

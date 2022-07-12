@@ -158,7 +158,18 @@ if (isset($_POST)) {
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Blank</title>
+    <title>OilCentral - Dashboard</title>
+
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="../imgs/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../imgs/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../imgs/favicon/favicon-16x16.png">
+    <link rel="manifest" href="../imgs/favicon/site.webmanifest">
+    <link rel="mask-icon" href="../imgs/favicon/safari-pinned-tab.svg" color="#bf46e8">
+    <link rel="shortcut icon" href="../imgs/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-config" content="../imgs/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -260,21 +271,17 @@ if (isset($_POST)) {
                                 <div class="collapse" id="collapseCardExample">
                                     <div class="card-body text-center">
                                         <div class="row">
-                                            <div class="col-lg-3">
+                                            <div class="col-lg-4">
                                                 <a class="btn btn-circle btn-sm btn-warning m-1"><i class="fas fa-ban"></i></a>
-                                                - Tornar Post invisível
+                                                - Bloquear conta
                                             </div>
-                                            <div class="col-lg-3">
+                                            <div class="col-lg-4">
                                                 <a class="btn btn-circle btn-sm btn-warning m-1"><i class="fas fa-arrow-up"></i></a>
-                                                - Tornar Post visível
+                                                - Promover nível
                                             </div>
-                                            <div class="col-lg-3">
-                                                <a class="btn btn-circle btn-sm btn-info m-1"><i class="fas fa-arrow-down"></i></a>
-                                                - Editar conteúdo do Post
-                                            </div>
-                                            <div class="col-lg-3">
+                                            <div class="col-lg-4">
                                                 <a class="btn btn-circle btn-sm btn-danger m-1"><i class="fas fa-trash"></i></a>
-                                                - Apagar Post
+                                                - Apagar Conta
                                             </div>
                                         </div>
                                     </div>

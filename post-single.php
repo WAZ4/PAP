@@ -32,7 +32,7 @@ else if (isset($_SESSION["post-criar"])) {
 }
 
 if (!verificarDisponibilidade($id_post) && $_SESSION["NIVEL_UTILIZADOR"] != 2) {
-  header("Location: blog.php");
+  header("Location: posts.php");
 }
 
 $cabecalho = $arrayName = array('titulo' => "", 'nomeUser' => "", 'timeStamp' => "", 'categoria' => "", 'categoria_ID' => "", 'imagemPrincipalUrl' => "");
@@ -40,13 +40,14 @@ $totalComentarios = getTotalComentarios($id_post);
 
 function apagarPost($id_post)
 {
-  $sql = "UPDATE post SET estado = 1 WHERE id_post = ?";
+  $sql = "UPDATE post SET estado = 0 WHERE id_post = ?";
   $conn = OpenCon();
   $stmt = $conn->prepare($sql);
   $stmt->bind_param("i", $id_post);
   $stmt->execute();
   $resultado_post_denuncia = $stmt->get_result();
   CloseCon($conn);
+  header("Location: posts.php");
 }
 
 function fazerDenuncia($id_post, $user_ID, $razao)
@@ -61,7 +62,7 @@ function fazerDenuncia($id_post, $user_ID, $razao)
 
   if ($resultado_post_denuncia->fetch_assoc()["nrDenuncias"] !=  0) {
 
-    $sql = "UPDATE post_denuncia SET razao = ? WHERE id_post = ? AND user_ID = ?";
+    $sql = "UPDATE post_denuncia SET razao = ?, estado = 0 WHERE id_post = ? AND user_ID = ?";
     $conn = OpenCon();
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("sii", $razao, $id_post, $user_ID);
@@ -461,9 +462,9 @@ function imprimirCategorias()
 
   while ($row = $resultado_post_categoria->fetch_assoc()) {
     ?>
-    <li><a href="blog.php?categoria=<?php echo $row["Categoria_ID"]; ?>">
+    <li><a href="posts.php?categoria=<?php echo $row["Categoria_ID"]; ?>">
         <?php echo $row["Categoria_Nome"]; ?>
-        <span>(<?php echo getTotalPosts(" WHERE categoria = " . $row["Categoria_ID"]) ?>)</span>
+        <span>(<?php echo getTotalPosts(" WHERE estado != 0 AND categoria = " . $row["Categoria_ID"]) ?>)</span>
       </a></li>
   <?php
   }
@@ -471,7 +472,7 @@ function imprimirCategorias()
 
 function imprimirPostsRecentes()
 {
-  $sql = "SELECT * from post ORDER BY id_post DESC Limit 5";
+  $sql = "SELECT * from post WHERE estado != 0 ORDER BY id_post DESC Limit 5";
   $conn = OpenCon();
   $stmt = $conn->prepare($sql);
   $stmt->execute();
@@ -532,13 +533,20 @@ main();
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Blog Single - Company Bootstrap Template</title>
+  <title>OilCentral - <?php echo ucfirst($cabecalho["titulo"]);?></title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
   <!-- Favicons -->
-  <link href="assets/img/favicon.png" rel="icon">
-  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="imgs/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="imgs/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="imgs/favicon/favicon-16x16.png">
+    <link rel="manifest" href="imgs/favicon/site.webmanifest">
+    <link rel="mask-icon" href="imgs/favicon/safari-pinned-tab.svg" color="#bf46e8">
+    <link rel="shortcut icon" href="imgs/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-config" content="imgs/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Roboto:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
@@ -588,7 +596,7 @@ main();
           <h2><a href="#" class="text-white">Post</a></h2>
           <ol>
             <li><a href="index.php">Home</a></li>
-            <li><a href="blog.php">Post's</a></li>
+            <li><a href="posts.php">Posts</a></li>
             <li><a href="#" class="text-white"><?php echo $cabecalho["titulo"]; ?></a></li>
           </ol>
         </div>
@@ -612,12 +620,12 @@ main();
               <div class="row">
                 <div class="col">
                   <h2 class="entry-title">
-                    <a href="blog-single.html"><?php echo $cabecalho["titulo"]; ?></a>
+                    <a href="#"><?php echo $cabecalho["titulo"]; ?></a>
                     <?php
                     if ((isset($_SESSION["user_ID"]) && $_SESSION["user_ID"] == $criador) || (isset($_SESSION["NIVEL_UTILIZADOR"]) && $_SESSION["NIVEL_UTILIZADOR"] == 2)) {
                     ?>
 
-                      <div class="float-end btn-group fs-4 fw-light">
+                      <div class="float-lg-end btn-group fs-4 fw-light">
 
                         <a class="me-4" href="<?php echo "post-editar.php?id_post=" . $id_post ?>"><i class="bi bi-pencil-square"> Editar</i></a>
 
@@ -637,10 +645,9 @@ main();
 
               <div class="entry-meta">
                 <ul>
-                  <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a href="blog-single.html"><?php echo $cabecalho["nomeUser"]; ?></a></li>
-                  <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a href="blog-single.html"><time datetime="2020-01-01"><?php echo $cabecalho["timeStamp"]; ?></time></a></li>
-                  <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> <a href="blog-single.html"><?php echo $totalComentarios;
-                                                                                                                    ?> Comentários</a></li>
+                  <li class="d-lg-flex align-items-center"><i class="bi bi-person"></i> <a href="blog-single.html"><?php echo $cabecalho["nomeUser"]; ?></a></li>
+                  <li class="d-lg-flex align-items-center"><i class="bi bi-clock"></i> <a href="blog-single.html"><time datetime="2020-01-01"><?php echo $cabecalho["timeStamp"]; ?></time></a></li>
+                  <li class="d-lg-flex align-items-center"><i class="bi bi-chat-dots"></i> <a href="blog-single.html"><?php echo $totalComentarios;?> Comentários</a></li>
                 </ul>
               </div>
 
@@ -651,10 +658,10 @@ main();
 
               </div>
 
-              <div class="entry-footer">
+              <div class="entry-footer mt-2">
                 <i class="bi bi-folder"></i>
                 <ul class="cats">
-                  <li><a href="<?php echo "blog.php?categoria=" . $cabecalho["categoria_ID"]; ?>"><?php echo $cabecalho["categoria"]; ?></a></li>
+                  <li><a href="<?php echo "posts.php?categoria=" . $cabecalho["categoria_ID"]; ?>"><?php echo $cabecalho["categoria"]; ?></a></li>
                 </ul>
                 <?php
                 if (isset($_SESSION["user_ID"])) {
@@ -717,7 +724,7 @@ main();
 
               <h3 class="sidebar-title">Procurar</h3>
               <div class="sidebar-item search-form">
-                <form action="blog.php" method="get">
+                <form action="posts.php" method="get">
                   <input type="text" name="pesquisa">
                   <button type="submit"><i class="bi bi-search"></i></button>
                 </form>
@@ -732,7 +739,7 @@ main();
                 </ul>
               </div><!-- End sidebar categories-->
 
-              <h3 class="sidebar-title">Post's Recentes</h3>
+              <h3 class="sidebar-title">Posts Recentes</h3>
               <div class="sidebar-item recent-posts">
                 <?php
                 imprimirPostsRecentes();

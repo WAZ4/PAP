@@ -7,8 +7,8 @@
                 <div class="col-lg-3 col-md-6 footer-contact">
                     <h3>OilCentral</h3>
                     <p>
-                        Alameda dos Oceanos, 138 <br>
-                        Lisboa, LIS 1990-394<br>
+                        R. Eiras 4A, Passos <br>
+                        Bragança<br>
                         Portugal <br><br>
                         <strong>Telemóvel:</strong> +351 910365645<br>
                         <strong>Email:</strong> ajuda@oilcentral.pt<br>
@@ -18,22 +18,22 @@
                 <div class="col-lg-2 col-md-6 footer-links">
                     <h4>Índice</h4>
                     <ul>
-                        <li><i class="bx bx-chevron-right"></i> <a href="#">Pagina Principal</a></li>
-                        <li><i class="bx bx-chevron-right"></i> <a href="#">Óleos</a></li>
-                        <li><i class="bx bx-chevron-right"></i> <a href="#">Protocolos</a></li>
-                        <li><i class="bx bx-chevron-right"></i> <a href="#">Post's</a></li>
-                        <li><i class="bx bx-chevron-right"></i> <a href="#">Guias</a></li>
-                        
+                        <li><i class="bx bx-chevron-right"></i> <a href="index.php">Página Principal</a></li>
+                        <li><i class="bx bx-chevron-right"></i> <a href="oleo-single.php">Óleos</a></li>
+                        <li><i class="bx bx-chevron-right"></i> <a href="protocolo.php">Protocolos</a></li>
+                        <li><i class="bx bx-chevron-right"></i> <a href="posts.php">Posts</a></li>
+                        <li><i class="bx bx-chevron-right"></i> <a href="guias.php">Guias</a></li>
+
                     </ul>
                 </div>
-                
+
                 <div class="col-lg-3 col-md-6 footer-links">
                     <ul>
-                        <li><i class="bx bx-chevron-right"></i> <a href="#">Login</a></li>
-                        <li><i class="bx bx-chevron-right"></i> <a href="#">Criar Conta</a></li>
-                        <li><i class="bx bx-chevron-right"></i> <a href="#">Termos e condições</a></li>
-                        <li><i class="bx bx-chevron-right"></i> <a href="#">Contacto</a></li>
-                        <li><i class="bx bx-chevron-right"></i> <a href="#">Sobre</a></li>
+                        <li><i class="bx bx-chevron-right"></i> <a href="login/">Login</a></li>
+                        <li><i class="bx bx-chevron-right"></i> <a href="criarConta-">Criar Conta</a></li>
+                        <li><i class="bx bx-chevron-right"></i> <a href="termosecondicoes.php">Termos e condições</a></li>
+                        <li><i class="bx bx-chevron-right"></i> <a href="contacto.php">Contacto</a></li>
+                        <li><i class="bx bx-chevron-right"></i> <a href="index.php">Sobre</a></li>
                     </ul>
                 </div>
 

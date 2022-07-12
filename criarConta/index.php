@@ -25,17 +25,17 @@ function enviarEmailAtivacao($hash, $email, $nome)
 
     try {
         //Server settings
-        $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
+        // $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
         $mail->isSMTP();                                            //Send using SMTP
         $mail->Host       = 'smtp-pt.securemail.pro';                     //Set the SMTP server to send through
         $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-        $mail->Username   = 'contacto@oilcentral.pt';                     //SMTP username
+        $mail->Username   = 'geral@oilcentral.pt';                     //SMTP username
         $mail->Password   = 'oleosforever254';                               //SMTP password
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
         $mail->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 
         //Recipients
-        $mail->setFrom('contacto@oilcentral.pt', 'OilCentral');
+        $mail->setFrom('geral@oilcentral.pt', 'OilCentral');
         $mail->addAddress($email, $nome);     //Add a recipient
         // $mail->addAddress('ellen@example.com');               //Name is optional
         // $mail->addReplyTo('info@example.com', 'Information');
@@ -134,7 +134,7 @@ function inserirImagem($imgurl)
             return $target_file;
             // echo "The file " . htmlspecialchars(basename($_FILES["fileToUpload"]["name"])) . " has been uploaded.";
         } else {
-            return 0;
+            return "Erro ao submeter image. Por favor verifique o formato do ficheiro.";
             $erro = "Sorry, there was an error uploading your file.";
         }
     }
@@ -154,7 +154,6 @@ function verificarEmail($email)
 function registar($email, $nome, $password)
 {
     global $erro;
-
 
     $nome = strip_tags(trim($nome));
     $email = strip_tags(trim($email));
@@ -178,7 +177,7 @@ function registar($email, $nome, $password)
     }
 
     if (($imgurl = inserirImagem($imgurl)) == false) {
-        $erro = $imgurl;
+        $erro = "Erro ao submeter imagem. Por favor verifique o formato ou utilize outra imagem.";
         return;
     }
 
@@ -217,12 +216,23 @@ if (isset($_POST)) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title> Free Stylish Login Page Website Template | Smarteyeapps.com</title>
+    <title>Criar Conta</title>
 
-    <link rel="shortcut icon" href="assets/images/fav.jpg">
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/fontawsom-all.min.css">
-    <link rel="stylesheet" type="text/css" href="assets/css/style.css" />
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="../imgs/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../imgs/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../imgs/favicon/favicon-16x16.png">
+    <link rel="manifest" href="../imgs/favicon/site.webmanifest">
+    <link rel="mask-icon" href="../imgs/favicon/safari-pinned-tab.svg" color="#bf46e8">
+    <link rel="shortcut icon" href="../imgs/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-config" content="../imgs/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <link rel="stylesheet" href="../assetsLogin/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assetsLogin/css/fontawsom-all.min.css">
+    <link rel="stylesheet" type="text/css" href="../assetsLogin/css/style.css" />
 </head>
 
 <style>
@@ -234,27 +244,28 @@ if (isset($_POST)) {
             <div class="sid-layy">
                 <div class="row slid-roo">
                     <div class="data-portion">
-                        <h2>Manage Your orders</h2>
-                        <p>Ao criar uma conta na OilCentral, vai poder interagir com a nossa comunidade e guardar publicações e oleos para conseguir encontrar-los mais facilmente da proxima vez que os procurar. </p>
+                        <h2>Crie uma conta</h2>
+                        <p>Ao criar uma conta na OilCentral, vai poder interagir com a nossa comunidade e criar as suas próprias publicações. </p>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="side-right">
-            <form action="#" method="post" enctype="multipart/form-data">
+        <div class="side-right pt-2">
 
-                <?php
-                if ($erro != "") {
-                ?>
-                    <div class="alert alert-danger alert-dismissible fade show w-100" role="alert">
-                        <?php echo $erro; ?>
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                <?php
-                }
-                ?>
+            <?php
+            if ($erro != "") {
+            ?>
+                <div class="alert alert-danger alert-dismissible fade show w-100" role="alert">
+                    <?php echo $erro; ?>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            <?php
+            }
+            ?>
+
+            <form action="#" method="post" enctype="multipart/form-data">
 
                 <input type="hidden" name="registarForm">
                 <a href="../index.php" style="font-size: 2rem;"><span style="color: #bf46e8">Oil</span>Central</a>
@@ -302,12 +313,12 @@ if (isset($_POST)) {
 
                 <div class="form-row row skjh">
                     <div class="col-12 left no-padding">
-                        <input type="checkbox" name="mark" required> Concorda com os <a href="">termos e condições</a>
+                        <input type="checkbox" name="mark" required> Concorda com os <a href="../termosecondicoes.php">termos e condições</a>
                         <!-- Perguntar ao professor a linguagem -->
                     </div>
                 </div>
 
-                <div class="form-row dfr">
+                <div class="form-row dfr pb-2">
                     <button class="btn btn-sm btn-success">Criar Conta</button>
                 </div>
 
@@ -325,10 +336,10 @@ if (isset($_POST)) {
         </div>
 </body>
 
-<script src="assets/js/jquery-3.2.1.min.js"></script>
-<script src="assets/js/popper.min.js"></script>
-<script src="assets/js/bootstrap.min.js"></script>
-<script src="assets/js/script.js"></script>
+<script src="../assetsLogin/js/jquery-3.2.1.min.js"></script>
+<script src="../assetsLogin/js/popper.min.js"></script>
+<script src="../assetsLogin/js/bootstrap.min.js"></script>
+<script src="../assetsLogin/js/script.js"></script>
 
 <script>
     function preview() {

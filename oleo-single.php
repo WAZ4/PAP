@@ -5,6 +5,16 @@ $Oleo_ID = 2;
 if (isset($_GET["Oleo_ID"])) {
     $Oleo_ID = $_GET["Oleo_ID"];
 }
+$oleo_nome = "Óleos essenciais";
+// Nome do óleo para o titulo do website
+$sql = "SELECT Oleo_Nome FROM Oleo_Master WHERE Oleo_ID = ?";
+$conn = OpenCon();
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $Oleo_ID);
+$stmt->execute();
+$resultado_oleo_master = $stmt->get_result();
+CloseCon($conn);
+$oleo_nome = ucfirst(strtolower($resultado_oleo_master->fetch_assoc()["Oleo_Nome"]));
 
 function listarOleos()
 {
@@ -75,16 +85,15 @@ function apresentarOleo()
         CloseCon($conn);
     }
 
-
     ?>
     <div class="row">
         <div class="col-md-6 h-100">
             <div class="align-content-bottom text-center mt-4">
-                <h2 class=""><?php echo $row["Oleo_Nome"]; ?></h1>
+                <h2 class=""><?php echo ucfirst($row["Oleo_Nome"]); ?></h1>
                     <?php
                     if ($row["Oleo_Tipo"] == 1) {
                     ?>
-                        <h4 class=""><?php echo $row["Oleo_Nome_PT"]; ?></h3>
+                        <h3 class="fs-5 pt-2"><?php echo ucfirst($row["Oleo_Nome_Latim"]); ?></h3>
                         <?php
                     }
                         ?>
@@ -186,7 +195,7 @@ function apresentarOleo()
                         <li class="list-group-item"><?php echo $string; ?></li>
 
                     <?php // Continuar aqui WAZA
-                    } else if ($resultado_oleo_blend_ingredientes->num_rows != 0){
+                    } else if ($resultado_oleo_blend_ingredientes->num_rows != 0) {
                     ?>
                         <h6>Ingredientes Principais</h6>
                         <ul class="list-group list-group-flush overflow-hidden">
@@ -245,7 +254,7 @@ function apresentarOleo()
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Oleo Single - Company Bootstrap Template</title>
+    <title>OilCentral - <?php echo $oleo_nome; ?></title>
     <meta content="" name="description">
     <meta content="" name="keywords">
 
@@ -339,7 +348,7 @@ function apresentarOleo()
                     <div class="col-md-4 entries">
                         <article class="entry entry-single">
                             <div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-white">
-                                <span class="fs-5 fw-semibold text-center mb-3">Lista de Oleos</span>
+                                <span class="fs-5 fw-semibold text-center mb-3">Lista de Óleos</span>
                                 <div class="list-group list-group-flush border-bottom scrollarea">
                                     <?php listarOleos(); ?>
                                 </div>
@@ -361,6 +370,18 @@ function apresentarOleo()
     </main><!-- End #main -->
 
     <?php include("estruturaPrincipal/footer.php"); ?>
+
+    <!-- Vendor JS Files -->
+    <script src="assets/vendor/aos/aos.js"></script>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+    <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+    <script src="assets/vendor/php-email-form/validate.js"></script>
+    <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+    <script src="assets/vendor/waypoints/noframework.waypoints.js"></script>
+
+    <!-- Template Main JS File -->
+    <script src="assets/js/main.js"></script>
 
 </body>
 

@@ -5,13 +5,20 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Services - Company Bootstrap Template</title>
+    <title>OilCentral - Guias</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
 
     <!-- Favicons -->
-    <link href="assets/img/favicon.png" rel="icon">
-    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="imgs/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="imgs/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="imgs/favicon/favicon-16x16.png">
+    <link rel="manifest" href="imgs/favicon/site.webmanifest">
+    <link rel="mask-icon" href="imgs/favicon/safari-pinned-tab.svg" color="#bf46e8">
+    <link rel="shortcut icon" href="imgs/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-config" content="imgs/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Roboto:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
@@ -71,69 +78,74 @@
         <section id="features" class="features">
             <div class="container" data-aos="fade-up">
 
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    De momento o unico Guia criado é o de aplicação tópica dos óleos essenciais.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
                 <div class="section-title">
                     <h2>Guias</h2>
-                    <p>Aprenda sobre mais sobre óleos essenciais. Em baixo pode encontrar varios Guiaas sobre como utilizar onde aplicar e técnicas de aplicação.</p>
+                    <p>Aprenda mais sobre óleos essenciais. Em baixo pode encontrar varios Guias sobre como utilizar, onde aplicar e técnicas de aplicação.</p>
                 </div>
 
                 <div class="row">
 
 
                     <div class="col-lg-3 col-md-4 mt-4">
-                        <div class="icon-box">
+                        <div class="icon-box" style="transform: rotate(0);">
                             <span class="material-icons pe-1" style="color: royalblue;">water_drop</span>
-                            <h3><a href=""> O que são Óleos essenciais</a></h3>
+                            <h3><a href="" class="stretched-link"> O que são óleos essenciais</a></h3>
                         </div>
                     </div>
 
 
                     <div class="col-lg-3 col-md-4 mt-4">
-                        <div class="icon-box">
+                        <div class="icon-box" style="transform: rotate(0);">
                             <span class="material-icons pe-1" style="color: magenta;"> where_to_vote </span>
-                            <h3><a href="">Onde comprar Óleos essenciais </a></h3>
+                            <h3><a href="" class="stretched-link">Onde comprar óleos essenciais </a></h3>
                         </div>
                     </div>
 
                     <div class="col-lg-3 col-md-4 mt-4">
-                        <div class="icon-box">
+                        <div class="icon-box" style="transform: rotate(0);">
                             <span class="material-icons pe-2" style="color: purple;"> spa </span>
 
-                            <h3><a href="">Formas de aplicação (Tópico, Aromático, Interno) </a></h3>
+                            <h3><a href="" class="stretched-link">Formas de aplicação (Tópico, Aromático, Interno) </a></h3>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-4 mt-4">
-                        <div class="icon-box">
+                        <div class="icon-box" style="transform: rotate(0);">
                             <span class="material-icons pe-2" style="color: teal;"> opacity </span>
 
-                            <h3><a href="">Diluição dos óleos</a></h3>
+                            <h3><a href="" class="stretched-link">Diluição dos óleos</a></h3>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-4 mt-4">
-                        <div class="icon-box">
+                        <div class="icon-box" style="transform: rotate(0);">
                             <span class="material-icons pe-2" style="color: orange;"> touch_app </span>
-                            <h3><a href="">Tecnicas de aplicação</a></h3>
+                            <h3><a href="" class="stretched-link">Tecnicas de aplicação</a></h3>
                         </div>
                     </div>
 
                     <div class="col-lg-3 col-md-4 mt-4">
-                        <div class="icon-box">
+                        <div class="icon-box" style="transform: rotate(0);">
                             <span class="material-icons pe-2" style="color: green;"> visibility </span>
-                            <h3><a href="">Como utilizar os óleos no difusor</a></h3>
+                            <h3><a href="" class="stretched-link">Como utilizar os óleos no difusor</a></h3>
                         </div>
                     </div>
 
 
                     <div class="col-lg-3 col-md-4 mt-4">
-                        <div class="icon-box">
+                        <div class="icon-box" style="transform: rotate(0);">
                             <span class="material-icons pe-2" style="color: turquoise;"> sensor_occupied </span>
-                            <h3><a href="">Aroma terapia</a></h3>
+                            <h3><a href="guia1.php" class="stretched-link">Aplicação tópico de óleos essenciais</a></h3>
                         </div>
                     </div>
 
                     <div class="col-lg-3 col-md-4 mt-4">
-                        <div class="icon-box">
+                        <div class="icon-box" style="transform: rotate(0);">
                             <span class="material-icons pe-1" style="color: red;"> warning </span>
-                            <h3><a href="">Cuidados a ter</a></h3>
+                            <h3><a href="" class="stretched-link">Cuidados a ter</a></h3>
                         </div>
                     </div>
 

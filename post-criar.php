@@ -33,7 +33,6 @@ function inserirPostConteudoBaseDeDados($nr_post)
 {
     $stringJson = $_POST["submitEditor"];
     $someObject = json_decode(json_encode(json_decode($stringJson)), true);
-    print_r($someObject);
 
     foreach ($someObject["blocks"] as $key => $value) {
         if (gettype($value) == "array") {
@@ -155,22 +154,22 @@ function inserirPostBaseDeDados($nr_post)
         }
     }
 }
-//Inserir as tags na base de dados ACABAR
-function inserirTagsBaseDados($nr_post, $tags)
-{
-    // foreach ($ags as $key ) {
-    //     # code...
-    // }
-    $sql = "SELECT COUNT(id_post) AS numeroDePosts FROM post;";
+// //Inserir as tags na base de dados ACABAR
+// function inserirTagsBaseDados($nr_post, $tags)
+// {
+//     // foreach ($ags as $key ) {
+//     //     # code...
+//     // }
+//     $sql = "SELECT COUNT(id_post) AS numeroDePosts FROM post;";
 
-    $conn = OpenCon();
+//     $conn = OpenCon();
 
-    $result_post = mysqli_query($conn, $sql);
+//     $result_post = mysqli_query($conn, $sql);
 
-    CloseCon($conn);
+//     CloseCon($conn);
 
-    return mysqli_fetch_assoc($result_post)["numeroDePosts"];
-}
+//     return mysqli_fetch_assoc($result_post)["numeroDePosts"];
+// }
 
 function listarCategorias()
 {
@@ -218,7 +217,7 @@ if (isset($_POST["post-criar-submit"])) {
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Criar Post</title>
+    <title>OilCentral - Criar Publicação</title>
 
     <!-- CSS BASE-->
     <?php
@@ -244,8 +243,8 @@ if (isset($_POST["post-criar-submit"])) {
     <script src="editorJS/editor.js"></script>
 
     <!-- Tags -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://unpkg.com/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
+    <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://unpkg.com/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" /> -->
 
 
     <!-- =======================================================
@@ -274,7 +273,7 @@ if (isset($_POST["post-criar-submit"])) {
                     <h2>Criar Post</h2>
                     <ol>
                         <li><a href="index.php">Home</a></li>
-                        <li><a href="blog.php">Blog</a></li>
+                        <li><a href="posts.php">Blog</a></li>
                         <li>Criar Post</li>
                     </ol>
                 </div>
@@ -293,16 +292,18 @@ if (isset($_POST["post-criar-submit"])) {
                         <article class="entry entry-single">
                             <div>
                                 <h1 class="align-center">Crie o seu Post!</h1>
-                                <p>Se necessário consulte o guia de como utilizar a nossa ferramenta de criação de posts <a class="link-info" href="">aqui</a></p>
+                                <p>Se necessário consulte o guia de como utilizar a nossa ferramenta de criação de posts <a class="link-info" href="guia2.php">aqui</a></p>
                             </div>
 
                             <form action="#" method="post" enctype="multipart/form-data">
+                                <div class="section" style="transform: rotate(0);">
 
-                                <div class="container bg-light">
-                                    <div id="editorjs"></div>
+                                    <div class="container bg-light">
+                                        <div id="editorjs"></div>
+                                    </div>
+                                    <script src="editorJS/index.js"></script>
+                                    <input type="hidden" name="submitEditor" id="submitEditor">
                                 </div>
-                                <script src="editorJS/index.js"></script>
-                                <input type="hidden" name="submitEditor" id="submitEditor">
 
                                 <!-- Seccao para o utilizador escolher a categoria na qual se enquadra o seu post -->
 
@@ -347,20 +348,20 @@ if (isset($_POST["post-criar-submit"])) {
                                         new Tagify(input)
                                     </script> -->
 
-                                    <!-- Seccao de publicar ou previsualizar o post -->
-                                    <div class="btn-toolbar justify-content-between mt-2" role="toolbar" aria-label="Toolbar with button groups">
-                                        <div class="btn-group" role="group" aria-label="First group">
-                                            <button type="submit" name="post-criar-submit" onclick="gravarEditor()" value="submit" class="btn btn-primary">Publicar</button>
-                                        </div>
-                                        <!-- <div class="mt-3"> -->
-                                        <div class="input-group">
-                                            <!-- Button trigger modal -->
-                                            <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"> Launch demo modal</button>
-                                                <button type="button" class="btn btn-outline-secondary" onclick="previsualizarPost()">Previsualizar Post</button> -->
-                                            <!-- </div> -->
-                                            <!-- </div> -->
-                                        </div>
+                                <!-- Seccao de publicar ou previsualizar o post -->
+                                <div class="btn-toolbar justify-content-between mt-2" role="toolbar" aria-label="Toolbar with button groups">
+                                    <div class="btn-group" role="group" aria-label="First group">
+                                        <button type="submit" name="post-criar-submit" onclick="gravarEditor()" value="submit" class="btn btn-primary border-0" style="background-color: #bf46e8;">Publicar</button>
                                     </div>
+                                    <!-- <div class="mt-3"> -->
+                                    <div class="input-group">
+                                        <!-- Button trigger modal -->
+                                        <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"> Launch demo modal</button>
+                                                <button type="button" class="btn btn-outline-secondary" onclick="previsualizarPost()">Previsualizar Post</button> -->
+                                        <!-- </div> -->
+                                        <!-- </div> -->
+                                    </div>
+                                </div>
 
                         </article><!-- End blog entry -->
 
